@@ -90,7 +90,7 @@
 }
 
 .chat-wrapper {
-  width: 90%;
+  width: 100%;
   /* max-width: 600px; */
   /* max-height: 90%; */
   padding: 25px;
@@ -198,8 +198,14 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .app-header{
-    top: 0;
+    background-color: 'c8c8c8';
     position: fixed;
+    width: 90%;
+    margin-right: 10px;
+  }
+  .screen-wrapper{
+    width: 90%;
+    height: 95%;
   }
   .chat-wrapper{
     margin-top: 50px;
