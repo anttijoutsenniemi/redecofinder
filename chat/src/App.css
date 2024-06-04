@@ -15,6 +15,8 @@
 }
 
 .screen-wrapper {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
   flex-direction: column;
   max-height: 100%;
   max-width: 700px;
@@ -48,7 +50,7 @@
 }
 
 .app-header {
-  background-color: black;
+  background-color: transparent;
   display: flex;
   justify-content: space-between; /* This distributes space between items */
   align-items: center;
@@ -59,15 +61,16 @@
 
 .header-title {
   margin: 0;
-  color: white;
+  margin-left: 5px;
+  color: black;
   font-size: large;
-  font-family: 'Courier New', monospace;
+  font-family: "Lucida Console", Monaco, monospace;
 }
 
 .hamburger-menu {
   font-size: 24px;
   cursor: pointer;
-  color: white;
+  color: black;
 }
 
 .drawer {
@@ -87,11 +90,10 @@
 }
 
 .chat-wrapper {
-  width: 100%;
+  width: 90%;
   /* max-width: 600px; */
   /* max-height: 90%; */
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+  padding: 25px;
   /* overflow-y: scroll;  */
 }
 
@@ -131,7 +133,7 @@
 }
 
 .chat-message.user .chat-bubble {
-  background-color: #007778; /* Different color for user */
+  background-color: #4caf50; /* Different color for user */
   color: white;
 }
 
@@ -148,7 +150,7 @@
   border: none;
   border-radius: 15px;
   cursor: pointer;
-  background-color: #0B1215;
+  background-color: #2196f3;
   color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }

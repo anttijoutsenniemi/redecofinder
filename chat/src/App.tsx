@@ -15,7 +15,7 @@ export interface ChatOption {
 const App: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     // Initial chat messages and options
-    { id: 1, type: 'chatbot', text: 'Welcome! I am your Homedesigner assistant, lets find furniture that matches your needs together!', options: ['Help me find suitable furniture for my home.'] },
+    { id: 1, type: 'chatbot', text: 'Welcome! I am your Furnival assistant, here to help you find suitable furniture sets for your event!', options: ['Help me find suitable furniture sets'] },
   ]);
   const [furnitureClass, setFurnitureClass] = useState<string>('Chairs');
   const messageEnd = useRef<HTMLDivElement>(null);
