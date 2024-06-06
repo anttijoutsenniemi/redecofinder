@@ -15,7 +15,7 @@ export interface ChatOption {
 const App: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     // Initial chat messages and options
-    { id: 1, type: 'chatbot', text: 'Welcome! I am your Furnival assistant, here to help you find suitable furniture sets for your event!', options: ['Help me find suitable furniture sets'] },
+    { id: 1, type: 'chatbot', text: 'Welcome! I am your Redecofinder assistant, here to help you design your space with suitable furniture!', options: ['Help me find suitable furniture'] },
   ]);
   const [furnitureClass, setFurnitureClass] = useState<string>('Chairs');
   const messageEnd = useRef<HTMLDivElement>(null);
@@ -89,7 +89,7 @@ function toggleDrawer() {
   return (
     <div className="chat-app-background">
     <div className='screen-wrapper'>
-    <div className='app-header'><h1 className='header-title'>Furnival assistant</h1>
+    <div className='app-header'><h1 className='header-title'>Redecofinder assistant</h1>
         <div className='hamburger-menu' onClick={()=>toggleDrawer()}>
           &#9776;
         </div>
