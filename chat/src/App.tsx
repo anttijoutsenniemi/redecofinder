@@ -5,6 +5,7 @@ export interface ChatMessage {
   id: number;
   type: 'user' | 'chatbot';
   text: string;
+  imageArray?: string[],
   options?: string[]; // Only present if type is 'chatbot'
 }
 
@@ -15,7 +16,7 @@ export interface ChatOption {
 const App: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     // Initial chat messages and options
-    { id: 1, type: 'chatbot', text: 'Welcome! I am your Redecofinder assistant, here to help you design your space with suitable furniture!', options: ['Help me find suitable furniture'] },
+    { id: 1, type: 'chatbot', text: 'Welcome! I am your Redecofinder assistant, here to help design your space with suitable furniture.', options: ['Help me find suitable furniture for my style'] },
   ]);
   const [furnitureClass, setFurnitureClass] = useState<string>('Chairs');
   const messageEnd = useRef<HTMLDivElement>(null);
@@ -33,9 +34,10 @@ const App: React.FC = () => {
     const newUserMessage: ChatMessage = { id: messages.length + 1, type: 'user', text: option };
 
     let botResponseText : string = 'I am not coded that far yet';  // Default response text
+    let imageArray : string[] = [];
     let options : string[] = [];
     switch (option) {
-        case 'Help me find suitable furniture for my home.':
+        case 'Help me find suitable furniture for my style':
             botResponseText = 'Great! What type of furniture are you looking for? Here are some categories to choose from:';
             options = ['Chairs', 'Tables'];
             break;
@@ -62,8 +64,8 @@ const App: React.FC = () => {
             options = ['Start again'];
             break;
         case 'Start again':
-            botResponseText = 'Welcome! I am your Homedesigner assistant, lets find furniture that matches your needs together!';
-            options = ['Help me find suitable furniture for my home.'];
+            botResponseText = 'Welcome! I am your Redecofinder assistant, here to help design your space with suitable furniture.';
+            options = ['Help me find suitable furniture for my style'];
             break;
         default:
             botResponseText = 'I didnt understand your selection.';
@@ -75,6 +77,7 @@ const App: React.FC = () => {
         id: messages.length + 2,
         type: 'chatbot',
         text: botResponseText,
+        imageArray: imageArray,
         options: options
     };
 
@@ -108,6 +111,14 @@ function toggleDrawer() {
             <img src="/icon.png" alt="Chatbot" className="chatbot-profile" />
             <div>
               <div className="chat-bubble" ref={messageEnd}>{message.text}</div>
+              {
+                message.imageArray && message.imageArray.length > 0 &&
+                message.imageArray.map((image, index) => (
+                  <div key={index}>
+                      <img src={`${image}`} alt='Furniture image'/>
+                  </div>
+                ))
+              }
               {
                 (message.options && message.id === messages.length) //only render options on the last message so user cant click previous options
                 ? 
