@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import InputField from './components/InputField';
 import './App.css';
 
 export interface ChatMessage {
@@ -92,7 +93,7 @@ function toggleDrawer() {
   return (
     <div className="chat-app-background">
     <div className='screen-wrapper'>
-    <div className='app-header'><h1 className='header-title'>Redecofinder assistant</h1>
+    <div className='app-header'><h1 className='header-title'>ReDecoFinder assistant</h1>
         <div className='hamburger-menu' onClick={()=>toggleDrawer()}>
           &#9776;
         </div>
@@ -143,6 +144,7 @@ function toggleDrawer() {
         )}
       </div>
     ))}
+      <InputField/>
       </div>
       </div>
     </div>
