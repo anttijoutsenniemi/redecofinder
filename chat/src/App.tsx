@@ -21,6 +21,7 @@ const App: React.FC = () => {
   ]);
   const [furnitureClass, setFurnitureClass] = useState<string>('Chairs');
   const messageEnd = useRef<HTMLDivElement>(null);
+  const [typingMode, setTypingMode] = useState<boolean>(false);
 
   const scrollToBottom = () => {
     messageEnd.current?.scrollIntoView({ behavior: 'smooth' });
@@ -54,6 +55,7 @@ const App: React.FC = () => {
             break;
         case 'Open Camera':
             //code for opening camera
+            setTypingMode(true);
             options = ['Start again'];
             break;
         case 'No thank you, give me chair suggestions that I can browse.':
@@ -88,6 +90,10 @@ const App: React.FC = () => {
 function toggleDrawer() {
   const drawer : any = document.getElementById('drawer');
   drawer.classList.toggle('open');
+}
+
+const receiveInput = (input : string) => {
+  console.log(input);
 }
 
   return (
@@ -144,7 +150,10 @@ function toggleDrawer() {
         )}
       </div>
     ))}
-      <InputField/>
+      {typingMode && (
+        <InputField receiveInput={receiveInput}/>
+      )}
+      
       </div>
       </div>
     </div>

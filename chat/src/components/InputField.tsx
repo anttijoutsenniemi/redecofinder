@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import './../styles/inputfield.css';
 
-const InputField: React.FC = () => {
+interface InputProps {
+    receiveInput: any
+} 
+
+const InputField: React.FC<InputProps> = (props) => {
   const [input, setInput] = useState('');
 
   const handleSend = () => {
-    alert(`You typed: ${input}`);
+    props.receiveInput(input);
     setInput('');
   };
 
