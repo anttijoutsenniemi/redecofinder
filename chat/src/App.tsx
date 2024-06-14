@@ -119,12 +119,13 @@ const receiveInput = (input : string) => {
             <div>
               <div className="chat-bubble" ref={messageEnd}>{message.text}</div>
               {
-                message.imageArray && message.imageArray.length > 0 &&
+                message.imageArray && message.imageArray.length > 0 && (
                 message.imageArray.map((image, index) => (
                   <div key={index}>
                       <img src={`${image}`} alt='Furniture image'/>
                   </div>
                 ))
+                )
               }
               {
                 (message.options && message.id === messages.length) //only render options on the last message so user cant click previous options
