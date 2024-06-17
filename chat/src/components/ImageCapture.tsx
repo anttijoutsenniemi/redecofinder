@@ -1,9 +1,7 @@
 import React, { useState, useRef } from 'react';
 
 interface ImageCaptureProps {
-    updateImage: (img64 : string, roomImage : boolean) => void
-    room: boolean,
-    reference: boolean
+    updateImage: (img64 : string) => void
 }
 
 const ImageCapture : React.FC<ImageCaptureProps> = (props) => {
@@ -15,7 +13,7 @@ const ImageCapture : React.FC<ImageCaptureProps> = (props) => {
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                props.updateImage(reader.result as string, props.room);
+                props.updateImage(reader.result as string);
             };
             reader.readAsDataURL(file);
         }
@@ -37,12 +35,12 @@ const ImageCapture : React.FC<ImageCaptureProps> = (props) => {
             />
             <div>
                 <button
-                    style={(useCamera) ? { backgroundColor: '#007778'} : { backgroundColor: 'grey' }}  
+                    style={(useCamera) ? { backgroundColor: '#2196f3'} : { backgroundColor: 'grey' }}  
                     onClick={() => setUseCamera(true)} 
                     className="camera-button">Use Camera
                 </button>
                 <button 
-                    style={(useCamera) ? { backgroundColor: 'grey' } : { backgroundColor: '#007778'}}
+                    style={(useCamera) ? { backgroundColor: 'grey' } : { backgroundColor: '#2196f3'}}
                     onClick={() => setUseCamera(false)} 
                     className="gallery-button">Use Gallery
                 </button>

@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import InputField from './components/InputField';
 import './App.css';
+import ImageCapture from './components/ImageCapture';
 
 export interface ChatMessage {
   id: number;
   type: 'user' | 'chatbot';
   text: string;
   imageArray?: string[],
+  imageUploadMode?: boolean,
   options?: string[]; // Only present if type is 'chatbot'
 }
 
@@ -22,6 +24,7 @@ const App: React.FC = () => {
   const [furnitureClass, setFurnitureClass] = useState<string>('Chairs');
   const messageEnd = useRef<HTMLDivElement>(null);
   const [typingMode, setTypingMode] = useState<boolean>(false);
+  const [refImage64, setRefImage64] = useState<string>("");
 
   const scrollToBottom = () => {
     messageEnd.current?.scrollIntoView({ behavior: 'smooth' });
@@ -31,6 +34,18 @@ const App: React.FC = () => {
     scrollToBottom();
   }, [messages]); 
 
+  const updateImage = (img64 : string) => {
+    setRefImage64(img64);
+    setTimeout(() => { //timeout to let rendering happen first before autoscroll
+      scrollToBottom();
+    }, 50);
+  }
+
+  const uploadImage = () => {
+    //here next upload image + other info to ai prompt
+    //it might be beneficial to push img64 strings to array if we want to add multiple images
+  }
+
   // Function to handle option click, send next
   const handleOptionClick = (option: string) => {
     const newUserMessage: ChatMessage = { id: messages.length + 1, type: 'user', text: option };
@@ -38,6 +53,7 @@ const App: React.FC = () => {
     let botResponseText : string = 'I am not coded that far yet';  // Default response text
     let imageArray : string[] = [];
     let options : string[] = [];
+    let imageUploadMode : boolean = false;
     switch (option) {
         case 'Help me find suitable furniture for my style':
             botResponseText = 'Great! What type of furniture are you looking for? Here are some categories to choose from:';
@@ -55,7 +71,8 @@ const App: React.FC = () => {
             break;
         case 'Open Camera':
             //code for opening camera
-            setTypingMode(true);
+            botResponseText = "Add reference image";
+            imageUploadMode = true;
             options = ['Start again'];
             break;
         case 'No thank you, give me chair suggestions that I can browse.':
@@ -80,6 +97,7 @@ const App: React.FC = () => {
         id: messages.length + 2,
         type: 'chatbot',
         text: botResponseText,
+        imageUploadMode: imageUploadMode,
         imageArray: imageArray,
         options: options
     };
@@ -118,15 +136,33 @@ const receiveInput = (input : string) => {
             <img src="/icon.png" alt="Chatbot" className="chatbot-profile" />
             <div>
               <div className="chat-bubble" ref={messageEnd}>{message.text}</div>
-              {
+              { //paste recommendation images array
                 message.imageArray && message.imageArray.length > 0 && (
                 message.imageArray.map((image, index) => (
                   <div key={index}>
-                      <img src={`${image}`} alt='Furniture image'/>
+                      <img src={`${image}`} alt='Furniture recommendation'/>
                   </div>
                 ))
                 )
               }
+
+              { //paste imageupload compo
+                message.imageUploadMode && 
+                (
+                  <div style={{ flexDirection: 'column' }}>
+                  <ImageCapture updateImage={updateImage}/>
+                  { refImage64 && (
+                    <div>
+                      <img src={refImage64} alt="Captured" style={{marginTop: 10, marginBottom: 10}}/>
+                      <div ref={messageEnd}>
+                      <button className='upload-image-button' onClick={() => uploadImage()}>Send image</button>
+                      </div>
+                    </div>
+                  )}
+                  </div>
+                )
+              }
+
               {
                 (message.options && message.id === messages.length) //only render options on the last message so user cant click previous options
                 ? 
@@ -154,6 +190,7 @@ const receiveInput = (input : string) => {
       {typingMode && (
         <InputField receiveInput={receiveInput}/>
       )}
+
       
       </div>
       </div>
