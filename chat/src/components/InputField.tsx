@@ -16,6 +16,7 @@ const InputField: React.FC<InputProps> = (props) => {
   return (
     <div className="input-container">
       <input
+        maxLength={300}
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}

@@ -110,8 +110,10 @@ function toggleDrawer() {
   drawer.classList.toggle('open');
 }
 
+//func for receiving input from user typing
 const receiveInput = (input : string) => {
   console.log(input);
+  setTypingMode(false);
 }
 
   return (
