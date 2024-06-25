@@ -24,6 +24,8 @@ const App: React.FC = () => {
   const [furnitureClass, setFurnitureClass] = useState<string>('Chairs');
   const messageEnd = useRef<HTMLDivElement>(null);
   const [typingMode, setTypingMode] = useState<boolean>(false);
+  const [typingPhase, setTypingPhase] = useState<number>(0);
+  const [chatHistory, setChatHistory] = useState<string>("");
   const [refImage64, setRefImage64] = useState<string>("");
 
   const scrollToBottom = () => {
@@ -47,8 +49,8 @@ const App: React.FC = () => {
   }
 
   // Function to handle option click, send next
-  const handleOptionClick = (option: string) => {
-    const newUserMessage: ChatMessage = { id: messages.length + 1, type: 'user', text: option };
+  const handleOptionClick = (option: string, userMessage? : string) => {
+    const newUserMessage: ChatMessage = { id: messages.length + 1, type: 'user', text: (userMessage) ? userMessage : option }; //ternary to post usermessage as bubble when user types and sends
 
     let botResponseText : string = 'I am not coded that far yet';  // Default response text
     let imageArray : string[] = [];
@@ -56,13 +58,32 @@ const App: React.FC = () => {
     let imageUploadMode : boolean = false;
     switch (option) {
         case 'Help me find suitable furniture for my style':
-            botResponseText = 'Great! What type of furniture are you looking for? Here are some categories to choose from:';
-            options = ['Chairs', 'Tables'];
+            botResponseText = 'Great! Can you describe to me in your own words what kind of space you are designing?';
+            setTypingPhase(1);
+            setTypingMode(true);
+            break;
+        case 'Space described':
+            botResponseText = 'Got it! Can you next explain what kind of style you are looking for? (fe. colors and themes)';
+            setTypingPhase(2);
+            setTypingMode(true);
+            break;
+        case 'Style explained':
+            botResponseText = 'Noted, what type of furniture are you looking for? Here are some options to choose from: ';
+            /* 
+            Here we start with categories: 
+            1. Chairs = työtuolit + neuvottelu-asiakastauolit
+            2. Sofas, armchairs and stools = sohvat, nojatuolit ja rahit
+            3. Storage furniture = säilytyskalusteet
+            4. Tables = sohva ja pikkupöydät + sähköpöydät + työpöydät + neuvottelupöydät
+            5. Conference sets = neuvotteluryhmät
+            */
+            options = ['Chairs', 'Sofas, armchairs and stools', 'Tables', 'Conference sets', 'Storage fruniture']
             break;
         case 'Chairs':
             setFurnitureClass('Chairs');
             botResponseText = 'Sure, lets find a chair to your liking. Do you want to take a picture of the room so I can suggest chairs that I think fit the space?';
             options = ['Open Camera', 'No thank you, give me chair suggestions that I can browse.'];
+            //Here next set a case for each category
             break;
         case 'Tables':
             setFurnitureClass('Tables');
@@ -112,7 +133,19 @@ function toggleDrawer() {
 
 //func for receiving input from user typing
 const receiveInput = (input : string) => {
-  console.log(input);
+  //typingPhase tells us to which part of the ai dialog this input is used for 1=describe the space, 2=describe style, 3=needs
+  if(typingPhase === 1){
+    setChatHistory('1. User describing space: ' + input);
+    handleOptionClick('Space described', input);
+  }
+  else if(typingPhase === 2){
+    setChatHistory(prevHistory => prevHistory + '2. User describing style he/she is looking for: ' + input);
+    handleOptionClick('Style explained', input);
+  }
+  else if(typingPhase === 3){
+    setChatHistory(prevHistory => prevHistory + '3. User describing needs for the furniture: ' + input);
+  }
+  setTypingPhase(0);
   setTypingMode(false);
 }
 
