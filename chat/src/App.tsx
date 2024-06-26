@@ -27,6 +27,8 @@ const App: React.FC = () => {
   const [typingPhase, setTypingPhase] = useState<number>(0);
   const [chatHistory, setChatHistory] = useState<string>("");
   const [refImage64, setRefImage64] = useState<string>("");
+  const [refImage642, setRefImage642] = useState<string>("");
+  const [refImage643, setRefImage643] = useState<string>("");
 
   const scrollToBottom = () => {
     messageEnd.current?.scrollIntoView({ behavior: 'smooth' });
@@ -37,7 +39,17 @@ const App: React.FC = () => {
   }, [messages]); 
 
   const updateImage = (img64 : string) => {
-    setRefImage64(img64);
+    //this is monkey solution but the updated state didnt render in an array based solution
+    if(refImage64 && !refImage642){
+      setRefImage642(img64);
+    }
+    else if(refImage642){
+      setRefImage643(img64);
+    }
+    else{
+      setRefImage64(img64);
+    }
+
     setTimeout(() => { //timeout to let rendering happen first before autoscroll
       scrollToBottom();
     }, 50);
@@ -79,29 +91,13 @@ const App: React.FC = () => {
             */
             options = ['Chairs', 'Sofas, armchairs and stools', 'Tables', 'Conference sets', 'Storage fruniture']
             break;
-        case 'Chairs':
-            setFurnitureClass('Chairs');
-            botResponseText = 'Sure, lets find a chair to your liking. Do you want to take a picture of the room so I can suggest chairs that I think fit the space?';
-            options = ['Open Camera', 'No thank you, give me chair suggestions that I can browse.'];
-            //Here next set a case for each category
-            break;
-        case 'Tables':
-            setFurnitureClass('Tables');
-            botResponseText = 'Sure, lets find a table to your liking. Do you want to take a picture of the room so I can suggest chairs that I think fit the space?';
-            options = ['Open Camera', 'No thank you, give me table suggestions that I can browse.'];
-            break;
-        case 'Open Camera':
+        case 'Open built in camera':
             //code for opening camera
-            botResponseText = "Add reference image";
+            botResponseText = "Add 1-3 reference image/images";
             imageUploadMode = true;
             options = ['Start again'];
             break;
-        case 'No thank you, give me chair suggestions that I can browse.':
-            //code for giving chair suggestions
-            options = ['Start again'];
-            break;
-        case 'No thank you, give me table suggestions that I can browse.':
-            //code for giving table suggestions
+        case 'No thank you, give me furniture suggestions that I can browse.':
             options = ['Start again'];
             break;
         case 'Start again':
@@ -109,8 +105,19 @@ const App: React.FC = () => {
             options = ['Help me find suitable furniture for my style'];
             break;
         default:
-            botResponseText = 'I didnt understand your selection.';
-            options = ['Start again'];
+            //when user selects furniture category
+            const categories = ['Chairs', 'Sofas, armchairs and stools', 'Tables', 'Conference sets', 'Storage furniture'];
+            if(categories.includes(option)){
+              setFurnitureClass(option);
+              botResponseText = `Sure, lets find ${option.toLowerCase()} to your liking. Would you like to provide me with reference image/images that I can look at for inspiration?`;
+              options = ['Open built in camera', 'No thank you, give me furniture suggestions that I can browse straight away.'];
+            }
+
+            //default if user somehow fires function with no specific case
+            else {
+              botResponseText = 'I didnt understand your selection.';
+              options = ['Start again'];
+            }
             break;
     }
 
@@ -141,12 +148,17 @@ const receiveInput = (input : string) => {
   else if(typingPhase === 2){
     setChatHistory(prevHistory => prevHistory + '2. User describing style he/she is looking for: ' + input);
     handleOptionClick('Style explained', input);
+    setTypingMode(false);
   }
   else if(typingPhase === 3){
     setChatHistory(prevHistory => prevHistory + '3. User describing needs for the furniture: ' + input);
+    setTypingPhase(0);
+    setTypingMode(false);
   }
-  setTypingPhase(0);
-  setTypingMode(false);
+}
+
+const addImageCaptureComponent = () => {
+
 }
 
   return (
@@ -184,16 +196,23 @@ const receiveInput = (input : string) => {
               { //paste imageupload compo
                 message.imageUploadMode && 
                 (
-                  <div style={{ flexDirection: 'column' }}>
-                  <ImageCapture updateImage={updateImage}/>
+                  <div style={{ flexDirection: 'column', marginTop: 10 }}>
+                  
                   { refImage64 && (
-                    <div>
-                      <img src={refImage64} alt="Captured" style={{marginTop: 10, marginBottom: 10}}/>
-                      <div ref={messageEnd}>
-                      <button className='upload-image-button' onClick={() => uploadImage()}>Send image</button>
-                      </div>
-                    </div>
+                    <img src={refImage64} alt="Captured" style={{marginTop: 10, marginBottom: 10, maxWidth: 200}}/>
                   )}
+                  { refImage642 && (
+                    <img src={refImage642} alt="Captured" style={{marginTop: 10, marginBottom: 10, maxWidth: 200}}/>
+                  )}
+                  { refImage643 && (
+                    <img src={refImage643} alt="Captured" style={{marginTop: 10, marginBottom: 10, maxWidth: 200}}/>
+                  )}
+                  { !refImage643 && (
+                    <div style={{marginTop: 10}}><ImageCapture updateImage={updateImage}/></div>
+                  )}
+                  
+                  <button style={{marginTop: 20}} className='green-upload-button' onClick={() => uploadImage()}>Send image/images</button>
+                  <div ref={messageEnd}></div>
                   </div>
                 )
               }

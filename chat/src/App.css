@@ -155,6 +155,17 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+.green-upload-button {
+  margin: 5px;
+  padding: 5px 15px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .camera-button, .gallery-button {
   padding: 10px 20px;
   margin: 5px;
