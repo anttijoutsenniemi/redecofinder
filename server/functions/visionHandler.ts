@@ -2,7 +2,7 @@ import axios from "axios";
 import dedent from "dedent";
 import furnitureStyles from '../styleJson/furnitureStyle.json';
 
-export const fetchInterPretationWithReference = async (refPic64 : string) => {
+export const fetchInterPretationWithReference = async (userFilledData : string, refPic64 : string) => {
     try {
       //this is for testing, comment this return statement to enable Ai
       // return dedent`{
@@ -38,10 +38,10 @@ export const fetchInterPretationWithReference = async (refPic64 : string) => {
               content: [
               {
                   type: "text",
-                  text: dedent`Could you help me find furniture that would match the style / design in the given reference image? I will give you a JSON where 
-                        you can fill true on the color and/or style value that you think would be applicable to furniture that fit the vibe in the reference image. 
-                        in the explanation key you can fill in your reasoning as to why furniture with chosen color and style values would fit.
-                        If the image is something else than interior design or reference image please only fill nonValidImage key as true. Fill this JSON and return
+                  text: dedent`Im looking for furniture attributes that fit the following description: ${userFilledData}. You can also
+                        take inspiration from the reference pictures provided by user. Your mission is to give each of the furniture attributes
+                        in the given JSON a valuation between 0-100 on how well they would fit the given info. 
+                        If the image is not valid please only fill nonValidImage key as true. Fill this JSON and return
                         it only: ${fillableJson}`
               },
               {
