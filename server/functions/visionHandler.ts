@@ -51,7 +51,7 @@ export const fetchInterPretationWithReference = async (userFilledData : string, 
       //const fillableJson = JSON.stringify(furnitureStyles);
       const fillableJson = JSON.stringify(furnitureStyles);
 
-      //we setup 
+      //we setup messages to be sent to ai
       const messages: Message[] = [
         {
           role: "user",
@@ -64,6 +64,7 @@ export const fetchInterPretationWithReference = async (userFilledData : string, 
         }
       ];
       
+      //we push all of the users images to its own structured format
       refPic64.forEach(url => {
         messages.push({
           role: "user",
@@ -78,6 +79,7 @@ export const fetchInterPretationWithReference = async (userFilledData : string, 
         });
       });
       
+      //lastly make all this into a payload object
       const requestPayload = {
         model: "gpt-4o",
         messages: messages
