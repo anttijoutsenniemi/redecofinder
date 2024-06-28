@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const fetchInterPretationWithReference = async (refPic64 : string) => {
+export const fetchInterPretationWithReference = async (userFilledData : string, refPic64 : string[]) => {
     try {
         const response = await axios.post('/airoute/ref', { refPic64: refPic64 }, {
           auth: {

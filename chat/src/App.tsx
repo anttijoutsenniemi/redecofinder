@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import InputField from './components/InputField';
 import './App.css';
 import ImageCapture from './components/ImageCapture';
+import { fetchInterPretationWithReference } from './components/Aihandler';
 
 export interface ChatMessage {
   id: number;
@@ -55,9 +56,12 @@ const App: React.FC = () => {
     }, 50);
   }
 
-  const uploadImage = () => {
+  const uploadImage = async () => {
     //here next upload image + other info to ai prompt
-    //it might be beneficial to push img64 strings to array if we want to add multiple images
+    let refImageArray : string[] = [refImage64, refImage642, refImage643];
+    let userFilledData : string = chatHistory;
+    let aiJson = await fetchInterPretationWithReference(userFilledData, refImageArray);
+    console.log(aiJson);
   }
 
   // Function to handle option click, send next
