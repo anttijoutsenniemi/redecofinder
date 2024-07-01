@@ -2,17 +2,6 @@ import axios from "axios";
 import dedent from "dedent";
 import furnitureStyles from '../styleJson/furnitureStyle.json';
 
-type MessageContent = {
-  type: string;
-  text?: string;
-  image_url?: { url: string };
-};
-
-type Message = {
-  role: string;
-  content: MessageContent[];
-};
-
 export const fetchInterPretationWithReference = async (userFilledData : string, refPic64 : string[]) => {
     try {
     //this is for testing, comment this return statement to enable Ai
@@ -51,71 +40,37 @@ export const fetchInterPretationWithReference = async (userFilledData : string, 
       //const fillableJson = JSON.stringify(furnitureStyles);
       const fillableJson = JSON.stringify(furnitureStyles);
 
-      //we setup messages to be sent to ai
-      const messages: Message[] = [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: `Im looking for furniture attributes that fit the following description: ${userFilledData}. You can also take inspiration from the reference pictures provided by user. Your mission is to give each of the furniture attributes in the given JSON a valuation between 0-100 on how well they would fit the given info. If the image is not valid please only fill nonValidImage key as true. Fill this JSON and return it only: ${fillableJson}`
-            }
-          ]
-        }
-      ];
-      
-      //we push all of the users images to its own structured format
-      refPic64.forEach(url => {
-        messages.push({
-          role: "user",
-          content: [
-            {
-              type: "image_url",
-              image_url: {
-                url: url
-              }
-            }
-          ]
-        });
-      });
-      
-      //lastly make all this into a payload object
-      const requestPayload = {
-        model: "gpt-4o",
-        messages: messages
-      };
-
       const result = await axios.post(
         'https://api.openai.com/v1/chat/completions',
-        requestPayload,
-        // {
-        //   //model: "gpt-4-turbo",
-        //   model: "gpt-4o",
-        //   messages: [
-        //     {
-        //       role: "user",
-        //       content: [
-        //       {
-        //           type: "text",
-        //           text: dedent`Im looking for furniture attributes that fit the following description: ${userFilledData}. You can also
-        //                 take inspiration from the reference pictures provided by user. Your mission is to give each of the furniture attributes
-        //                 in the given JSON a valuation between 0-100 on how well they would fit the given info. 
-        //                 If the image is not valid please only fill nonValidImage key as true. Fill this JSON and return
-        //                 it only: ${fillableJson}`
-        //       },
-        //       {
-        //           type: "image_url",
-        //           image_url: {
-        //             url: `${refPic64[0]}`
-        //             //url: "https://images.tori.fi/api/v1/imagestori/images/100261082365.jpg?rule=medium_660",
-        //           },
-        //       },
-        //       ],
-        //     },
-        //   ],
-        //   max_tokens: 1000,
-        //   response_format: { type: "json_object" }
-        // },
+        
+        {
+          //model: "gpt-4-turbo",
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "user",
+              content: [
+              {
+                  type: "text",
+                  text: dedent`Im looking for furniture attributes that fit the following description: ${userFilledData}. You can also
+                        take inspiration from the reference pictures provided by user. Your mission is to give each of the furniture attributes
+                        in the given JSON a valuation between 0-100 on how well they would fit the given info. 
+                        If the image is not valid please only fill nonValidImage key as true. Fill this JSON and return
+                        it only: ${fillableJson}`
+              },
+              {
+                  type: "image_url",
+                  image_url: {
+                    url: `${refPic64[0]}`
+                    //url: "https://images.tori.fi/api/v1/imagestori/images/100261082365.jpg?rule=medium_660",
+                  },
+              },
+              ],
+            },
+          ],
+          max_tokens: 1000,
+          response_format: { type: "json_object" }
+        },
         {
           headers: {
             'Content-Type': 'application/json',

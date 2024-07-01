@@ -60,6 +60,7 @@ const App: React.FC = () => {
     //here next upload image + other info to ai prompt
     let refImageArray : string[] = [refImage64, refImage642, refImage643];
     let userFilledData : string = chatHistory;
+    console.log(refImageArray);
     let aiJson = await fetchInterPretationWithReference(userFilledData, refImageArray);
     console.log(aiJson);
   }

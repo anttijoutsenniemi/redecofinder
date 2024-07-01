@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import helmet from "helmet";
 import apiRoute from "./routes/apiRoute";
+import aiRoute from "./routes/aiRoute";
 import expressBasicAuth from "express-basic-auth";
 
 const app : Application = express();
@@ -11,7 +12,7 @@ const app : Application = express();
 const authenticate =
   expressBasicAuth({
     users: {
-      [process.env.HTTP_BASIC_AUTH_USERNAME!]: process.env.HTTP_BASIC_AUTH_PASSWORD!
+      [process.env.TESTER_USERNAME!]: process.env.TESTER_PASSWORD!
     },
     unauthorizedResponse: getUnauthorizedResponse,
     challenge: true
@@ -40,8 +41,11 @@ const port = process.env.PORT || 8000;
 
 app.use(express.json({limit: '50mb'})); //receive req.body
 
-//here only apiroute is authenticated at the moment
+app.use(express.static('public_chat'));
+
+//here only these routes are authenticated at the moment
 app.use("/api", authenticate, apiRoute);
+app.use("/airoute", authenticate, aiRoute);
 
 app.get("/", (req: Request, res: Response) => {
   try {
