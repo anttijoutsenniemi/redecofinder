@@ -39,7 +39,30 @@ export const fetchInterPretationWithReference = async (userFilledData : string, 
       const apiKey = process.env.OPENAI_API_KEY;
       //const fillableJson = JSON.stringify(furnitureStyles);
       const fillableJson = JSON.stringify(furnitureStyles);
+      
+      //our initial prompt with userfilleddata and stylejson
+      let contentArray : object[] = [
+        {
+            type: "text",
+            text: dedent`Im looking for furniture attributes that fit the following description: ${userFilledData}. You can also
+                  take inspiration from the reference pictures provided by user. Your mission is to give each of the furniture attributes
+                  in the given JSON a valuation between 0-100 on how well they would fit the given info. 
+                  If the image is not valid please only fill nonValidImage key as true. Fill this JSON and return
+                  it only: ${fillableJson}`
+        }
+      ]
 
+      //here we add each picture as an object in to the contentarray that will be sent to openai
+      for(let i = 0; i < refPic64.length && i < 4; i++){
+        let newObject : object = {
+          type: "image_url",
+          image_url: {
+            url: refPic64[i]
+          },
+        }
+        contentArray.push(newObject);
+      }
+      
       const result = await axios.post(
         'https://api.openai.com/v1/chat/completions',
         
@@ -49,23 +72,7 @@ export const fetchInterPretationWithReference = async (userFilledData : string, 
           messages: [
             {
               role: "user",
-              content: [
-              {
-                  type: "text",
-                  text: dedent`Im looking for furniture attributes that fit the following description: ${userFilledData}. You can also
-                        take inspiration from the reference pictures provided by user. Your mission is to give each of the furniture attributes
-                        in the given JSON a valuation between 0-100 on how well they would fit the given info. 
-                        If the image is not valid please only fill nonValidImage key as true. Fill this JSON and return
-                        it only: ${fillableJson}`
-              },
-              {
-                  type: "image_url",
-                  image_url: {
-                    url: `${refPic64[0]}`
-                    //url: "https://images.tori.fi/api/v1/imagestori/images/100261082365.jpg?rule=medium_660",
-                  },
-              },
-              ],
+              content: contentArray,
             },
           ],
           max_tokens: 1000,
