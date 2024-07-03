@@ -96,7 +96,7 @@ const App: React.FC = () => {
             */
             options = ['Chairs', 'Sofas, armchairs and stools', 'Tables', 'Conference sets', 'Storage fruniture']
             break;
-        case 'Open built in camera':
+        case 'Add images':
             //code for opening camera
             botResponseText = "Add 1-3 reference image/images";
             imageUploadMode = true;
@@ -115,7 +115,7 @@ const App: React.FC = () => {
             if(categories.includes(option)){
               setFurnitureClass(option);
               botResponseText = `Sure, lets find ${option.toLowerCase()} to your liking. Would you like to provide me with reference image/images that I can look at for inspiration?`;
-              options = ['Open built in camera', 'No thank you, give me furniture suggestions that I can browse straight away.'];
+              options = ['Add images', 'No thank you, give me furniture suggestions that I can browse straight away.'];
             }
 
             //default if user somehow fires function with no specific case
@@ -215,8 +215,10 @@ const addImageCaptureComponent = () => {
                   { !refImage643 && (
                     <div style={{marginTop: 10}}><ImageCapture updateImage={updateImage}/></div>
                   )}
-                  
-                  <button style={{marginTop: 20}} className='green-upload-button' onClick={() => uploadImage()}>Send image/images</button>
+                  { (refImage64)
+                  ? <button style={{marginTop: 20}} className='green-upload-button' onClick={() => uploadImage()}>Send image/images</button>
+                  : null
+                  }
                   <div ref={messageEnd}></div>
                   </div>
                 )

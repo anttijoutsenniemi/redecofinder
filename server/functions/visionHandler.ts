@@ -54,13 +54,15 @@ export const fetchInterPretationWithReference = async (userFilledData : string, 
 
       //here we add each picture as an object in to the contentarray that will be sent to openai
       for(let i = 0; i < refPic64.length && i < 4; i++){
-        let newObject : object = {
-          type: "image_url",
-          image_url: {
-            url: refPic64[i]
-          },
+        if(refPic64[i]){
+          let newObject : object = {
+            type: "image_url",
+            image_url: {
+              url: refPic64[i]
+            },
+          }
+          contentArray.push(newObject);
         }
-        contentArray.push(newObject);
       }
       
       const result = await axios.post(

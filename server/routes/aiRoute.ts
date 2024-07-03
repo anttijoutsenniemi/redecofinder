@@ -29,7 +29,6 @@ const validateAndProcessRequest = (req: Request, res: Response) : boolean => {
 
 aiRoute.post("/ref", async (req : express.Request, res : express.Response) : Promise<void> => { 
     try {
-        console.log("juu");
         let img64Array : string[] = req.body.refPic64;
         let userFilledData : string = req.body.userFilledData;
         if(validateAndProcessRequest(req, res)){
