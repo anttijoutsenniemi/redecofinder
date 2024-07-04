@@ -1,5 +1,7 @@
 import axios from 'axios';
 import cheerio, { load } from 'cheerio';
+import iconv from 'iconv-lite';
+var charset = require('charset');
 
 export interface Product {
     picUrl: string;
@@ -16,22 +18,32 @@ export async function scrapeWebsite(url: string): Promise<Product[]> {
     const products: Product[] = [];
     let currentPage = 1;
     let hasMorePages = true;
-    let lastIndex : number = 0;
-    let currentIndex : number = 0;
+    const userAgent = 'Chrome/91.0.4472.124';
 
     while(hasMorePages){
         let response;
         if(currentPage > 1){
-            response = await axios.get(`${url}?page=${currentPage}`);
-        } 
-        else{
-            response = await axios.get(url);
+            response = await axios.get(`${url}&page=${currentPage}`, {
+                responseType: 'arraybuffer', 
+                headers: {
+                    "User-Agent": userAgent
+                }
+            });
+        } else {
+            response = await axios.get(url, {
+                responseType: 'arraybuffer',
+                headers: {
+                    "User-Agent": userAgent
+                }
+            });
         }
-        const html = response.data;
+        
+        const encoding = charset(response.headers) || 'utf-8';
+        //const html = response.data;
+        const html = iconv.decode(response.data, encoding);
         const $ = load(html);
 
         $('.listatuote').each((_idx, el) => {
-
             let productInfoObject: Product = {
                 picUrl: "",
                 title: "",
@@ -40,29 +52,45 @@ export async function scrapeWebsite(url: string): Promise<Product[]> {
                 productUrl: "",
                 deleted: false
             };
-            
-            let title = $(el).find('.grid-product__title').text().trim();
+
+            //find products title or name
+            let title = $(el).find('.nimi a').text().trim();
             if(title){
                 productInfoObject['title'] = title;
             }
 
-            let picUrl = $(el).find('img').attr('src');
+            //find products picture https url
+            let picUrl = $(el).find('img').data('src');
             if(picUrl){
-                productInfoObject['picUrl'] = 'https:' + picUrl;
+                let thumbUrl : string = 'https://www.tavaratrading.com' + picUrl;
+                let bigPictureUrl : string = thumbUrl.replace('_thumb', ''); //use this variable as value if you want to use big pictures and not thumbnails
+                productInfoObject['picUrl'] = thumbUrl;
             }
 
-            let productUrl = $(el).find('a').attr('href');
+            //find products product page url
+            let productUrl = $(el).find('.nimi a').attr('href');
             if(productUrl){
-                productInfoObject['productUrl'] = productUrl;
+                productInfoObject['productUrl'] = 'https://www.tavaratrading.com' + productUrl;
+            }
+
+            //find products price
+            let price = $(el).find('.price_out').text().trim();
+            if(price){
+                productInfoObject['price'] = price + " €";
+            }
+
+            //find how many of the product are available
+            let quantity = $(el).find('.availability .available').text().trim();
+            if(quantity){
+                productInfoObject['quantity'] = quantity;
             }
 
             products.push(productInfoObject);
-        
         });
 
-        const hasNextPage = $('.pagination').find('.next').length > 0; //this checks if the html has button for next page. if true we scrape all the pages
+        const hasNextPage = $('.page_navigation a i.icon-seuraava-sivu-icon').length > 0;
         hasMorePages = hasNextPage;
-        currentPage++
+        currentPage++;
     }
     return products;
 }

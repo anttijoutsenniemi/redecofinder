@@ -1,5 +1,5 @@
 import express from 'express';
-import { scrapeWebsite } from '../functions/testScraping';
+import { scrapeWebsite } from '../functions/webScraping';
 
 const apiRoute : express.Router = express.Router();
 
