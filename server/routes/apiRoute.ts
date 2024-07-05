@@ -13,6 +13,21 @@ apiRoute.get("/", async (req : express.Request, res : express.Response) : Promis
 
 apiRoute.get("/testScraping", async (req : express.Request, res : express.Response) : Promise<void> => { 
     try {
+                   /* 
+            Here we start with categories: 
+            1. Chairs = työtuolit + neuvottelu-asiakastauolit
+            2. Sofas, armchairs and stools = sohvat, nojatuolit ja rahit
+            3. Storage furniture = säilytyskalusteet
+            4. Tables = sohva ja pikkupöydät + sähköpöydät + työpöydät + neuvottelupöydät
+            5. Conference sets = neuvotteluryhmät
+            */
+        /* these urls are ready for scraping
+        1. https://www.tavaratrading.com/kaytetyt/?category[]=2&category[]=11
+        2. https://www.tavaratrading.com/kaytetyt/?category[]=29
+        3. https://www.tavaratrading.com/kaytetyt/?category[]=8
+        4. https://www.tavaratrading.com/kaytetyt/?category[]=5&category[]=173&category[]=54&category[]=190
+        5. https://www.tavaratrading.com/kaytetyt/?category[]=139
+        */
         let scraping = scrapeWebsite('https://www.tavaratrading.com/kaytetyt/?category[]=2&category[]=11')
         .then(products => console.log(products));
         res.status(200).json({ "message" : "apiroute initialized"});
