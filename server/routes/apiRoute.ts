@@ -1,7 +1,14 @@
 import express from 'express';
 import { scrapeWebsite } from '../functions/webScraping';
+import furnitureModel from '../dbModels/furnitureModel';
 
 const apiRoute : express.Router = express.Router();
+
+const chairModule = furnitureModel('chairs');
+const sofaModule = furnitureModel('sofas');
+const storageModule = furnitureModel('storage');
+const tableModule = furnitureModel('tables');
+const conferenceModule = furnitureModel('conference');
 
 apiRoute.get("/", async (req : express.Request, res : express.Response) : Promise<void> => { 
     try {

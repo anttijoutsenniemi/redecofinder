@@ -40,16 +40,14 @@ export interface ScrapingData {
     styleJson?: StyleJson
 }
 
-const chairModel = (furnitureCategory : string) => {
+const furnitureModel = (furnitureCategory : string) => {
     const url : string = process.env.MONGO_ATLAS_URI ?? "";
     const client = new MongoClient(url);
     const dbName = 'redecofinderData';
-    if(furnitureCategory === ''){
 
-    }
-    const collection = 'chairCollection';
+    const collection = `${furnitureCategory}Collection`;
     const db = client.db(dbName);
-    const chairCollection = db.collection(collection);
+    const furnitureCollection = db.collection(collection);
 
     client.connect().catch(error => {
         console.error('Failed to connect to MongoDB:', error);
@@ -58,7 +56,7 @@ const chairModel = (furnitureCategory : string) => {
     //find one by id and return it as json
     const fetchOneWithStyles = async (title : string) => {
         try {
-            const result = await chairCollection.findOne({title : title, styleJson: { $exists: true }});
+            const result = await furnitureCollection.findOne({title : title, styleJson: { $exists: true }});
             return result;
         } catch (error) {
             console.error('Connection to productInfo document failed with status code 100: ', error);
@@ -69,7 +67,7 @@ const chairModel = (furnitureCategory : string) => {
     //find all data and return an array
     const fetchData = async () => {
         try {
-            const result = await chairCollection.find({
+            const result = await furnitureCollection.find({
                 styleJson: { $exists: true },
                 deleted: false
             }).toArray();
@@ -83,7 +81,7 @@ const chairModel = (furnitureCategory : string) => {
     //add one datacell to document
     const addData = async (scrapingData : ScrapingData) => {
         try {
-            const result = await chairCollection.insertOne(scrapingData);
+            const result = await furnitureCollection.insertOne(scrapingData);
             return result;
         } catch (error) {
             console.error('Connection to test db failed with status code 102');
@@ -96,7 +94,7 @@ const chairModel = (furnitureCategory : string) => {
         try {
             const query = { title: { $nin: titleArray } };
             const update = { $set: { deleted: true } };
-            const result = await chairCollection.updateMany(query, update);
+            const result = await furnitureCollection.updateMany(query, update);
         } catch (error) {
             console.error('Connection to test db failed with status code 102');
             throw error;
@@ -108,7 +106,7 @@ const chairModel = (furnitureCategory : string) => {
         try {
             const query = { title: title };
             const update = { $set: { deleted: false } };
-            const result = await chairCollection.updateOne(query, update);
+            const result = await furnitureCollection.updateOne(query, update);
         } catch (error) {
             console.error('Connection to test db failed with status code 102');
             throw error;
@@ -127,4 +125,4 @@ const chairModel = (furnitureCategory : string) => {
     };
 }
 
-export default chairModel;
+export default furnitureModel;
