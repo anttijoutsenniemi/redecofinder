@@ -5,6 +5,7 @@ import helmet from "helmet";
 import apiRoute from "./routes/apiRoute";
 import aiRoute from "./routes/aiRoute";
 import expressBasicAuth from "express-basic-auth";
+import { setupCronJobs } from "./functions/scheduledFunctions";
 
 const app : Application = express();
 
@@ -38,6 +39,7 @@ app.use(helmet({
 
 const port = process.env.PORT || 8000;
 
+//setupCronJobs(); //start scheduled scraping and ai functions
 
 app.use(express.json({limit: '50mb'})); //receive req.body
 

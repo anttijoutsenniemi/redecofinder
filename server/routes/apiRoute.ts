@@ -28,13 +28,7 @@ apiRoute.get("/testScraping", async (req : express.Request, res : express.Respon
             4. Tables = sohva ja pikkupöydät + sähköpöydät + työpöydät + neuvottelupöydät
             5. Conference sets = neuvotteluryhmät
             */
-        /* these urls are ready for scraping
-        1. https://www.tavaratrading.com/kaytetyt/?category[]=2&category[]=11
-        2. https://www.tavaratrading.com/kaytetyt/?category[]=29
-        3. https://www.tavaratrading.com/kaytetyt/?category[]=8
-        4. https://www.tavaratrading.com/kaytetyt/?category[]=5&category[]=173&category[]=54&category[]=190
-        5. https://www.tavaratrading.com/kaytetyt/?category[]=139
-        */
+
         let scraping = scrapeWebsite('https://www.tavaratrading.com/kaytetyt/?category[]=2&category[]=11')
         .then(products => console.log(products));
         res.status(200).json({ "message" : "apiroute initialized"});

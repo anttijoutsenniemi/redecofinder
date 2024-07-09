@@ -1,6 +1,7 @@
 import axios from "axios";
 import dedent from "dedent";
 import furnitureStyles from '../styleJson/furnitureStyle.json';
+import singleFurniture from '../styleJson/singleFurniture.json';
 
 export const fetchInterPretationWithReference = async (userFilledData : string, refPic64 : string[]) => {
     try {
@@ -88,6 +89,84 @@ export const fetchInterPretationWithReference = async (userFilledData : string, 
         },
       )
       //console.log(result.data.choices[0].message.content);
+      let answer = result.data.choices[0].message.content;
+      return answer;
+    } catch (error) {
+      console.log("Error occured getting ai response: ", error);
+      return false
+    } 
+  };
+
+  export const fetchStyleForSingleFurniture = async (furniturePicUrl : string) => {
+    try {
+      //this is for testing, comment this return statement to enable Ai
+      // return dedent`{
+        //     "colorThemes": {
+        //       "dark": 100,
+        //       "light": 0,
+        //       "colorful": 0,
+        //       "earthy": 0,
+        //       "blackAndWhite": 0,
+        //       "pastel": 0,
+        //       "neutrals": 0,
+        //       "jewelTones": 0,
+        //       "metallics": 0,
+        //       "oceanic": 0
+        //   },
+        //   "designStyles": {
+        //       "industrial": 0,
+        //       "scandinavian": 0,
+        //       "minimalist": 100,
+        //       "modern": 0,
+        //       "farmhouse": 0,
+        //       "artDeco": 0,
+        //       "bohemian": 0,
+        //       "traditional": 0,
+        //       "rustic": 0,
+        //       "glam": 0,
+        //       "contemporary": 0,
+        //       "transitional": 0
+        //   }
+        // }`
+      
+      const apiKey = process.env.OPENAI_API_KEY;
+      //const fillableJson = JSON.stringify(furnitureStyles);
+      const fillableJson = JSON.stringify(singleFurniture);
+      const result = await axios.post(
+        'https://api.openai.com/v1/chat/completions',
+        {
+          //model: "gpt-4-turbo",
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "user",
+              content: [
+              {
+                  type: "text",
+                  text: dedent`Could you help me to make an estimation on the color themes and style values of the furniture in this image?
+                        I will give you a JSON where you can fill in 0-100 rating on the color themes and style values that you think describe
+                        the furniture the best. Fill this JSON and return it only: ${fillableJson}`
+              },
+              {
+                  type: "image_url",
+                  image_url: {
+                    url: `${furniturePicUrl}`
+                    //url: "https://images.tori.fi/api/v1/imagestori/images/100261082365.jpg?rule=medium_660",
+                  },
+              },
+              ],
+            },
+          ],
+          max_tokens: 1000,
+          response_format: { type: "json_object" }
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+          },
+        },
+      )
       let answer = result.data.choices[0].message.content;
       return answer;
     } catch (error) {
