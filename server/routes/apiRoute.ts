@@ -18,6 +18,22 @@ apiRoute.get("/", async (req : express.Request, res : express.Response) : Promis
     }
 });
 
+apiRoute.get("/furnitureCategory", async (req : express.Request, res : express.Response) : Promise<void> => { 
+    try {
+        let category : string = req.body.category;
+        if(category.length < 20 && typeof category === 'string'){
+            let data = await furnitureModel(category).fetchData();
+            res.status(200).json(data);
+        }
+        else{
+            res.status(404).json({ "error" : `invalid data` });
+        }
+        res.status(200).json({ "message" : "apircoute initialized"});
+    } catch (e : any) {
+        res.status(404).json({ "error" : `error fetching: ${e}` });
+    }
+});
+
 apiRoute.get("/testScraping", async (req : express.Request, res : express.Response) : Promise<void> => { 
     try {
                    /* 
