@@ -27,6 +27,7 @@ const App: React.FC = () => {
   const [typingMode, setTypingMode] = useState<boolean>(false);
   const [typingPhase, setTypingPhase] = useState<number>(0);
   const [chatHistory, setChatHistory] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [refImage64, setRefImage64] = useState<string>("");
   const [refImage642, setRefImage642] = useState<string>("");
   const [refImage643, setRefImage643] = useState<string>("");
@@ -113,7 +114,9 @@ const App: React.FC = () => {
             //when user selects furniture category
             const categories = ['Chairs', 'Sofas, armchairs and stools', 'Tables', 'Conference sets', 'Storage furniture'];
             if(categories.includes(option)){
-              setFurnitureClass(option);
+              const words = option.split(' ');
+              const firstWord = words[0].toLowerCase();
+              setFurnitureClass(firstWord);
               botResponseText = `Sure, lets find ${option.toLowerCase()} to your liking. Would you like to provide me with reference image/images that I can look at for inspiration?`;
               options = ['Add images', 'No thank you, give me furniture suggestions that I can browse straight away.'];
             }
@@ -145,20 +148,28 @@ function toggleDrawer() {
 
 //func for receiving input from user typing
 const receiveInput = (input : string) => {
-  //typingPhase tells us to which part of the ai dialog this input is used for 1=describe the space, 2=describe style, 3=needs
-  if(typingPhase === 1){
-    setChatHistory('1. User describing space: ' + input);
-    handleOptionClick('Space described', input);
+  if(input.length < 1 || !input){
+    setErrorMessage("Im sorry but I do not understand empty messages");
   }
-  else if(typingPhase === 2){
-    setChatHistory(prevHistory => prevHistory + '2. User describing style he/she is looking for: ' + input);
-    handleOptionClick('Style explained', input);
-    setTypingMode(false);
-  }
-  else if(typingPhase === 3){
-    setChatHistory(prevHistory => prevHistory + '3. User describing needs for the furniture: ' + input);
-    setTypingPhase(0);
-    setTypingMode(false);
+  else{
+    //typingPhase tells us to which part of the ai dialog this input is used for 1=describe the space, 2=describe style, 3=needs
+    if(typingPhase === 1){
+      setChatHistory('1. User describing space: ' + input);
+      handleOptionClick('Space described', input);
+      setErrorMessage('');
+    }
+    else if(typingPhase === 2){
+      setChatHistory(prevHistory => prevHistory + '2. User describing style he/she is looking for: ' + input);
+      handleOptionClick('Style explained', input);
+      setTypingMode(false);
+      setErrorMessage('');
+    }
+    else if(typingPhase === 3){
+      setChatHistory(prevHistory => prevHistory + '3. User describing needs for the furniture: ' + input);
+      setTypingPhase(0);
+      setTypingMode(false);
+      setErrorMessage('');
+    }
   }
 }
 
@@ -248,6 +259,9 @@ const addImageCaptureComponent = () => {
         )}
       </div>
     ))}
+      {errorMessage && (
+        <div><p style={{color: 'red'}}>{errorMessage}</p></div>
+      )}
       {typingMode && (
         <InputField receiveInput={receiveInput}/>
       )}
