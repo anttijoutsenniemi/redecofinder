@@ -105,7 +105,6 @@ const App: React.FC = () => {
     };
 
     // Compute distances
-
       const distances = arrayOfObjects.map((obj : any, index : number) => {
         const distance = calculateDistance(aiJson, obj.styleJson);
         return {
