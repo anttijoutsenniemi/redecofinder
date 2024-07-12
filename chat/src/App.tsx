@@ -3,6 +3,7 @@ import InputField from './components/InputField';
 import './App.css';
 import ImageCapture from './components/ImageCapture';
 import { fetchInterPretationWithReference } from './components/Aihandler';
+import { fetchFurnitureData } from './components/ApiFetches';
 
 export interface ChatMessage {
   id: number;
@@ -16,6 +17,28 @@ export interface ChatMessage {
 export interface ChatOption {
   label: string;
 }
+
+type StyleObject = {
+  nonValidImage?: boolean;
+  explanation?: string;
+  colorThemes: {
+    [key: string]: number;
+  };
+  designStyles: {
+    [key: string]: number;
+  };
+};
+
+type CompareObject = {
+  _id: any;
+  picUrl: string;
+  title: string;
+  productUrl: string;
+  deleted: boolean;
+  quanity?: string;
+  price?: string;
+  styleJson: StyleObject;
+};
 
 const App: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -61,9 +84,41 @@ const App: React.FC = () => {
     //here next upload image + other info to ai prompt
     let refImageArray : string[] = [refImage64, refImage642, refImage643];
     let userFilledData : string = chatHistory;
-    console.log(refImageArray);
-    let aiJson = await fetchInterPretationWithReference(userFilledData, refImageArray);
+    let aiJson1 = await fetchInterPretationWithReference(userFilledData, refImageArray);
+    let aiJson = JSON.parse(aiJson1);
+    let arrayOfObjects = await fetchFurnitureData(furnitureClass);
     console.log(aiJson);
+    console.log(arrayOfObjects[0]);
+
+    // Function to flatten the object
+    const flattenObject = (obj: StyleObject): number[] => {
+      const colorThemes = obj.colorThemes ? Object.values(obj.colorThemes) : [];
+      const designStyles = obj.designStyles ? Object.values(obj.designStyles) : [];
+      return [...colorThemes, ...designStyles];
+    };
+
+    // Flatten the target object
+    const targetValues = flattenObject(aiJson);
+
+    // Calculate Euclidean distance
+    const calculateDistance = (obj1: StyleObject, obj2: StyleObject): number => {
+      const values1 = flattenObject(obj1);
+      const values2 = flattenObject(obj2);
+      return Math.sqrt(values1.reduce((sum, value, index) => sum + Math.pow(value - values2[index], 2), 0));
+    };
+
+    // Compute distances
+    const distances = arrayOfObjects.map((obj : any) => ({
+      distance: calculateDistance(aiJson, obj.styleJson),
+      object: obj
+    }));
+
+    // Sort by distance
+    const sortedObjects = distances.sort((a : any, b : any) => a.distance - b.distance);
+
+    // Select top 10 matches
+    const top10Matches = sortedObjects.slice(0, 10).map((item : any) => item.object);
+    console.log(top10Matches);
   }
 
   // Function to handle option click, send next

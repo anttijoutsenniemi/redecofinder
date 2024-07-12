@@ -46,7 +46,7 @@ app.use(express.json({limit: '50mb'})); //receive req.body
 app.use(express.static('public_chat'));
 
 //here only these routes are authenticated at the moment
-app.use("/api", /*authenticate,*/ apiRoute);
+app.use("/apiroute", /*authenticate,*/ apiRoute);
 app.use("/airoute", authenticate, aiRoute);
 
 app.get("/", (req: Request, res: Response) => {

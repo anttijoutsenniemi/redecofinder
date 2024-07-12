@@ -11,7 +11,7 @@ const scrapeCategory = async (url : string, category : string) => {
     }
 };
 
-const scrapeAndMakeAiData = async () => {
+export const scrapeAndMakeAiData = async () => {
     const scrapePromises = [
         scrapeCategory('https://www.tavaratrading.com/kaytetyt/?category[]=2&category[]=11', 'chairs'),
         scrapeCategory('https://www.tavaratrading.com/kaytetyt/?category[]=29', 'sofas'),

@@ -1,6 +1,7 @@
 import express from 'express';
 import { scrapeWebsite } from '../functions/webScraping';
 import furnitureModel from '../dbModels/furnitureModel';
+import { scrapeAndMakeAiData } from '../functions/scheduledFunctions';
 
 const apiRoute : express.Router = express.Router();
 
@@ -18,7 +19,7 @@ apiRoute.get("/", async (req : express.Request, res : express.Response) : Promis
     }
 });
 
-apiRoute.get("/furnitureCategory", async (req : express.Request, res : express.Response) : Promise<void> => { 
+apiRoute.post("/furnitureCategory", async (req : express.Request, res : express.Response) : Promise<void> => { 
     try {
         let category : string = req.body.category;
         if(category.length < 20 && typeof category === 'string'){
@@ -28,7 +29,6 @@ apiRoute.get("/furnitureCategory", async (req : express.Request, res : express.R
         else{
             res.status(404).json({ "error" : `invalid data` });
         }
-        res.status(200).json({ "message" : "apircoute initialized"});
     } catch (e : any) {
         res.status(404).json({ "error" : `error fetching: ${e}` });
     }
@@ -44,9 +44,7 @@ apiRoute.get("/testScraping", async (req : express.Request, res : express.Respon
             4. Tables = sohva ja pikkupöydät + sähköpöydät + työpöydät + neuvottelupöydät
             5. Conference sets = neuvotteluryhmät
             */
-
-        let scraping = scrapeWebsite('https://www.tavaratrading.com/kaytetyt/?category[]=2&category[]=11')
-        .then(products => console.log(products));
+        //let automaticScraping = await scrapeAndMakeAiData();
         res.status(200).json({ "message" : "apiroute initialized"});
     } catch (e : any) {
         res.status(404).json({ "error" : `error fetching: ${e}` });
