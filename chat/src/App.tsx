@@ -30,11 +30,11 @@ type StyleObject = {
 };
 
 type CompareObject = {
-  _id: any;
-  picUrl: string;
-  title: string;
-  productUrl: string;
-  deleted: boolean;
+  // _id: any;
+  // picUrl: string;
+  // title: string;
+  // productUrl: string;
+  // deleted: boolean;
   quanity?: string;
   price?: string;
   styleJson: StyleObject;
@@ -86,9 +86,8 @@ const App: React.FC = () => {
     let userFilledData : string = chatHistory;
     let aiJson1 = await fetchInterPretationWithReference(userFilledData, refImageArray);
     let aiJson = JSON.parse(aiJson1);
-    let arrayOfObjects = await fetchFurnitureData(furnitureClass);
-    console.log(aiJson);
-    console.log(arrayOfObjects[0]);
+
+    let arrayOfObjects = await fetchFurnitureData(furnitureClass);  
 
     // Function to flatten the object
     const flattenObject = (obj: StyleObject): number[] => {
@@ -97,28 +96,33 @@ const App: React.FC = () => {
       return [...colorThemes, ...designStyles];
     };
 
-    // Flatten the target object
-    const targetValues = flattenObject(aiJson);
-
     // Calculate Euclidean distance
     const calculateDistance = (obj1: StyleObject, obj2: StyleObject): number => {
       const values1 = flattenObject(obj1);
       const values2 = flattenObject(obj2);
+      //console.log(values1, values2);
       return Math.sqrt(values1.reduce((sum, value, index) => sum + Math.pow(value - values2[index], 2), 0));
     };
 
     // Compute distances
-    const distances = arrayOfObjects.map((obj : any) => ({
-      distance: calculateDistance(aiJson, obj.styleJson),
-      object: obj
-    }));
 
-    // Sort by distance
-    const sortedObjects = distances.sort((a : any, b : any) => a.distance - b.distance);
+      const distances = arrayOfObjects.map((obj : any, index : number) => {
+        const distance = calculateDistance(aiJson, obj.styleJson);
+        return {
+          distance,
+          object: obj
+        };
+      });
+  
+      // Sort by distance
+      const sortedObjects = distances.sort((a : any, b : any) => a.distance - b.distance);
+  
+      // Select top 10 matches
+      const top10Matches = sortedObjects.slice(0, 10).map((item : any) => item.object);
+      console.log(top10Matches);
 
-    // Select top 10 matches
-    const top10Matches = sortedObjects.slice(0, 10).map((item : any) => item.object);
-    console.log(top10Matches);
+      //here next show the 10 results to user
+    
   }
 
   // Function to handle option click, send next

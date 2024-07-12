@@ -33,13 +33,12 @@ aiRoute.post("/ref", async (req : express.Request, res : express.Response) : Pro
         let userFilledData : string = req.body.userFilledData;
         if(validateAndProcessRequest(req, res)){
             let aiJson = await fetchInterPretationWithReference(userFilledData, img64Array);
-            res.status(200).json(JSON.stringify(aiJson));
+            res.status(200).json(aiJson);
         }
         else {
             res.status(404).json({ "error" : `invalid data format` });
         }
 
-        
     } catch (e : any) {
         res.status(404).json({ "error" : `error fetching: ${e}` });
     }
