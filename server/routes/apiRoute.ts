@@ -2,6 +2,7 @@ import express from 'express';
 import { scrapeWebsite } from '../functions/webScraping';
 import furnitureModel from '../dbModels/furnitureModel';
 import { scrapeAndMakeAiData } from '../functions/scheduledFunctions';
+import parameterLibrary from './../styleJson/parameterLibrary.json';
 
 const apiRoute : express.Router = express.Router();
 
@@ -22,7 +23,7 @@ apiRoute.get("/", async (req : express.Request, res : express.Response) : Promis
 apiRoute.post("/furnitureCategory", async (req : express.Request, res : express.Response) : Promise<void> => { 
     try {
         let category : string = req.body.category;
-        if(category.length < 20 && typeof category === 'string'){
+        if(parameterLibrary.includes(category)){
             let data = await furnitureModel(category).fetchData();
             res.status(200).json(data);
         }
