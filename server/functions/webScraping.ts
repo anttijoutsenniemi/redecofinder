@@ -1,6 +1,7 @@
 import axios from 'axios';
 import cheerio, { load } from 'cheerio';
 import iconv from 'iconv-lite';
+import clientPublic from './../styleJson/clientPublic.json';
 var charset = require('charset');
 
 export interface Product {
@@ -63,7 +64,7 @@ export async function scrapeWebsite(url: string): Promise<Product[]> {
             //find products picture https url
             let picUrl = $(el).find('img').data('src');
             if(picUrl){
-                let thumbUrl : string = 'https://www.tavaratrading.com' + picUrl;
+                let thumbUrl : string = clientPublic.webStoreUrl + picUrl;
                 let bigPictureUrl : string = thumbUrl.replace('_thumb', ''); //use this variable as value if you want to use big pictures and not thumbnails
                 productInfoObject['picUrl'] = thumbUrl;
             }
@@ -71,7 +72,7 @@ export async function scrapeWebsite(url: string): Promise<Product[]> {
             //find products product page url
             let productUrl = $(el).find('.nimi a').attr('href');
             if(productUrl){
-                productInfoObject['productUrl'] = 'https://www.tavaratrading.com' + productUrl;
+                productInfoObject['productUrl'] = clientPublic.webStoreUrl + productUrl;
             }
 
             //find products price
