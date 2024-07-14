@@ -38,6 +38,7 @@ export async function scrapeWebsite(url: string): Promise<Product[]> {
             });
         }
         
+        //here we make sure we use utf-8 encoding so we maintain nordic characters
         const encoding = charset(response.headers) || 'utf-8';
         //const html = response.data;
         const html = iconv.decode(response.data, encoding);
