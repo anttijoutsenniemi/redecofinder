@@ -30,11 +30,11 @@ type StyleObject = {
 };
 
 type CompareObject = {
-  // _id: any;
-  // picUrl: string;
-  // title: string;
-  // productUrl: string;
-  // deleted: boolean;
+  _id: any;
+  picUrl: string;
+  title: string;
+  productUrl: string;
+  deleted: boolean;
   quanity?: string;
   price?: string;
   styleJson: StyleObject;
@@ -51,6 +51,7 @@ const App: React.FC = () => {
   const [typingPhase, setTypingPhase] = useState<number>(0);
   const [chatHistory, setChatHistory] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [recommendations, setRecommendations] = useState<string>("");
   const [refImage64, setRefImage64] = useState<string>("");
   const [refImage642, setRefImage642] = useState<string>("");
   const [refImage643, setRefImage643] = useState<string>("");
@@ -118,9 +119,10 @@ const App: React.FC = () => {
   
       // Select top 10 matches
       const top10Matches = sortedObjects.slice(0, 10).map((item : any) => item.object);
-      console.log(top10Matches);
+      setRecommendations(top10Matches);
 
-      //here next show the 10 results to user
+      //here next show the 10 results to user: handleoptionclick where images go to imagearray
+      //add other elements to jsx like price and avaialabity
     
   }
 
