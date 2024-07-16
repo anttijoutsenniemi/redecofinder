@@ -4,12 +4,14 @@ import './App.css';
 import ImageCapture from './components/ImageCapture';
 import { fetchInterPretationWithReference } from './components/Aihandler';
 import { fetchFurnitureData } from './components/ApiFetches';
+import ProductCard from './components/Products';
 
 export interface ChatMessage {
   id: number;
   type: 'user' | 'chatbot';
   text: string;
   imageArray?: string[],
+  recommendationArray?: CompareObject[],
   imageUploadMode?: boolean,
   options?: string[]; // Only present if type is 'chatbot'
 }
@@ -29,14 +31,14 @@ type StyleObject = {
   };
 };
 
-type CompareObject = {
+export type CompareObject = {
   _id: any;
   picUrl: string;
   title: string;
   productUrl: string;
-  deleted: boolean;
-  quanity?: string;
+  quantity?: string;
   price?: string;
+  deleted: boolean;
   styleJson: StyleObject;
 };
 
@@ -82,58 +84,63 @@ const App: React.FC = () => {
   }
 
   const uploadImage = async () => {
-    //here next upload image + other info to ai prompt
-    let refImageArray : string[] = [refImage64, refImage642, refImage643];
-    let userFilledData : string = chatHistory;
-    let aiJson1 = await fetchInterPretationWithReference(userFilledData, refImageArray);
-    let aiJson = JSON.parse(aiJson1);
-
-    let arrayOfObjects = await fetchFurnitureData(furnitureClass);  
-
-    // Function to flatten the object
-    const flattenObject = (obj: StyleObject): number[] => {
-      const colorThemes = obj.colorThemes ? Object.values(obj.colorThemes) : [];
-      const designStyles = obj.designStyles ? Object.values(obj.designStyles) : [];
-      return [...colorThemes, ...designStyles];
-    };
-
-    // Calculate Euclidean distance
-    const calculateDistance = (obj1: StyleObject, obj2: StyleObject): number => {
-      const values1 = flattenObject(obj1);
-      const values2 = flattenObject(obj2);
-      //console.log(values1, values2);
-      return Math.sqrt(values1.reduce((sum, value, index) => sum + Math.pow(value - values2[index], 2), 0));
-    };
-
-    // Compute distances
-      const distances = arrayOfObjects.map((obj : any, index : number) => {
-        const distance = calculateDistance(aiJson, obj.styleJson);
-        return {
-          distance,
-          object: obj
-        };
-      });
+    try {
+      let refImageArray : string[] = [refImage64, refImage642, refImage643];
+      let userFilledData : string = chatHistory;
+      let aiJson1 = await fetchInterPretationWithReference(userFilledData, refImageArray);
+      let aiJson = JSON.parse(aiJson1);
+      let botAnswr : string = aiJson.explanation;
   
-      // Sort by distance
-      const sortedObjects = distances.sort((a : any, b : any) => a.distance - b.distance);
+      let arrayOfObjects = await fetchFurnitureData(furnitureClass);  
   
-      // Select top 10 matches
-      const top10Matches = sortedObjects.slice(0, 10).map((item : any) => item.object);
-      setRecommendations(top10Matches);
-
-      //here next show the 10 results to user: handleoptionclick where images go to imagearray
-      //add other elements to jsx like price and avaialabity
+      // Function to flatten the object
+      const flattenObject = (obj: StyleObject): number[] => {
+        const colorThemes = obj.colorThemes ? Object.values(obj.colorThemes) : [];
+        const designStyles = obj.designStyles ? Object.values(obj.designStyles) : [];
+        return [...colorThemes, ...designStyles];
+      };
+  
+      // Calculate Euclidean distance
+      const calculateDistance = (obj1: StyleObject, obj2: StyleObject): number => {
+        const values1 = flattenObject(obj1);
+        const values2 = flattenObject(obj2);
+        //console.log(values1, values2);
+        return Math.sqrt(values1.reduce((sum, value, index) => sum + Math.pow(value - values2[index], 2), 0));
+      };
+  
+      // Compute distances
+        const distances = arrayOfObjects.map((obj : any, index : number) => {
+          const distance = calculateDistance(aiJson, obj.styleJson);
+          return {
+            distance,
+            object: obj
+          };
+        });
     
+        // Sort by distance
+        const sortedObjects = distances.sort((a : any, b : any) => a.distance - b.distance);
+    
+        // Select top 10 matches
+        const top10Matches = sortedObjects.slice(0, 10).map((item : any) => item.object);
+        setRecommendations(top10Matches);
+        handleOptionClick('recommendations', 'Show me the recommendations please', top10Matches, botAnswr);
+        //here next show the 10 results to user: handleoptionclick where images go to imagearray
+        //add other elements to jsx like price and avaialabity
+      
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   // Function to handle option click, send next
-  const handleOptionClick = (option: string, userMessage? : string) => {
+  const handleOptionClick = (option: string, userMessage? : string, recommendations? : CompareObject[], botAnswr?: string) => {
     const newUserMessage: ChatMessage = { id: messages.length + 1, type: 'user', text: (userMessage) ? userMessage : option }; //ternary to post usermessage as bubble when user types and sends
 
     let botResponseText : string = 'I am not coded that far yet';  // Default response text
     let imageArray : string[] = [];
     let options : string[] = [];
     let imageUploadMode : boolean = false;
+    let recommendationArray : CompareObject[] = [];
     switch (option) {
         case 'Help me find suitable furniture for my style':
             botResponseText = 'Great! Can you describe to me in your own words what kind of space you are designing?';
@@ -161,6 +168,17 @@ const App: React.FC = () => {
             //code for opening camera
             botResponseText = "Add 1-3 reference image/images";
             imageUploadMode = true;
+            options = ['Start again'];
+            break;
+        case 'recommendations':
+            if(botAnswr && recommendations){
+              botResponseText = botAnswr;
+              recommendationArray = recommendations;
+            }
+            else{
+              botResponseText = 'I did not understand your selection.'
+            }
+            
             options = ['Start again'];
             break;
         case 'No thank you, give me furniture suggestions that I can browse.':
@@ -194,6 +212,7 @@ const App: React.FC = () => {
         type: 'chatbot',
         text: botResponseText,
         imageUploadMode: imageUploadMode,
+        recommendationArray: recommendationArray,
         imageArray: imageArray,
         options: options
     };
@@ -233,7 +252,7 @@ const receiveInput = (input : string) => {
   }
 }
 
-const addImageCaptureComponent = () => {
+const handleProductClick = (index: number, productUrl: string) => {
 
 }
 
@@ -266,6 +285,12 @@ const addImageCaptureComponent = () => {
                       <img src={`${image}`} alt='Furniture recommendation'/>
                   </div>
                 ))
+                )
+              }
+
+              { //paste recommendation products
+                message.recommendationArray && message.recommendationArray.length > 0 && (
+                  <ProductCard products={message.recommendationArray} onCardClick={handleProductClick}/>
                 )
               }
 
