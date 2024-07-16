@@ -6,6 +6,7 @@ import apiRoute from "./routes/apiRoute";
 import aiRoute from "./routes/aiRoute";
 import expressBasicAuth from "express-basic-auth";
 import { setupCronJobs } from "./functions/scheduledFunctions";
+import clientPublic from './styleJson/clientPublic.json';
 
 const app : Application = express();
 
@@ -28,7 +29,8 @@ function getUnauthorizedResponse(req:any) {
 //content security policy config to only accept scripts from self source
 const cspConfig = {
   directives: {
-    defaultSrc: ["'self'"]
+    defaultSrc: ["'self'"],
+    imgSrc: ["'self'", clientPublic.webStoreUrl, "data:"]
   },
 };
 
