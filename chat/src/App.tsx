@@ -10,7 +10,6 @@ export interface ChatMessage {
   id: number;
   type: 'user' | 'chatbot';
   text: string;
-  imageArray?: string[],
   recommendationArray?: CompareObject[],
   imageUploadMode?: boolean,
   options?: string[]; // Only present if type is 'chatbot'
@@ -50,6 +49,8 @@ const App: React.FC = () => {
   const [furnitureClass, setFurnitureClass] = useState<string>('Chairs');
   const messageEnd = useRef<HTMLDivElement>(null);
   const [typingMode, setTypingMode] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [imagesSent, setImagesSent] = useState<boolean>(false);
   const [typingPhase, setTypingPhase] = useState<number>(0);
   const [chatHistory, setChatHistory] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -67,6 +68,7 @@ const App: React.FC = () => {
   }, [messages]); 
 
   const updateImage = (img64 : string) => {
+    setImagesSent(false);
     //this is monkey solution but the updated state didnt render in an array based solution
     if(refImage64 && !refImage642){
       setRefImage642(img64);
@@ -85,6 +87,8 @@ const App: React.FC = () => {
 
   const uploadImage = async () => {
     try {
+      setLoading(true);
+      setImagesSent(true);
       let refImageArray : string[] = [refImage64, refImage642, refImage643];
       let userFilledData : string = chatHistory;
       let aiJson1 = await fetchInterPretationWithReference(userFilledData, refImageArray);
@@ -137,7 +141,6 @@ const App: React.FC = () => {
     const newUserMessage: ChatMessage = { id: messages.length + 1, type: 'user', text: (userMessage) ? userMessage : option }; //ternary to post usermessage as bubble when user types and sends
 
     let botResponseText : string = 'I am not coded that far yet';  // Default response text
-    let imageArray : string[] = [];
     let options : string[] = [];
     let imageUploadMode : boolean = false;
     let recommendationArray : CompareObject[] = [];
@@ -171,9 +174,10 @@ const App: React.FC = () => {
             options = ['Start again'];
             break;
         case 'recommendations':
-            if(botAnswr && recommendations){
-              botResponseText = botAnswr;
+            if(botAnswr && recommendations){ 
+              botResponseText = botAnswr + " I found these recommendations best suited for your style:";
               recommendationArray = recommendations;
+              setLoading(false);
             }
             else{
               botResponseText = 'I did not understand your selection.'
@@ -213,7 +217,6 @@ const App: React.FC = () => {
         text: botResponseText,
         imageUploadMode: imageUploadMode,
         recommendationArray: recommendationArray,
-        imageArray: imageArray,
         options: options
     };
 
@@ -278,15 +281,6 @@ const handleProductClick = (index: number, productUrl: string) => {
             <img src="/icon.png" alt="Chatbot" className="chatbot-profile" />
             <div>
               <div className="chat-bubble" ref={messageEnd}>{message.text}</div>
-              { //paste recommendation images array
-                message.imageArray && message.imageArray.length > 0 && (
-                message.imageArray.map((image, index) => (
-                  <div key={index}>
-                      <img src={`${image}`} alt='Furniture recommendation'/>
-                  </div>
-                ))
-                )
-              }
 
               { //paste recommendation products
                 message.recommendationArray && message.recommendationArray.length > 0 && (
@@ -295,7 +289,7 @@ const handleProductClick = (index: number, productUrl: string) => {
               }
 
               { //paste imageupload compo
-                message.imageUploadMode && 
+                message.imageUploadMode &&
                 (
                   <div style={{ flexDirection: 'column', marginTop: 10 }}>
                   
@@ -308,10 +302,10 @@ const handleProductClick = (index: number, productUrl: string) => {
                   { refImage643 && (
                     <img src={refImage643} alt="Captured" style={{marginTop: 10, marginBottom: 10, maxWidth: 200}}/>
                   )}
-                  { !refImage643 && (
+                  { !refImage643 && !imagesSent && (
                     <div style={{marginTop: 10}}><ImageCapture updateImage={updateImage}/></div>
                   )}
-                  { (refImage64)
+                  { (refImage64 && !imagesSent)
                   ? <button style={{marginTop: 20}} className='green-upload-button' onClick={() => uploadImage()}>Send image/images</button>
                   : null
                   }
@@ -344,13 +338,15 @@ const handleProductClick = (index: number, productUrl: string) => {
         )}
       </div>
     ))}
+      {loading && ( 
+        <div><p>Hold on tight as I analyze your data and find best furniture for your style...</p></div>
+      )}
       {errorMessage && (
         <div><p style={{color: 'red'}}>{errorMessage}</p></div>
       )}
       {typingMode && (
         <InputField receiveInput={receiveInput}/>
       )}
-
       
       </div>
       </div>
