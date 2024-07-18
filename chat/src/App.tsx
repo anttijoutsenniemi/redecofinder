@@ -136,6 +136,17 @@ const App: React.FC = () => {
     }
   }
 
+  function getRandomElements(arr : any, count : number) {
+    const shuffled = arr.sort(() => 0.5 - Math.random()); // Shuffle the array
+    return shuffled.slice(0, count); // Get the first `count` elements
+  }
+
+  const getRandomRecommendations = async () => {
+    let arrayOfObjects = await fetchFurnitureData(furnitureClass);
+    let newArr = getRandomElements(arrayOfObjects, 10);
+    handleOptionClick('recommendations', 'Show me the recommendations please', newArr, 'Here are some random recommendations as promised:')
+  }
+
   // Function to handle option click, send next
   const handleOptionClick = (option: string, userMessage? : string, recommendations? : CompareObject[], botAnswr?: string) => {
     const newUserMessage: ChatMessage = { id: messages.length + 1, type: 'user', text: (userMessage) ? userMessage : option }; //ternary to post usermessage as bubble when user types and sends
@@ -185,8 +196,9 @@ const App: React.FC = () => {
             
             options = ['Start again'];
             break;
-        case 'No thank you, give me furniture suggestions that I can browse.':
-            options = ['Start again'];
+        case 'No thank you, give me random suggestions that I can browse straight away.':
+            botResponseText = 'Alright, give me a second as I pick 10 table suggestions for you at random...';
+            getRandomRecommendations();
             break;
         case 'Start again':
             botResponseText = 'Welcome! I am your Redecofinder assistant, here to help design your space with suitable furniture.';
@@ -200,7 +212,7 @@ const App: React.FC = () => {
               const firstWord = words[0].toLowerCase();
               setFurnitureClass(firstWord);
               botResponseText = `Sure, lets find ${option.toLowerCase()} to your liking. Would you like to provide me with reference image/images that I can look at for inspiration?`;
-              options = ['Add images', 'No thank you, give me furniture suggestions that I can browse straight away.'];
+              options = ['Add images', 'No thank you, give me random suggestions that I can browse straight away.'];
             }
 
             //default if user somehow fires function with no specific case
