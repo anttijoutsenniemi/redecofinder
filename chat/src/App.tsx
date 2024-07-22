@@ -5,6 +5,7 @@ import ImageCapture from './components/ImageCapture';
 import { fetchInterPretationWithReference } from './components/Aihandler';
 import { fetchFurnitureData } from './components/ApiFetches';
 import ProductCard from './components/Products';
+import Modal from './components/Modal';
 
 export interface ChatMessage {
   id: number;
@@ -58,6 +59,14 @@ const App: React.FC = () => {
   const [refImage64, setRefImage64] = useState<string>("");
   const [refImage642, setRefImage642] = useState<string>("");
   const [refImage643, setRefImage643] = useState<string>("");
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedProduct, setSelectedProduct] = useState<null | CompareObject>(null);
+
+  const openModal = (product : CompareObject) => {
+    setModalOpen(true);
+    setSelectedProduct(product);
+  }
+  const closeModal = () => setModalOpen(false);
 
   const scrollToBottom = () => {
     messageEnd.current?.scrollIntoView({ behavior: 'smooth' });
@@ -296,7 +305,10 @@ const handleProductClick = (index: number, productUrl: string) => {
 
               { //paste recommendation products
                 message.recommendationArray && message.recommendationArray.length > 0 && (
-                  <ProductCard products={message.recommendationArray} onCardClick={handleProductClick}/>
+                  <>
+                    <ProductCard products={message.recommendationArray} onCardClick={openModal}/>
+                    <Modal title='Select from options below' product={selectedProduct} isOpen={modalOpen} onClose={closeModal}/>
+                  </>
                 )
               }
 

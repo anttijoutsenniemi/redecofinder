@@ -5,7 +5,7 @@ import './../styles/products.css';
 
 interface ProductCardProps {
   products: CompareObject[];
-  onCardClick: (index: number, productUrl: string) => void;
+  onCardClick: (product : any) => void;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ products, onCardClick }) => {
@@ -15,7 +15,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ products, onCardClick }) => {
         <div
           key={index}
           className="product-card"
-          onClick={() => onCardClick(index, product.productUrl)}
+          onClick={() => onCardClick(product)}
         >
           {index === 0 && <div className="best-match-label">Best Match</div>}
           <img src={product.picUrl} alt={product.title} className="product-image" />
