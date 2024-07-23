@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import './../styles/modal.css';
+import { CompareObject } from '../App';
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  product: any
+  product: CompareObject | any
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, product }) => {
@@ -19,7 +20,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, product }) => {
     <div className="modal-overlay">
       <div className="modal">
         <header className="modal-header">
-          <h1>{title}</h1>
+          <h1>{product.title}</h1>
           <button onClick={() => closeModal()} className="close-button">✖</button>
         </header>
 
