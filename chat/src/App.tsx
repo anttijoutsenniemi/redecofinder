@@ -130,6 +130,7 @@ const App: React.FC = () => {
             object: obj
           };
         });
+        //console.log(distances);
     
         // Sort by distance
         const sortedObjects = distances.sort((a : any, b : any) => a.distance - b.distance);
