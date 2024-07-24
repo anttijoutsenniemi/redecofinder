@@ -4,6 +4,7 @@ import './App.css';
 import ImageCapture from './components/ImageCapture';
 import { fetchInterPretationWithReference } from './components/Aihandler';
 import { fetchFurnitureData } from './components/ApiFetches';
+import clientPublic from './assets/clientPublic.json';
 import ProductCard from './components/Products';
 import Modal from './components/Modal';
 
@@ -290,8 +291,8 @@ const handleProductClick = (index: number, productUrl: string) => {
         </div>
         <div className='drawer' id='drawer'>
         <button className='close-button' onClick={()=>toggleDrawer()}>Close &times;</button>
-          <a href={`https://google.com`}>
-            <div className='modal-option-button' style={{color: 'white', marginTop: 10}}>Open Google</div>
+          <a href={clientPublic.webStoreUrl}>
+            <div className='modal-option-button' style={{color: 'white', marginTop: 10}}>Open {clientPublic.webStoreName} ecom store</div>
           </a>
         </div>
       <div className="chat-wrapper">
