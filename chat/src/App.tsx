@@ -77,6 +77,7 @@ const App: React.FC = () => {
     scrollToBottom();
   }, [messages]); 
 
+  //&_&
   const updateImage = (img64 : string) => {
     setImagesSent(false);
     //this is monkey solution but the updated state didnt render in an array based solution
