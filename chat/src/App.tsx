@@ -21,7 +21,7 @@ export interface ChatOption {
   label: string;
 }
 
-type StyleObject = {
+export type StyleObject = {
   nonValidImage?: boolean;
   explanation?: string;
   colorThemes: {
