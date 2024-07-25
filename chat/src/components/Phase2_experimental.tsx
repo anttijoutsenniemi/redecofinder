@@ -10,24 +10,6 @@ const Phase1: React.FC = () => {
   const [typingMode, setTypingMode] = useState(false);
   const [historyStack, setHistoryStack] = useState<{ option: string, phase: number | null }[]>([]);
 
-  useEffect(() => {
-    // Restore state on navigation
-    const phase = location.pathname.split('/')[1];
-    switch (phase) {
-      case 'phase1':
-        setTypingPhase(1);
-        break;
-      case 'phase2':
-        setTypingPhase(2);
-        break;
-      case 'phase3':
-        setTypingPhase(3);
-        break;
-      default:
-        setTypingPhase(1);
-    }
-  }, [location.pathname]);
-
   // Function to handle option click, send next
   const handleOptionClick = (option: string, userMessage?: string, recommendations?: CompareObject[], botAnswr?: string) => {
     const newUserMessage: ChatMessage = { id: messages.length + 1, type: 'user', text: userMessage ? userMessage : option }; //ternary to post usermessage as bubble when user types and sends
@@ -74,7 +56,7 @@ const Phase1: React.FC = () => {
       <div>
         <button onClick={() => handleOptionClick('Help me find suitable furniture for my style')}>Help me find suitable furniture for my style</button>
         <button onClick={() => handleOptionClick('Space described')}>Space described</button>
-        <button onClick={() => navigate('/phase2')}>Navigate to 2</button>
+        <p>Tesintg 2</p>
         {/* Add more buttons for other options */}
       </div>
       {typingMode && <input type="text" onBlur={(e) => handleOptionClick(`Phase ${typingPhase} answer`, e.target.value)} />}
