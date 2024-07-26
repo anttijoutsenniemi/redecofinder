@@ -50,6 +50,10 @@ const App: React.FC = () => {
         setOldArray(testArray);
         //navigate('/phase2');
         setTestArray(['phasekaks','hahaa']);
+        //next, put the original App.tsx inside this compos Route element
+        //then put all of its usestate variables here and save them all in one historyobject.
+        //each hostoryobject has also value phase like 1, 2 ,3...
+        // when user navigates, we fetch all states from the historyobject for the correct phase
     }
 
   return (
