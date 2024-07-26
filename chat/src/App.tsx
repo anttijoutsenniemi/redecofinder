@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, useNavigation, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import Phase1 from './../src/components/Phase1_experimental';
 import Phase2 from './../src/components/Phase2_experimental';
 // import Phase2 from './components/Phase2';
@@ -41,11 +41,24 @@ export interface ChatMessage {
   };
 
 const App: React.FC = () => {
+    //const navigate = useNavigate();
+    const [currentRoute, setCurrentRoute] = useState<string>('/phase1');
+    const [testArray, setTestArray] = useState<string[]>(['juu']);
+    const [oldArray, setOldArray] = useState<string[]>();
+
+    const navigateTest = () => {
+        setOldArray(testArray);
+        //navigate('/phase2');
+        setTestArray(['phasekaks','hahaa']);
+    }
+
   return (
     <Router>
       <Routes>
-        <Route path='/phase1' element={<Phase1/>} />
-        <Route path='/phase2' element={<Phase2/>} />
+        <Route path='/' element={<Phase1 testArray={testArray} navigate={navigateTest}/>} />
+        <Route path='/phase1' element={<Phase1 testArray={testArray} navigate={navigateTest}/>} />
+        <Route path='/phase2' element={<Phase1 testArray={testArray} navigate={navigateTest}/>} />
+        {/* <Route path='/phase2' element={<Phase2/>} /> */}
       </Routes>
     </Router>
   );

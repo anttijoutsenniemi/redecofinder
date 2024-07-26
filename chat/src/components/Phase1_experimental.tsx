@@ -2,7 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { ChatMessage, ChatOption, CompareObject, StyleObject } from '../App';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const Phase1: React.FC = () => {
+interface Phase1Props {
+  testArray: string[],
+  navigate: any
+}
+
+const Phase1: React.FC<Phase1Props> = (props: Phase1Props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -62,19 +67,24 @@ const Phase1: React.FC = () => {
     setHistoryStack(prevHistory => [...prevHistory, { option, phase: typingPhase }]);
   };
 
+  const navigationTest = () => {
+    props.navigate();
+    navigate('/phase2');
+  }
+
   return (
     <div>
       <div>
-        {messages.map(message => (
-          <div key={message.id} className={message.type}>
-            {message.text}
+        {props.testArray.map((message, index) => (
+          <div key={index}>
+            {message}
           </div>
         ))}
       </div>
       <div>
         <button onClick={() => handleOptionClick('Help me find suitable furniture for my style')}>Help me find suitable furniture for my style</button>
         <button onClick={() => handleOptionClick('Space described')}>Space described</button>
-        <button onClick={() => navigate('/phase2')}>Navigate to 2</button>
+        <button style={{border: '1px'}} onClick={() => navigationTest()}>Navigate to 2</button>
         {/* Add more buttons for other options */}
       </div>
       {typingMode && <input type="text" onBlur={(e) => handleOptionClick(`Phase ${typingPhase} answer`, e.target.value)} />}

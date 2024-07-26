@@ -8,7 +8,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<Phase1/>} />
+        {/* <Route path='/' element={<Phase1/>} /> */}
       </Routes>
     </Router>
   );
