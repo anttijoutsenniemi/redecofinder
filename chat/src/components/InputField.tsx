@@ -13,6 +13,12 @@ const InputField: React.FC<InputProps> = (props) => {
     setInput('');
   };
 
+  const handleKeyPress = (event : React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSend();
+    }
+  };
+
   return (
     <div className="input-container">
       <input
@@ -22,6 +28,7 @@ const InputField: React.FC<InputProps> = (props) => {
         onChange={(e) => setInput(e.target.value)}
         className="rounded-input"
         placeholder="Type something..."
+        onKeyDown={handleKeyPress}
       />
       <button onClick={handleSend} className="send-button">
         Send
