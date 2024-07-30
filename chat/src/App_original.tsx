@@ -7,7 +7,6 @@ import { fetchFurnitureData } from './components/ApiFetches';
 import clientPublic from './assets/clientPublic.json';
 import ProductCard from './components/Products';
 import Modal from './components/Modal';
-import { AppStates } from './App';
 
 export interface ChatMessage {
   id: number;
@@ -44,28 +43,25 @@ export type CompareObject = {
   styleJson: StyleObject;
 };
 
-interface ChildComponentProps {
-  appStates: AppStates;
-  setModalOpen: (value: boolean) => void;
-  setTypingMode: (value: boolean) => void;
-  setLoading: (value: boolean) => void;
-  setMessages: (messages: ChatMessage[]) => void;
-  setFurnitureClass: (furnitureClass: string) => void;
-  setImagesSent: (value: boolean) => void;
-  setTypingPhase: (value: number) => void;
-  setChatHistory: (updater: (prevHistory: string) => string) => void;
-  setChatHistoryDirect: (value: string) => void;
-  setErrorMessage: (value: string) => void;
-  setRecommendations: (value: string) => void;
-  setRefImage64: (value: string) => void;
-  setRefImage642: (value: string) => void;
-  setRefImage643: (value: string) => void;
-  setSelectedProduct: (product: null | CompareObject) => void;
-}
-
-const App1: React.FC<ChildComponentProps> = ({ appStates, setModalOpen, setTypingMode, setLoading, setMessages, setFurnitureClass,
-  setImagesSent, setTypingPhase, setChatHistory, setChatHistoryDirect, setErrorMessage, setRecommendations,
-  setRefImage64, setRefImage642, setRefImage643, setSelectedProduct }) => {
+const App: React.FC = () => {
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    // Initial chat messages and options
+    { id: 1, type: 'chatbot', text: 'Welcome! I am your Redecofinder assistant, here to help design your space with suitable furniture.', options: ['Help me find suitable furniture for my style'] },
+  ]);
+  const [furnitureClass, setFurnitureClass] = useState<string>('Chairs');
+  const messageEnd = useRef<HTMLDivElement>(null);
+  const [typingMode, setTypingMode] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [imagesSent, setImagesSent] = useState<boolean>(false);
+  const [typingPhase, setTypingPhase] = useState<number>(0);
+  const [chatHistory, setChatHistory] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [recommendations, setRecommendations] = useState<string>("");
+  const [refImage64, setRefImage64] = useState<string>("");
+  const [refImage642, setRefImage642] = useState<string>("");
+  const [refImage643, setRefImage643] = useState<string>("");
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedProduct, setSelectedProduct] = useState<null | CompareObject>(null);
 
   const openModal = (product : CompareObject) => {
     setModalOpen(true);
@@ -74,21 +70,21 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, setModalOpen, setTypin
   const closeModal = () => setModalOpen(false);
 
   const scrollToBottom = () => {
-    appStates.messageEnd.current?.scrollIntoView({ behavior: 'smooth' });
+    messageEnd.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, [appStates.messages]); 
+  }, [messages]); 
 
   //&_&
   const updateImage = (img64 : string) => {
     setImagesSent(false);
     //this is monkey solution but the updated state didnt render in an array based solution
-    if(appStates.refImage64 && !appStates.refImage642){
+    if(refImage64 && !refImage642){
       setRefImage642(img64);
     }
-    else if(appStates.refImage642){
+    else if(refImage642){
       setRefImage643(img64);
     }
     else{
@@ -104,13 +100,13 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, setModalOpen, setTypin
     try {
       setLoading(true);
       setImagesSent(true);
-      let refImageArray : string[] = [appStates.refImage64, appStates.refImage642, appStates.refImage643];
-      let userFilledData : string = appStates.chatHistory;
+      let refImageArray : string[] = [refImage64, refImage642, refImage643];
+      let userFilledData : string = chatHistory;
       let aiJson1 = await fetchInterPretationWithReference(userFilledData, refImageArray);
       let aiJson = JSON.parse(aiJson1);
       let botAnswr : string = aiJson.explanation;
   
-      let arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);  
+      let arrayOfObjects = await fetchFurnitureData(furnitureClass);  
   
       // Function to flatten the object
       const flattenObject = (obj: StyleObject): number[] => {
@@ -158,14 +154,14 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, setModalOpen, setTypin
   }
 
   const getRandomRecommendations = async () => {
-    let arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
+    let arrayOfObjects = await fetchFurnitureData(furnitureClass);
     let newArr = getRandomElements(arrayOfObjects, 10);
     handleOptionClick('recommendations', 'Show me the recommendations please', newArr, 'Here are some random recommendations as promised:')
   }
 
   // Function to handle option click, send next
   const handleOptionClick = (option: string, userMessage? : string, recommendations? : CompareObject[], botAnswr?: string) => {
-    const newUserMessage: ChatMessage = { id: appStates.messages.length + 1, type: 'user', text: (userMessage) ? userMessage : option }; //ternary to post usermessage as bubble when user types and sends
+    const newUserMessage: ChatMessage = { id: messages.length + 1, type: 'user', text: (userMessage) ? userMessage : option }; //ternary to post usermessage as bubble when user types and sends
 
     let botResponseText : string = 'I am not coded that far yet';  // Default response text
     let options : string[] = [];
@@ -240,7 +236,7 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, setModalOpen, setTypin
     }
 
     const newBotMessage: ChatMessage = {
-        id: appStates.messages.length + 2,
+        id: messages.length + 2,
         type: 'chatbot',
         text: botResponseText,
         imageUploadMode: imageUploadMode,
@@ -248,7 +244,7 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, setModalOpen, setTypin
         options: options
     };
 
-    setMessages([...appStates.messages, newUserMessage, newBotMessage]);
+    setMessages([...messages, newUserMessage, newBotMessage]);
 };
 
 function toggleDrawer() {
@@ -263,18 +259,18 @@ const receiveInput = (input : string) => {
   }
   else{
     //typingPhase tells us to which part of the ai dialog this input is used for 1=describe the space, 2=describe style, 3=needs
-    if(appStates.typingPhase === 1){
-      setChatHistoryDirect('1. User describing space: ' + input);
+    if(typingPhase === 1){
+      setChatHistory('1. User describing space: ' + input);
       handleOptionClick('Space described', input);
       setErrorMessage('');
     }
-    else if(appStates.typingPhase === 2){
+    else if(typingPhase === 2){
       setChatHistory(prevHistory => prevHistory + '2. User describing style he/she is looking for: ' + input);
       handleOptionClick('Style explained', input);
       setTypingMode(false);
       setErrorMessage('');
     }
-    else if(appStates.typingPhase === 3){
+    else if(typingPhase === 3){
       setChatHistory(prevHistory => prevHistory + '3. User describing needs for the furniture: ' + input);
       setTypingPhase(0);
       setTypingMode(false);
@@ -302,19 +298,19 @@ const handleProductClick = (index: number, productUrl: string) => {
           </a>
         </div>
       <div className="chat-wrapper">
-      {appStates.messages.map((message) => (
+      {messages.map((message) => (
       <div key={message.id} className={`chat-message ${message.type}`}>
         {message.type === 'chatbot' && (
           <div className="chat-content">
             <img src="/icon.png" alt="Chatbot" className="chatbot-profile" />
             <div>
-              <div className="chat-bubble" ref={appStates.messageEnd}>{message.text}</div>
+              <div className="chat-bubble" ref={messageEnd}>{message.text}</div>
 
               { //paste recommendation products
                 message.recommendationArray && message.recommendationArray.length > 0 && (
                   <>
                     <ProductCard products={message.recommendationArray} onCardClick={openModal}/>
-                    <Modal title='Select from options below' product={appStates.selectedProduct} isOpen={appStates.modalOpen} onClose={closeModal}/>
+                    <Modal title='Select from options below' product={selectedProduct} isOpen={modalOpen} onClose={closeModal}/>
                   </>
                 )
               }
@@ -324,29 +320,29 @@ const handleProductClick = (index: number, productUrl: string) => {
                 (
                   <div style={{ flexDirection: 'column', marginTop: 10 }}>
                   
-                  { appStates.refImage64 && (
-                    <img src={appStates.refImage64} alt="Captured" style={{marginTop: 10, marginBottom: 10, maxWidth: 200}}/>
+                  { refImage64 && (
+                    <img src={refImage64} alt="Captured" style={{marginTop: 10, marginBottom: 10, maxWidth: 200}}/>
                   )}
-                  { appStates.refImage642 && (
-                    <img src={appStates.refImage642} alt="Captured" style={{marginTop: 10, marginBottom: 10, maxWidth: 200}}/>
+                  { refImage642 && (
+                    <img src={refImage642} alt="Captured" style={{marginTop: 10, marginBottom: 10, maxWidth: 200}}/>
                   )}
-                  { appStates.refImage643 && (
-                    <img src={appStates.refImage643} alt="Captured" style={{marginTop: 10, marginBottom: 10, maxWidth: 200}}/>
+                  { refImage643 && (
+                    <img src={refImage643} alt="Captured" style={{marginTop: 10, marginBottom: 10, maxWidth: 200}}/>
                   )}
-                  { !appStates.refImage643 && !appStates.imagesSent && (
+                  { !refImage643 && !imagesSent && (
                     <div style={{marginTop: 10}}><ImageCapture updateImage={updateImage}/></div>
                   )}
-                  { (appStates.refImage64 && !appStates.imagesSent)
+                  { (refImage64 && !imagesSent)
                   ? <button style={{marginTop: 20}} className='green-upload-button' onClick={() => uploadImage()}>Send image/images</button>
                   : null
                   }
-                  <div ref={appStates.messageEnd}></div>
+                  <div ref={messageEnd}></div>
                   </div>
                 )
               }
 
               {
-                (message.options && message.id === appStates.messages.length) //only render options on the last message so user cant click previous options
+                (message.options && message.id === messages.length) //only render options on the last message so user cant click previous options
                 ? 
                 <>
                   <div className="chat-options">
@@ -369,13 +365,13 @@ const handleProductClick = (index: number, productUrl: string) => {
         )}
       </div>
     ))}
-      {appStates.loading && ( 
+      {loading && ( 
         <div><p>Hold on tight as I analyze your data and find best furniture for your style...</p></div>
       )}
-      {appStates.errorMessage && (
-        <div><p style={{color: 'red'}}>{appStates.errorMessage}</p></div>
+      {errorMessage && (
+        <div><p style={{color: 'red'}}>{errorMessage}</p></div>
       )}
-      {appStates.typingMode && (
+      {typingMode && (
         <InputField receiveInput={receiveInput}/>
       )}
       
@@ -385,4 +381,4 @@ const handleProductClick = (index: number, productUrl: string) => {
   );
 };
 
-export default App1;
+export default App;
