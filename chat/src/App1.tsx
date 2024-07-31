@@ -8,6 +8,7 @@ import clientPublic from './assets/clientPublic.json';
 import ProductCard from './components/Products';
 import Modal from './components/Modal';
 import { AppStates } from './App';
+import { useNavigate } from 'react-router';
 
 export interface ChatMessage {
   id: number;
@@ -46,6 +47,8 @@ export type CompareObject = {
 
 interface ChildComponentProps {
   appStates: AppStates;
+  navigateHandler: (sourcePhase: number) => void;
+  phaseNumber: number;
   setModalOpen: (value: boolean) => void;
   setTypingMode: (value: boolean) => void;
   setLoading: (value: boolean) => void;
@@ -63,9 +66,11 @@ interface ChildComponentProps {
   setSelectedProduct: (product: null | CompareObject) => void;
 }
 
-const App1: React.FC<ChildComponentProps> = ({ appStates, setModalOpen, setTypingMode, setLoading, setMessages, setFurnitureClass,
+const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phaseNumber, setModalOpen, setTypingMode, setLoading, setMessages, setFurnitureClass,
   setImagesSent, setTypingPhase, setChatHistory, setChatHistoryDirect, setErrorMessage, setRecommendations,
   setRefImage64, setRefImage642, setRefImage643, setSelectedProduct }) => {
+
+  const navigate = useNavigate();
 
   const openModal = (product : CompareObject) => {
     setModalOpen(true);
@@ -171,16 +176,19 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, setModalOpen, setTypin
     let options : string[] = [];
     let imageUploadMode : boolean = false;
     let recommendationArray : CompareObject[] = [];
+    let nextPageNumber : number;
     switch (option) {
         case 'Help me find suitable furniture for my style':
             botResponseText = 'Great! Can you describe to me in your own words what kind of space you are designing?';
             setTypingPhase(1);
             setTypingMode(true);
+            nextPageNumber = 1;
             break;
         case 'Space described':
             botResponseText = 'Got it! Can you next explain what kind of style you are looking for? (fe. colors and themes)';
             setTypingPhase(2);
             setTypingMode(true);
+            nextPageNumber = 2;
             break;
         case 'Style explained':
             botResponseText = 'Noted, what type of furniture are you looking for? Here are some options to choose from: ';
@@ -193,12 +201,13 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, setModalOpen, setTypin
             5. Conference sets = neuvotteluryhmät
             */
             options = ['Chairs', 'Sofas, armchairs and stools', 'Tables', 'Conference sets', 'Storage fruniture']
+            nextPageNumber = 3;
             break;
         case 'Add images':
-            //code for opening camera
             botResponseText = "Add 1-3 reference image/images";
             imageUploadMode = true;
             options = ['Start again'];
+            nextPageNumber = 5;
             break;
         case 'recommendations':
             if(botAnswr && recommendations){ 
@@ -211,14 +220,17 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, setModalOpen, setTypin
             }
             
             options = ['Start again'];
+            nextPageNumber = 6;
             break;
         case 'No thank you, give me random suggestions that I can browse straight away.':
             botResponseText = 'Alright, give me a second as I pick 10 table suggestions for you at random...';
             getRandomRecommendations();
+            nextPageNumber = 5;
             break;
         case 'Start again':
             botResponseText = 'Welcome! I am your Redecofinder assistant, here to help design your space with suitable furniture.';
             options = ['Help me find suitable furniture for my style'];
+            nextPageNumber = 0;
             break;
         default:
             //when user selects furniture category
@@ -229,12 +241,14 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, setModalOpen, setTypin
               setFurnitureClass(firstWord);
               botResponseText = `Sure, lets find ${option.toLowerCase()} to your liking. Would you like to provide me with reference image/images that I can look at for inspiration?`;
               options = ['Add images', 'No thank you, give me random suggestions that I can browse straight away.'];
+              nextPageNumber = 4;
             }
 
             //default if user somehow fires function with no specific case
             else {
               botResponseText = 'I didnt understand your selection.';
               options = ['Start again'];
+              nextPageNumber = 0;
             }
             break;
     }
@@ -249,6 +263,14 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, setModalOpen, setTypin
     };
 
     setMessages([...appStates.messages, newUserMessage, newBotMessage]);
+
+    if(nextPageNumber === 0){
+      navigate('/');
+    }
+    else {
+      navigateHandler(phaseNumber);
+      navigate(`/${nextPageNumber}`);
+    }
 };
 
 function toggleDrawer() {
