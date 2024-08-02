@@ -56,8 +56,8 @@ interface ChildComponentProps {
   setFurnitureClass: (furnitureClass: string) => void;
   setImagesSent: (value: boolean) => void;
   setTypingPhase: (value: number) => void;
-  setChatHistory: (updater: (prevHistory: string) => string) => void;
-  setChatHistoryDirect: (value: string) => void;
+  setChatHistory?: (updater: (prevHistory: string[]) => string[]) => void;
+  setChatHistoryDirect: (value: string[]) => void;
   setErrorMessage: (value: string) => void;
   setRecommendations: (value: string) => void;
   setRefImage64: (value: string) => void;
@@ -67,7 +67,7 @@ interface ChildComponentProps {
 }
 
 const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phaseNumber, setModalOpen, setTypingMode, setLoading, setMessages, setFurnitureClass,
-  setImagesSent, setTypingPhase, setChatHistory, setChatHistoryDirect, setErrorMessage, setRecommendations,
+  setImagesSent, setTypingPhase, setChatHistoryDirect, setErrorMessage, setRecommendations,
   setRefImage64, setRefImage642, setRefImage643, setSelectedProduct }) => {
 
   const navigate = useNavigate();
@@ -110,7 +110,12 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
       setLoading(true);
       setImagesSent(true);
       let refImageArray : string[] = [appStates.refImage64, appStates.refImage642, appStates.refImage643];
-      let userFilledData : string = appStates.chatHistory;
+      let userFilledData : string = "";
+      for(let i = 0; i < appStates.chatHistory.length; i++){
+        userFilledData += appStates.chatHistory[i] + " ";
+      }
+      console.log(userFilledData);
+      
       let aiJson1 = await fetchInterPretationWithReference(userFilledData, refImageArray);
       let aiJson = JSON.parse(aiJson1);
       let botAnswr : string = aiJson.explanation;
@@ -154,6 +159,7 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
       
     } catch (error) {
       console.log(error);
+      setErrorMessage('An unexpected error occured fetching AI response');
     }
   }
 
@@ -285,19 +291,23 @@ const receiveInput = (input : string) => {
   }
   else{
     //typingPhase tells us to which part of the ai dialog this input is used for 1=describe the space, 2=describe style, 3=needs
+    let historyArrayMessages : string[] = appStates.chatHistory;
     if(appStates.typingPhase === 1){
-      setChatHistoryDirect('1. User describing space: ' + input);
+      historyArrayMessages[0] = '1. User describing space: ' + input;
+      setChatHistoryDirect(historyArrayMessages);
       handleOptionClick('Space described', input);
       setErrorMessage('');
     }
     else if(appStates.typingPhase === 2){
-      setChatHistory(prevHistory => prevHistory + '2. User describing style he/she is looking for: ' + input);
+      historyArrayMessages[1] = '2. User describing style he/she is looking for: ' + input;
+      setChatHistoryDirect(historyArrayMessages);
       handleOptionClick('Style explained', input);
       setTypingMode(false);
       setErrorMessage('');
     }
     else if(appStates.typingPhase === 3){
-      setChatHistory(prevHistory => prevHistory + '3. User describing needs for the furniture: ' + input);
+      historyArrayMessages[2] = '3. User describing needs for the furniture: ' + input;
+      setChatHistoryDirect(historyArrayMessages);
       setTypingPhase(0);
       setTypingMode(false);
       setErrorMessage('');

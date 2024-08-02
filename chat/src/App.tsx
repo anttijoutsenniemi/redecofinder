@@ -48,7 +48,7 @@ export interface ChatMessage {
     loading: boolean;
     imagesSent: boolean;
     typingPhase: number;
-    chatHistory: string;
+    chatHistory: string[];
     errorMessage: string;
     recommendations: string;
     refImage64: string;
@@ -78,7 +78,7 @@ const App0: React.FC = () => {
             loading: false,
             imagesSent: false,
             typingPhase: 0,
-            chatHistory: "",
+            chatHistory: [],
             errorMessage: "",
             recommendations: "",
             refImage64: "",
@@ -126,8 +126,8 @@ const App0: React.FC = () => {
     const setFurnitureClass = (furnitureClass: string) => setAppStates(prevState => ({ ...prevState, furnitureClass }));
     const setImagesSent = (value: boolean) => setAppStates(prevState => ({ ...prevState, imagesSent: value }));
     const setTypingPhase = (value: number) => setAppStates(prevState => ({ ...prevState, typingPhase: value }));
-    const setChatHistory = (updater: (prevHistory: string) => string) => setAppStates(prevState => ({ ...prevState, chatHistory: updater(prevState.chatHistory) }));  
-    const setChatHistoryDirect = (value: string) => setAppStates(prevState => ({ ...prevState, chatHistory: value }));
+    const setChatHistory = (updater: (prevHistory: string[]) => string[]) => setAppStates(prevState => ({ ...prevState, chatHistory: updater(prevState.chatHistory) }));  
+    const setChatHistoryDirect = (value: string[]) => setAppStates(prevState => ({ ...prevState, chatHistory: value }));
     const setErrorMessage = (value: string) => setAppStates(prevState => ({ ...prevState, errorMessage: value }));
     const setRecommendations = (value: string) => setAppStates(prevState => ({ ...prevState, recommendations: value }));
     const setRefImage64 = (value: string) => setAppStates(prevState => ({ ...prevState, refImage64: value }));
