@@ -70,7 +70,7 @@ const App0: React.FC = () => {
     const [appStates, setAppStates] = useState<AppStates>(
         {
             messages: [
-              { id: 1, type: 'chatbot', text: 'Welcome! I am your Redecofinder assistant, here to help design your space with suitable furniture.', options: ['Help me find suitable furniture for my style'] },
+              { id: 1, type: 'chatbot', text: 'Welcome! I am your Redecofinder AI assistant, here to help design your space with suitable furniture.', options: ['Help me find suitable furniture for my style'] },
             ],
             furnitureClass: 'Chairs',
             messageEnd: messageEndRef,
