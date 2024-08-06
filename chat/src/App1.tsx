@@ -9,6 +9,10 @@ import ProductCard from './components/Products';
 import Modal from './components/Modal';
 import { AppStates } from './App';
 import { useNavigate } from 'react-router';
+import { quantum } from 'ldrs';
+import type {} from 'ldrs'
+quantum.register();
+
 
 export interface ChatMessage {
   id: number;
@@ -402,7 +406,10 @@ const handleProductClick = (index: number, productUrl: string) => {
       </div>
     ))}
       {appStates.loading && ( 
-        <div><p>Hold on tight as I analyze your data and find best furniture for your style...</p></div>
+        <div className='loadingWrapper'>
+          <l-quantum size={60} color={'#2196f3'} speed={3}></l-quantum>
+          <p>Hold on tight as I analyze your data and find best furniture for your style...</p>
+        </div>
       )}
       {appStates.errorMessage && (
         <div><p style={{color: 'red'}}>{appStates.errorMessage}</p></div>
