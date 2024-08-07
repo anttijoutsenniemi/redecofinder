@@ -94,14 +94,12 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
   const updateImage = (img64 : string) => {
     setImagesSent(false);
     //this is monkey solution but the updated state didnt render in an array based solution
-    if(appStates.refImage64 && !appStates.refImage642){
-      setRefImage642(img64);
-    }
-    else if(appStates.refImage642){
-      setRefImage643(img64);
-    }
-    else{
+    if (!appStates.refImage64) {
       setRefImage64(img64);
+    } else if (!appStates.refImage642) {
+      setRefImage642(img64);
+    } else {
+      setRefImage643(img64);
     }
 
     setTimeout(() => { //timeout to let rendering happen first before autoscroll
@@ -318,10 +316,6 @@ const receiveInput = (input : string) => {
   }
 }
 
-const handleProductClick = (index: number, productUrl: string) => {
-
-}
-
   return (
     <div className="chat-app-background">
     <div className='screen-wrapper'>
@@ -358,22 +352,45 @@ const handleProductClick = (index: number, productUrl: string) => {
                 message.imageUploadMode &&
                 (
                   <div style={{ flexDirection: 'column', marginTop: 10 }}>
-                  
                   { appStates.refImage64 && (
-                    //here next add X to remove picture
-                    <img src={appStates.refImage64} alt="Captured" style={{marginTop: 10, marginBottom: 10, maxWidth: 200}}/>
+                    <div className="x-image-container">
+                      <img src={appStates.refImage64} alt="Captured" style={{ maxWidth: 200 }} />
+                      <button
+                        className="x-image-button"
+                        onClick={() => setRefImage64('')}
+                      >
+                        X
+                      </button>
+                    </div>
                   )}
                   { appStates.refImage642 && (
-                    <img src={appStates.refImage642} alt="Captured" style={{marginTop: 10, marginBottom: 10, maxWidth: 200}}/>
+                    <div className="x-image-container">
+                      <img src={appStates.refImage642} alt="Captured" style={{ maxWidth: 200 }} />
+                      <button
+                        className="x-image-button"
+                        onClick={() => setRefImage642('')}
+                      >
+                        X
+                      </button>
+                    </div>
                   )}
                   { appStates.refImage643 && (
-                    <img src={appStates.refImage643} alt="Captured" style={{marginTop: 10, marginBottom: 10, maxWidth: 200}}/>
+                    <div className="x-image-container">
+                      <img src={appStates.refImage643} alt="Captured" style={{ maxWidth: 200 }} />
+                      <button
+                        className="x-image-button"
+                        onClick={() => setRefImage643('')}
+                      >
+                        X
+                      </button>
+                    </div>
                   )}
-                  { !appStates.refImage643 && !appStates.imagesSent && (
-                    <div style={{marginTop: 10}}><ImageCapture updateImage={updateImage}/></div>
-                  )}
+                  {((appStates.refImage64 && appStates.refImage642 && appStates.refImage643) || appStates.imagesSent)
+                    ? null
+                    : <div style={{marginTop: 10}}><ImageCapture updateImage={updateImage}/></div>
+                  }
                   { (appStates.refImage64 && !appStates.imagesSent)
-                  ? <button style={{marginTop: 20}} className='green-upload-button' onClick={() => uploadImage()}>Send image/images</button>
+                  ? <div style={{float: 'none'}}><button style={{marginTop: 20}} className='green-upload-button' onClick={() => uploadImage()}>Send image/images</button></div>
                   : null
                   }
                   <div ref={appStates.messageEnd}></div>

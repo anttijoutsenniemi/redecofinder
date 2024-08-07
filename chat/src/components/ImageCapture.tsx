@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 
 interface ImageCaptureProps {
-    updateImage: (img64 : string) => void
+    updateImage: (img64 : string) => void;
 }
 
 const ImageCapture : React.FC<ImageCaptureProps> = (props) => {
