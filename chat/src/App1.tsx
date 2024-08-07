@@ -10,7 +10,7 @@ import Modal from './components/Modal';
 import { AppStates } from './App';
 import { useNavigate } from 'react-router';
 import { quantum } from 'ldrs';
-import type {} from 'ldrs'
+import type {} from 'ldrs';
 quantum.register();
 
 
