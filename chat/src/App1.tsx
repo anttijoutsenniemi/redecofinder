@@ -118,7 +118,6 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
       for(let i = 0; i < appStates.chatHistory.length; i++){
         userFilledData += appStates.chatHistory[i] + " ";
       }
-      console.log(userFilledData);
       
       let aiJson1 = await fetchInterPretationWithReference(userFilledData, refImageArray);
       let aiJson = JSON.parse(aiJson1);
@@ -361,6 +360,7 @@ const handleProductClick = (index: number, productUrl: string) => {
                   <div style={{ flexDirection: 'column', marginTop: 10 }}>
                   
                   { appStates.refImage64 && (
+                    //here next add X to remove picture
                     <img src={appStates.refImage64} alt="Captured" style={{marginTop: 10, marginBottom: 10, maxWidth: 200}}/>
                   )}
                   { appStates.refImage642 && (
