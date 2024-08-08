@@ -94,9 +94,9 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
   const updateImage = (img64 : string) => {
     setImagesSent(false);
     //this is monkey solution but the updated state didnt render in an array based solution
-    if (!appStates.refImage64) {
+    if (!appStates.refImage64 || appStates.refImage64 === '') {
       setRefImage64(img64);
-    } else if (!appStates.refImage642) {
+    } else if (!appStates.refImage642 || appStates.refImage642 === '') {
       setRefImage642(img64);
     } else {
       setRefImage643(img64);
