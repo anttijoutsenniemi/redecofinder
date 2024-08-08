@@ -113,9 +113,10 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
       setImagesSent(true);
 
       let refImageArray : string[] = [];
-      (appStates.refImage64) ? refImageArray[0] = appStates.refImage64 : null;
-      (appStates.refImage64) ? refImageArray[1] = appStates.refImage642 : null;
-      (appStates.refImage64) ? refImageArray[2] = appStates.refImage643 : null;
+      (appStates.refImage64) ? refImageArray[refImageArray.length] = appStates.refImage64 : null;
+      (appStates.refImage642) ? refImageArray[refImageArray.length] = appStates.refImage642 : null;
+      (appStates.refImage643) ? refImageArray[refImageArray.length] = appStates.refImage643 : null;
+
       let userFilledData : string = "";
       for(let i = 0; i < appStates.chatHistory.length; i++){
         userFilledData += appStates.chatHistory[i] + " ";
