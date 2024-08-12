@@ -266,7 +266,7 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
 
             //default if user somehow fires function with no specific case
             else {
-              botResponseText = 'I didnt understand your selection.';
+              botResponseText = 'An error occured processing your selection';
               options = ['Start again'];
               nextPageNumber = 0;
             }
