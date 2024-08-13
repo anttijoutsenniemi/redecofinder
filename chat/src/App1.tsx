@@ -192,7 +192,7 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
   const handleOptionClick = (option: string, userMessage? : string, recommendations? : CompareObject[], botAnswr?: string) => {
     const newUserMessage: ChatMessage = { id: appStates.messages.length + 1, type: 'user', text: (userMessage) ? userMessage : option }; //ternary to post usermessage as bubble when user types and sends
 
-    let botResponseText : string = 'I am not coded that far yet';  // Default response text
+    let botResponseText : string = 'I am not coded that far yet';  // Default response text, gets overwritten by case
     let options : string[] = [];
     let imageUploadMode : boolean = false;
     let recommendationArray : CompareObject[] = [];
