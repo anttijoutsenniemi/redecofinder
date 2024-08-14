@@ -202,13 +202,13 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
             botResponseText = 'Great! Can you describe to me in your own words what kind of space you are designing?';
             setTypingPhase(1);
             setTypingMode(true);
-            nextPageNumber = 1;
+            nextPageNumber = phaseNumber + 1;
             break;
         case 'Space described':
             botResponseText = 'Got it! Can you next explain what kind of style you are looking for? (fe. colors and themes)';
             setTypingPhase(2);
             setTypingMode(true);
-            nextPageNumber = 2;
+            nextPageNumber = phaseNumber + 1;
             break;
         case 'Style explained':
             botResponseText = 'Noted, what type of furniture are you looking for? Here are some options to choose from: ';
@@ -220,14 +220,14 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
             4. Tables = sohva ja pikkupöydät + sähköpöydät + työpöydät + neuvottelupöydät
             5. Conference sets = neuvotteluryhmät
             */
-            options = ['Chairs', 'Sofas, armchairs and stools', 'Tables', 'Conference sets', 'Storage fruniture']
-            nextPageNumber = 3;
+            options = ['Chairs', 'Sofas, armchairs and stools', 'Tables', 'Conference sets', 'Storage furniture']
+            nextPageNumber = phaseNumber + 1;
             break;
         case 'Add images':
             botResponseText = "Add 1-3 reference image/images";
             imageUploadMode = true;
             options = ['Start again'];
-            nextPageNumber = 5;
+            nextPageNumber = phaseNumber + 1;
             break;
         case 'recommendations':
             if(botAnswr && recommendations){ 
@@ -239,13 +239,18 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
               botResponseText = 'I did not understand your selection.'
             }
             
-            options = ['Start again'];
-            nextPageNumber = 6;
+            options = ['Start again', 'Lets find more furniture from a different category'];
+            nextPageNumber = phaseNumber + 1;
             break;
         case 'No thank you, give me random suggestions that I can browse straight away.':
             botResponseText = 'Alright, give me a second as I pick 10 table suggestions for you at random...';
             getRandomRecommendations();
-            nextPageNumber = 5;
+            nextPageNumber = phaseNumber + 1;
+            break;
+        case 'Lets find more furniture from a different category':
+            botResponseText = 'Alright, which category are we looking for?';
+            options = ['Chairs', 'Sofas, armchairs and stools', 'Tables', 'Conference sets', 'Storage furniture']
+            nextPageNumber = phaseNumber + 1;
             break;
         case 'Start again':
             botResponseText = 'Welcome! I am your Redecofinder assistant, here to help design your space with suitable furniture.';
@@ -261,7 +266,7 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
               setFurnitureClass(firstWord);
               botResponseText = `Sure, lets find ${option.toLowerCase()} to your liking. Would you like to provide me with reference image/images that I can look at for inspiration?`;
               options = ['Add images', 'No thank you, give me random suggestions that I can browse straight away.'];
-              nextPageNumber = 4;
+              nextPageNumber = phaseNumber + 1;
             }
 
             //default if user somehow fires function with no specific case
