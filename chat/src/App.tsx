@@ -56,6 +56,8 @@ export interface ChatMessage {
     refImage643: string;
     modalOpen: boolean;
     selectedProduct: null | CompareObject;
+    spaceImgMode: boolean;
+    aiJson: any;
   }
 
   export interface StateHistory {
@@ -70,7 +72,10 @@ const App0: React.FC = () => {
     const [appStates, setAppStates] = useState<AppStates>(
         {
             messages: [
-              { id: 1, type: 'chatbot', text: 'Welcome! I am your Redecofinder AI assistant, here to help design your space with suitable furniture.', options: ['Help me find suitable furniture for my style'] },
+              { id: 1, 
+                type: 'chatbot',
+                text: 'Welcome! I am your Redecofinder AI assistant, here to help design your space with suitable furniture. You can proceed by selecting 1: receive recommendations quick and easy by using images of the space you are designing. 2: complete a full style inquiry where we find suitable furniture for you together.', 
+                options: ['1. Find furniture using a picture of the space', '2. Find furniture using full style inquiry'] },
             ],
             furnitureClass: 'Chairs',
             messageEnd: messageEndRef,
@@ -86,11 +91,14 @@ const App0: React.FC = () => {
             refImage643: "",
             modalOpen: false,
             selectedProduct: null,
+            spaceImgMode: false,
+            aiJson: null
           }
     );
     const [stateHistory, setStateHistory] = useState<StateHistory[]>([{ phase: 0, states: appStates}]);
     const [currentPhase, setCurrentPhase] = useState<number>(0);
     const [previousPhase, setPreviousPhase] = useState<number>(0);
+    const [phaseNumbers, setPhaseNumbers] = useState<number[]>([1, 2, 3]);
     const location = useLocation();
 
     useNavigationDetection(
@@ -138,6 +146,9 @@ const App0: React.FC = () => {
     const setRefImage642 = (value: string) => setAppStates(prevState => ({ ...prevState, refImage642: value }));
     const setRefImage643 = (value: string) => setAppStates(prevState => ({ ...prevState, refImage643: value }));
     const setSelectedProduct = (product: null | CompareObject) => setAppStates(prevState => ({ ...prevState, selectedProduct: product }));
+    const setSpaceImageMode = (value: boolean) => setAppStates(prevState => ({ ...prevState, spaceImgMode: value }));
+    const setAiJson = (value: any) => setAppStates(prevState => ({ ...prevState, aiJson: value }));
+
 
     const navigateHandler = (sourcePhase : number) => {
 
@@ -148,6 +159,7 @@ const App0: React.FC = () => {
 
         // let newHistoryObject : StateHistory = { phase: sourcePhase + 1, states: appStates };
         // setStateHistory(prevState => ([...prevState, newHistoryObject]));
+        setPhaseNumbers((prevNumbers : number[]) => [...prevNumbers, prevNumbers.length]);
         setPreviousPhase(sourcePhase);
         let newPhase = sourcePhase + 1;
         setCurrentPhase(newPhase);
@@ -169,20 +181,14 @@ const App0: React.FC = () => {
 
   return (
       <Routes>
-        <Route path='/' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={0} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} />} />
-        <Route path='/1' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={1} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} />} />
-        <Route path='/2' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={2} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} />} />
-        <Route path='/3' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={3} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} />} />
-        <Route path='/4' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={4} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} />} />
-        <Route path='/5' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={5} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} />} />
-        <Route path='/6' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={6} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} />} />
-        <Route path='/7' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={7} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} />} />
-        <Route path='/8' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={8} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} />} />
-        <Route path='/9' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={9} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} />} />
-        <Route path='/10' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={10} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} />} />
-        <Route path='/11' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={11} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} />} />
-        <Route path='/12' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={12} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} />} />
-        <Route path='/13' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={13} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} />} />
+        <Route path='/' element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={0} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} setSpaceImageMode={setSpaceImageMode} setAiJson={setAiJson}/>} />
+
+        {
+            phaseNumbers.map((number, index)=> (
+                <Route key={index} path={`/${number}`} element={<App1 appStates={appStates} navigateHandler={navigateHandler} phaseNumber={number} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} setSpaceImageMode={setSpaceImageMode} setAiJson={setAiJson}/>} />
+            ))
+        }
+
       </Routes>
   );
 };

@@ -1,9 +1,9 @@
 import express, { Request, Response } from 'express';
-import { fetchInterPretationWithReference } from '../functions/visionHandler';
+import { fetchInterPretationWithReference, fetchInterPretationWithSpaceImg } from '../functions/visionHandler';
 
 const aiRoute : express.Router = express.Router();
 
-const validateAndProcessRequest = (req: Request, res: Response) : boolean => {
+const validateAndProcessRequest = (req: Request, res: Response, checkUserData? : boolean) : boolean => {
     let img64Array: string[] = req.body.refPic64;
     let userFilledData: string = req.body.userFilledData;
     
@@ -14,10 +14,13 @@ const validateAndProcessRequest = (req: Request, res: Response) : boolean => {
       return false;
     }
     // Check if userFilledData is a non-empty string
-    if (typeof userFilledData !== 'string' || userFilledData.trim() === '') {
-      console.log("is not string");
-      return false;
+    if(checkUserData){
+      if (typeof userFilledData !== 'string' || userFilledData.trim() === '') {
+        console.log("is not string");
+        return false;
+      }
     }
+
     // Check that img64Array has fewer than 4 items
     if (img64Array.length >= 4) {
       console.log("too many items");
@@ -31,7 +34,7 @@ aiRoute.post("/ref", async (req : express.Request, res : express.Response) : Pro
     try {
         let img64Array : string[] = req.body.refPic64;
         let userFilledData : string = req.body.userFilledData;
-        if(validateAndProcessRequest(req, res)){
+        if(validateAndProcessRequest(req, res, true)){
             let aiJson = await fetchInterPretationWithReference(userFilledData, img64Array);
             res.status(200).json(aiJson);
         }
@@ -42,6 +45,22 @@ aiRoute.post("/ref", async (req : express.Request, res : express.Response) : Pro
     } catch (e : any) {
         res.status(404).json({ "error" : `error fetching: ${e}` });
     }
+});
+
+aiRoute.post("/spaceimg", async (req : express.Request, res : express.Response) : Promise<void> => { 
+  try {
+      let img64Array : string[] = req.body.refPic64;
+      if(validateAndProcessRequest(req, res)){
+          let aiJson = await fetchInterPretationWithSpaceImg(img64Array);
+          res.status(200).json(aiJson);
+      }
+      else {
+          res.status(404).json({ "error" : `invalid data format` });
+      }
+
+  } catch (e : any) {
+      res.status(404).json({ "error" : `error fetching: ${e}` });
+  }
 });
 
 export default aiRoute;

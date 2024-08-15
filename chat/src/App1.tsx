@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import InputField from './components/InputField';
 import './App.css';
 import ImageCapture from './components/ImageCapture';
-import { fetchInterPretationWithReference } from './components/Aihandler';
+import { fetchInterPretationWithReference, fetchInterPretationWithSpaceImg } from './components/Aihandler';
 import { fetchFurnitureData } from './components/ApiFetches';
 import clientPublic from './assets/clientPublic.json';
 import ProductCard from './components/Products';
@@ -68,11 +68,13 @@ interface ChildComponentProps {
   setRefImage642: (value: string) => void;
   setRefImage643: (value: string) => void;
   setSelectedProduct: (product: null | CompareObject) => void;
+  setSpaceImageMode: (value: boolean) => void;
+  setAiJson: (value: any) => void;
 }
 
 const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phaseNumber, setModalOpen, setTypingMode, setLoading, setMessages, setFurnitureClass,
   setImagesSent, setTypingPhase, setChatHistoryDirect, setErrorMessage, setRecommendations,
-  setRefImage64, setRefImage642, setRefImage643, setSelectedProduct }) => {
+  setRefImage64, setRefImage642, setRefImage643, setSelectedProduct, setSpaceImageMode, setAiJson }) => {
 
   const navigate = useNavigate();
 
@@ -112,26 +114,40 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
       setLoading(true);
       setImagesSent(true);
 
-      let refImageArray : string[] = [];
-      if (appStates.refImage64) {
-        refImageArray.push(appStates.refImage64);
+      let aiJson : any;
+      if(appStates.aiJson){ //this should trigger if user wants to find more products after already getting the first set of recommendations
+        aiJson = appStates.aiJson;
+      }
+      else{ //this should trigger if its the first time user wants product recommendations
+        let refImageArray : string[] = [];
+        if (appStates.refImage64) {
+          refImageArray.push(appStates.refImage64);
+        }
+        if (appStates.refImage642) {
+          refImageArray.push(appStates.refImage642);
+        }
+        if (appStates.refImage643) {
+          refImageArray.push(appStates.refImage643);
+        }
+  
+        let aiJsonUnParsed;
+        if(appStates.spaceImgMode){ //we use ai prompt with images of the space
+          aiJsonUnParsed = await fetchInterPretationWithSpaceImg(refImageArray);
+        }
+        else{ //we use ai prompt with user typed data + ref images
+          let userFilledData : string = "";
+  
+          for(let i = 0; i < appStates.chatHistory.length; i++){
+            userFilledData += appStates.chatHistory[i] + " ";
+          }
+          
+          aiJsonUnParsed = await fetchInterPretationWithReference(userFilledData, refImageArray);
+        }
+  
+        aiJson = JSON.parse(aiJsonUnParsed);
+        setAiJson(aiJson);
       }
       
-      if (appStates.refImage642) {
-        refImageArray.push(appStates.refImage642);
-      }
-      
-      if (appStates.refImage643) {
-        refImageArray.push(appStates.refImage643);
-      }
-
-      let userFilledData : string = "";
-      for(let i = 0; i < appStates.chatHistory.length; i++){
-        userFilledData += appStates.chatHistory[i] + " ";
-      }
-      
-      let aiJson1 = await fetchInterPretationWithReference(userFilledData, refImageArray);
-      let aiJson = JSON.parse(aiJson1);
       let botAnswr : string = aiJson.explanation;
   
       let arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);  
@@ -164,11 +180,11 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
         // Sort by distance
         const sortedObjects = distances.sort((a : any, b : any) => a.distance - b.distance);
     
-        // Select top 10 matches
-        const top10Matches = sortedObjects.slice(0, 10).map((item : any) => item.object);
-        setRecommendations(top10Matches);
-        handleOptionClick('recommendations', 'Show me the recommendations please', top10Matches, botAnswr);
-        //here next show the 10 results to user: handleoptionclick where images go to imagearray
+        // Select top 3 matches
+        const top3Matches = sortedObjects.slice(0, 3).map((item : any) => item.object);
+        setRecommendations(top3Matches);
+        handleOptionClick('recommendations', 'Show me the recommendations please', top3Matches, botAnswr);
+        //here next show the 3 results to user: handleoptionclick where images go to imagearray
         //add other elements to jsx like price and avaialabity
       
     } catch (error) {
@@ -184,7 +200,7 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
 
   const getRandomRecommendations = async () => {
     let arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
-    let newArr = getRandomElements(arrayOfObjects, 10);
+    let newArr = getRandomElements(arrayOfObjects, 3);
     handleOptionClick('recommendations', 'Show me the recommendations please', newArr, 'Here are some random recommendations as promised:')
   }
 
@@ -198,8 +214,13 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
     let recommendationArray : CompareObject[] = [];
     let nextPageNumber : number;
     switch (option) {
-        case 'Help me find suitable furniture for my style':
-            botResponseText = 'Great! Can you describe to me in your own words what kind of space you are designing?';
+        case '1. Find furniture using a picture of the space':
+            botResponseText = 'Sure thing! What type of furniture are we looking for?';
+            options = ['1. Chairs', '2. Sofas, armchairs and stools', '3. Tables', '4. Conference sets', '5. Storage furniture'];
+            nextPageNumber = phaseNumber + 1;
+            break;
+        case '2. Find furniture using full style inquiry':
+            botResponseText = 'Great, lets get to it! Can you describe to me in your own words what kind of space you are designing?';
             setTypingPhase(1);
             setTypingMode(true);
             nextPageNumber = phaseNumber + 1;
@@ -225,8 +246,16 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
             break;
         case 'Add images':
             botResponseText = "Add 1-3 reference image/images";
+            setSpaceImageMode(false);
             imageUploadMode = true;
-            options = ['Start again'];
+            //options = ['Start again'];
+            nextPageNumber = phaseNumber + 1;
+            break;
+        case 'Add image/images of the space':
+            botResponseText = "Add 1-3 image/images of the space";
+            setSpaceImageMode(true);
+            imageUploadMode = true;
+            //options = ['Start again'];
             nextPageNumber = phaseNumber + 1;
             break;
         case 'recommendations':
@@ -243,7 +272,7 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
             nextPageNumber = phaseNumber + 1;
             break;
         case 'No thank you, give me random suggestions that I can browse straight away.':
-            botResponseText = 'Alright, give me a second as I pick 10 table suggestions for you at random...';
+            botResponseText = 'Alright, give me a second as I pick 3 furniture suggestions for you at random...';
             getRandomRecommendations();
             nextPageNumber = phaseNumber + 1;
             break;
@@ -260,12 +289,28 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
         default:
             //when user selects furniture category
             const categories = ['Chairs', 'Sofas, armchairs and stools', 'Tables', 'Conference sets', 'Storage furniture'];
+            const categories2 = ['1. Chairs', '2. Sofas, armchairs and stools', '3. Tables', '4. Conference sets', '5. Storage furniture'];
+
             if(categories.includes(option)){
               const words = option.split(' ');
               const firstWord = words[0].toLowerCase();
               setFurnitureClass(firstWord);
-              botResponseText = `Sure, lets find ${option.toLowerCase()} to your liking. Would you like to provide me with reference image/images that I can look at for inspiration?`;
-              options = ['Add images', 'No thank you, give me random suggestions that I can browse straight away.'];
+              if(appStates.aiJson){
+                uploadImage();
+                nextPageNumber = phaseNumber + 1;
+              }
+              else{
+                botResponseText = `Sure, lets find ${option.toLowerCase()} to your liking. Would you like to provide me with reference image/images that I can look at for inspiration?`;
+                options = ['Add images', 'No thank you, give me random suggestions that I can browse straight away.'];
+                nextPageNumber = phaseNumber + 1;
+              }
+            }
+            else if(categories2.includes(option)){
+              const words = option.split(' ').filter(word => /^[A-Za-z]+$/.test(word));
+              const firstWord = words[0].toLowerCase();
+              setFurnitureClass(firstWord);
+              botResponseText = `Sure, lets find ${option.toLowerCase()} to your liking. Would you like to provide me with image/images of the space you are designing so I can find fitting ${option.toLowerCase()}?`;
+              options = ['Add image/images of the space', 'No thank you, give me random suggestions that I can browse straight away.'];
               nextPageNumber = phaseNumber + 1;
             }
 
