@@ -74,8 +74,8 @@ const App0: React.FC = () => {
             messages: [
               { id: 1, 
                 type: 'chatbot',
-                text: 'Welcome! I am your Redecofinder AI assistant, here to help design your space with suitable furniture. You can proceed by selecting 1: receive recommendations quick and easy by using images of the space you are designing. 2: complete a full style inquiry where we find suitable furniture for you together.', 
-                options: ['1. Find furniture using a picture of the space', '2. Find furniture using full style inquiry'] },
+                text: 'Welcome! I am your Redecofinder AI assistant, here to help design your space with suitable second hand furniture. You can proceed by selecting 1: receive recommendations quick and easy by using images of the space you are designing. 2: complete a full style inquiry where we find suitable furniture for you together.', 
+                options: ['1. Find furniture using image/images of the space', '2. Find furniture using full style inquiry'] },
             ],
             furnitureClass: 'Chairs',
             messageEnd: messageEndRef,

@@ -30,7 +30,7 @@ function getUnauthorizedResponse(req:any) {
 const cspConfig = {
   directives: {
     defaultSrc: ["'self'"],
-    imgSrc: ["'self'", clientPublic.webStoreUrl, "data:"]
+    imgSrc: ["'self'", clientPublic.webStoreUrl, "data:"],
   },
 };
 

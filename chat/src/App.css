@@ -1,7 +1,11 @@
 /* src/App.css */
 
 *{
-  font-family: sans-serif;
+  /* font-family: Consolas, monospace; */
+  font-family: 'Dosis', sans-serif;
+  /* letter-spacing: 0.05em; */
+  letter-spacing: 0.08em;
+  /* font-weight: bold; */
 }
 
 .chat-app-background {
@@ -65,6 +69,7 @@
   color: black;
   font-size: large;
   font-family: "Lucida Console", Monaco, monospace;
+  font-weight: bold;
 }
 
 .hamburger-menu {

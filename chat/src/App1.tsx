@@ -109,14 +109,16 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
     }, 50);
   }
 
-  const uploadImage = async () => {
+  const uploadImage = async (furnitureClass? : string) => {
     try {
       setLoading(true);
       setImagesSent(true);
 
       let aiJson : any;
-      if(appStates.aiJson){ //this should trigger if user wants to find more products after already getting the first set of recommendations
+      let arrayOfObjects : any;
+      if(appStates.aiJson && furnitureClass){ //this should trigger if user wants to find more products after already getting the first set of recommendations
         aiJson = appStates.aiJson;
+        arrayOfObjects = await fetchFurnitureData(furnitureClass);
       }
       else{ //this should trigger if its the first time user wants product recommendations
         let refImageArray : string[] = [];
@@ -146,11 +148,10 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
   
         aiJson = JSON.parse(aiJsonUnParsed);
         setAiJson(aiJson);
+        arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
       }
       
-      let botAnswr : string = aiJson.explanation;
-  
-      let arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);  
+      let botAnswr : string = aiJson.explanation;  
   
       // Function to flatten the object
       const flattenObject = (obj: StyleObject): number[] => {
@@ -208,13 +209,13 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
   const handleOptionClick = (option: string, userMessage? : string, recommendations? : CompareObject[], botAnswr?: string) => {
     const newUserMessage: ChatMessage = { id: appStates.messages.length + 1, type: 'user', text: (userMessage) ? userMessage : option }; //ternary to post usermessage as bubble when user types and sends
 
-    let botResponseText : string = 'I am not coded that far yet';  // Default response text, gets overwritten by case
+    let botResponseText : string = 'Just a minute...';  // Default response text, gets overwritten by case
     let options : string[] = [];
     let imageUploadMode : boolean = false;
     let recommendationArray : CompareObject[] = [];
     let nextPageNumber : number;
     switch (option) {
-        case '1. Find furniture using a picture of the space':
+        case '1. Find furniture using image/images of the space':
             botResponseText = 'Sure thing! What type of furniture are we looking for?';
             options = ['1. Chairs', '2. Sofas, armchairs and stools', '3. Tables', '4. Conference sets', '5. Storage furniture'];
             nextPageNumber = phaseNumber + 1;
@@ -282,9 +283,9 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Start again':
-            botResponseText = 'Welcome! I am your Redecofinder assistant, here to help design your space with suitable furniture.';
-            options = ['Help me find suitable furniture for my style'];
-            nextPageNumber = 0;
+            botResponseText = 'Welcome! I am your Redecofinder AI assistant, here to help design your space with suitable seond hand furniture. You can proceed by selecting 1: receive recommendations quick and easy by using images of the space you are designing. 2: complete a full style inquiry where we find suitable furniture for you together.';
+            options = ['1. Find furniture using a picture of the space', '2. Find furniture using full style inquiry'];
+            nextPageNumber = phaseNumber + 1;
             break;
         default:
             //when user selects furniture category
@@ -296,7 +297,7 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
               const firstWord = words[0].toLowerCase();
               setFurnitureClass(firstWord);
               if(appStates.aiJson){
-                uploadImage();
+                uploadImage(firstWord);
                 nextPageNumber = phaseNumber + 1;
               }
               else{
@@ -309,7 +310,7 @@ const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phase
               const words = option.split(' ').filter(word => /^[A-Za-z]+$/.test(word));
               const firstWord = words[0].toLowerCase();
               setFurnitureClass(firstWord);
-              botResponseText = `Sure, lets find ${option.toLowerCase()} to your liking. Would you like to provide me with image/images of the space you are designing so I can find fitting ${option.toLowerCase()}?`;
+              botResponseText = `Sure, lets find ${firstWord} to your liking. Would you like to provide me with image/images of the space you are designing so I can find fitting ${firstWord}?`;
               options = ['Add image/images of the space', 'No thank you, give me random suggestions that I can browse straight away.'];
               nextPageNumber = phaseNumber + 1;
             }
