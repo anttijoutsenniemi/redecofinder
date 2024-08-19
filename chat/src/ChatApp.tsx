@@ -13,7 +13,6 @@ import { quantum } from 'ldrs';
 import type {} from 'ldrs';
 quantum.register();
 
-
 export interface ChatMessage {
   id: number;
   type: 'user' | 'chatbot';
@@ -72,7 +71,7 @@ interface ChildComponentProps {
   setAiJson: (value: any) => void;
 }
 
-const App1: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phaseNumber, setModalOpen, setTypingMode, setLoading, setMessages, setFurnitureClass,
+const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phaseNumber, setModalOpen, setTypingMode, setLoading, setMessages, setFurnitureClass,
   setImagesSent, setTypingPhase, setChatHistoryDirect, setErrorMessage, setRecommendations,
   setRefImage64, setRefImage642, setRefImage643, setSelectedProduct, setSpaceImageMode, setAiJson }) => {
 
@@ -505,4 +504,4 @@ const receiveInput = (input : string) => {
   );
 };
 
-export default App1;
+export default ChatApp;
