@@ -292,8 +292,8 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             const categories2 = ['1. Chairs', '2. Sofas, armchairs and stools', '3. Tables', '4. Conference sets', '5. Storage furniture'];
 
             if(categories.includes(option)){
-              const words = option.split(' ');
-              const firstWord = words[0].toLowerCase();
+              const words = option.split(' ').filter(word => /^[A-Za-z,]+$/.test(word));
+              const firstWord = words[0].replace(/[^A-Za-z]/g, '').toLowerCase();
               setFurnitureClass(firstWord);
               if(appStates.aiJson){
                 uploadImage(firstWord);
@@ -307,7 +307,6 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             }
             else if(categories2.includes(option)){
               const words = option.split(' ').filter(word => /^[A-Za-z,]+$/.test(word));
-              //const firstWord = words[0].toLowerCase();
               const firstWord = words[0].replace(/[^A-Za-z]/g, '').toLowerCase();
               setFurnitureClass(firstWord);
               botResponseText = `Sure, lets find ${firstWord} to your liking. Would you like to provide me with image/images of the space you are designing so I can find fitting ${firstWord}?`;
