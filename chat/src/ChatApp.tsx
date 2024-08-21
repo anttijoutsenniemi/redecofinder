@@ -283,7 +283,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             break;
         case 'Start again':
             botResponseText = 'Welcome! I am your Redecofinder AI assistant, here to help design your space with suitable seond hand furniture. You can proceed by selecting 1: receive recommendations quick and easy by using images of the space you are designing. 2: complete a full style inquiry where we find suitable furniture for you together.';
-            options = ['1. Find furniture using a picture of the space', '2. Find furniture using full style inquiry'];
+            options = ['1. Find furniture using image/images of the space', '2. Find furniture using full style inquiry'];
             nextPageNumber = phaseNumber + 1;
             break;
         default:
