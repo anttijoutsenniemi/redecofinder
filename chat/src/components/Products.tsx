@@ -17,12 +17,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ products, onCardClick }) => {
           className="product-card"
           onClick={() => onCardClick(product)}
         >
-          {index === 0 && <div className="best-match-label">Best Match</div>}
+          {index === 0 && <div className="best-match-label">Paras osuma</div>}
           <img src={product.picUrl} alt={product.title} className="product-image" />
           <div className="product-details">
             <h2 className="product-title">{product.title}</h2>
-            {product.quantity && <p className="product-quantity">Quantity: {product.quantity}</p>}
-            {product.price && <p className="product-price">Price: {product.price}</p>}
+            {product.quantity && <p className="product-quantity">Saatavuus: {product.quantity}</p>}
+            {product.price && <p className="product-price">Hinta: {product.price}</p>}
           </div>
         </div>
       ))}

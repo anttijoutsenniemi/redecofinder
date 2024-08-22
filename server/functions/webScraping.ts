@@ -75,10 +75,19 @@ export async function scrapeWebsite(url: string): Promise<Product[]> {
                 productInfoObject['productUrl'] = clientPublic.webStoreUrl + productUrl;
             }
 
-            //find products price
+            // Find the product's price
             let price = $(el).find('.price_out').text().trim();
+
+            // Find the VAT (alv) notice
+            let vatNotice = $(el).find('.vat_notice').text().trim();
+
+            // Extract the VAT percentage from the VAT notice
+            let vatPercentageMatch = vatNotice.match(/\d+/);
+            let vatPercentage = vatPercentageMatch ? vatPercentageMatch[0] + "%" : "";
+
+            // Combine the price and VAT percentage
             if(price){
-                productInfoObject['price'] = price + " €";
+                productInfoObject['price'] = `${price} € (ALV ${vatPercentage})`;
             }
 
             //find how many of the product are available

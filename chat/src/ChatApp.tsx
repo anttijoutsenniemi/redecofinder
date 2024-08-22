@@ -183,7 +183,8 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
         // Select top 3 matches
         const top3Matches = sortedObjects.slice(0, 3).map((item : any) => item.object);
         setRecommendations(top3Matches);
-        handleOptionClick('recommendations', 'Show me the recommendations please', top3Matches, botAnswr);
+        // handleOptionClick('recommendations', 'Show me the recommendations please', top3Matches, botAnswr);
+        handleOptionClick('suositukset', 'Voisitko näyttää minulle huonekalusuositukset?', top3Matches, botAnswr);
         //here next show the 3 results to user: handleoptionclick where images go to imagearray
         //add other elements to jsx like price and avaialabity
       
@@ -201,95 +202,87 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
   const getRandomRecommendations = async () => {
     let arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
     let newArr = getRandomElements(arrayOfObjects, 3);
-    handleOptionClick('recommendations', 'Show me the recommendations please', newArr, 'Here are some random recommendations as promised:')
+    
+    //handleOptionClick('recommendations', 'Show me the recommendations please', newArr, 'Here are some random recommendations as promised:')
+    handleOptionClick('suositukset', 'Voisitko näyttää minulle huonekalusuosituket?', newArr, 'Tässä on satunnaisia suosituksia kujten lupasin:')
   }
 
   // Function to handle option click, send next
   const handleOptionClick = (option: string, userMessage? : string, recommendations? : CompareObject[], botAnswr?: string) => {
-    const newUserMessage: ChatMessage = { id: appStates.messages.length + 1, type: 'user', text: (userMessage) ? userMessage : option }; //ternary to post usermessage as bubble when user types and sends
+    const newUserMessage: ChatMessage = { id: appStates.messages.length + 1, type: 'user', text: (userMessage) ? userMessage : option }; // ternäärinen ehto lähettää käyttäjän viestin kuplana, kun käyttäjä kirjoittaa ja lähettää
 
-    let botResponseText : string = 'Just a minute...';  // Default response text, gets overwritten by case
+    let botResponseText : string = 'Hetkinen...';  // Oletusvastausteksti, korvataan tapauskohtaisesti
     let options : string[] = [];
     let imageUploadMode : boolean = false;
     let recommendationArray : CompareObject[] = [];
     let nextPageNumber : number;
     switch (option) {
-        case '1. Find furniture using image/images of the space':
-            botResponseText = 'Sure thing! What type of furniture are we looking for?';
-            options = ['1. Chairs', '2. Sofas, armchairs and stools', '3. Tables', '4. Conference sets', '5. Storage furniture'];
+        case '1. Etsi huonekaluja käyttämällä kuvia tilasta':
+            botResponseText = 'Tottakai! Minkä tyyppisiä huonekaluja etsitään?';
+            options = ['1. Tuolit', '2. Sohvat, nojatuolit ja rahit', '3. Pöydät', '4. Neuvotteluryhmät', '5. Säilytyskalusteet'];
             nextPageNumber = phaseNumber + 1;
             break;
-        case '2. Find furniture using full style inquiry':
-            botResponseText = 'Great, lets get to it! Can you describe to me in your own words what kind of space you are designing?';
+        case '2. Etsi huonekaluja täyttämällä koko tyylikysely':
+            botResponseText = 'Hienoa, aloitetaan! Voitko kuvailla omin sanoin millaista tilaa suunnittelet?';
             setTypingPhase(1);
             setTypingMode(true);
             nextPageNumber = phaseNumber + 1;
             break;
-        case 'Space described':
-            botResponseText = 'Got it! Can you next explain what kind of style you are looking for? (fe. colors and themes)';
+        case 'Tila kuvailtu':
+            botResponseText = 'Selvä! Voitko seuraavaksi kertoa, millaista tyyliä haet? (esim. värit ja teemat)';
             setTypingPhase(2);
             setTypingMode(true);
             nextPageNumber = phaseNumber + 1;
             break;
-        case 'Style explained':
-            botResponseText = 'Noted, what type of furniture are you looking for? Here are some options to choose from: ';
-            /* 
-            Here we start with categories: 
-            1. Chairs = työtuolit + neuvottelu-asiakastauolit
-            2. Sofas, armchairs and stools = sohvat, nojatuolit ja rahit
-            3. Storage furniture = säilytyskalusteet
-            4. Tables = sohva ja pikkupöydät + sähköpöydät + työpöydät + neuvottelupöydät
-            5. Conference sets = neuvotteluryhmät
-            */
-            options = ['Chairs', 'Sofas, armchairs and stools', 'Tables', 'Conference sets', 'Storage furniture']
+        case 'Tyyli kuvailtu':
+            botResponseText = 'Ymmärretty, minkä tyyppisiä huonekaluja etsit? Tässä muutamia vaihtoehtoja:';
+            options = ['Tuolit', 'Sohvat, nojatuolit ja rahit', 'Pöydät', 'Neuvotteluryhmät', 'Säilytyskalusteet'];
             nextPageNumber = phaseNumber + 1;
             break;
-        case 'Add images':
-            botResponseText = "Add 1-3 reference image/images";
+        case 'Lisää kuvia':
+            botResponseText = "Lisää 1-3 referenssikuvaa";
             setSpaceImageMode(false);
             imageUploadMode = true;
-            //options = ['Start again'];
             nextPageNumber = phaseNumber + 1;
             break;
-        case 'Add image/images of the space':
-            botResponseText = "Add 1-3 image/images of the space";
+        case 'Lisää kuva/kuvia tilasta':
+            botResponseText = "Lisää 1-3 kuvaa tilasta";
             setSpaceImageMode(true);
             imageUploadMode = true;
-            //options = ['Start again'];
             nextPageNumber = phaseNumber + 1;
             break;
-        case 'recommendations':
+        case 'suositukset':
             if(botAnswr && recommendations){ 
-              botResponseText = botAnswr + " I found these recommendations best suited for your style:";
+              botResponseText = botAnswr + " Löysin nämä suositukset, jotka sopivat parhaiten tyyliisi:";
               recommendationArray = recommendations;
               setLoading(false);
             }
             else{
-              botResponseText = 'I did not understand your selection.'
+              botResponseText = 'En ymmärtänyt valintaasi.'
             }
             
-            options = ['Start again', 'Lets find more furniture from a different category'];
+            options = ['Aloita alusta', 'Etsitään lisää huonekaluja eri kategoriasta'];
             nextPageNumber = phaseNumber + 1;
             break;
-        case 'No thank you, give me random suggestions that I can browse straight away.':
-            botResponseText = 'Alright, give me a second as I pick 3 furniture suggestions for you at random...';
+        case 'Ei kiitos, anna minulle satunnaisia ehdotuksia, joita voin selata heti.':
+            botResponseText = 'Selvä, odota hetki, valitsen sinulle kolme satunnaista huonekalu ehdotusta...';
             getRandomRecommendations();
             nextPageNumber = phaseNumber + 1;
             break;
-        case 'Lets find more furniture from a different category':
-            botResponseText = 'Alright, which category are we looking for?';
-            options = ['Chairs', 'Sofas, armchairs and stools', 'Tables', 'Conference sets', 'Storage furniture']
+        case 'Etsitään lisää huonekaluja eri kategoriasta':
+            botResponseText = 'Selvä, mitä kategoriaa etsitään?';
+            options = ['Tuolit', 'Sohvat, nojatuolit ja rahit', 'Pöydät', 'Neuvotteluryhmät', 'Säilytyskalusteet'];
             nextPageNumber = phaseNumber + 1;
             break;
-        case 'Start again':
-            botResponseText = 'Welcome! I am your Redecofinder AI assistant, here to help design your space with suitable seond hand furniture. You can proceed by selecting 1: receive recommendations quick and easy by using images of the space you are designing. 2: complete a full style inquiry where we find suitable furniture for you together.';
-            options = ['1. Find furniture using image/images of the space', '2. Find furniture using full style inquiry'];
+        case 'Aloita alusta':
+            botResponseText = 'Tervetuloa! Olen Redecofinder AI-avustajasi, ja autan sinua suunnittelemaan tilaasi sopivilla käytetyillä huonekaluilla. Voit jatkaa valitsemalla 1: saat suosituksia nopeasti ja helposti käyttämällä kuvia suunnittelemastasi tilasta. 2: täytä koko tyylikysely, jossa löydämme sinulle sopivat huonekalut yhdessä.';
+            options = ['1. Etsi huonekaluja käyttämällä kuvia tilasta', '2. Etsi huonekaluja täyttämällä koko tyylikysely'];
             nextPageNumber = phaseNumber + 1;
             break;
         default:
-            //when user selects furniture category
-            const categories = ['Chairs', 'Sofas, armchairs and stools', 'Tables', 'Conference sets', 'Storage furniture'];
-            const categories2 = ['1. Chairs', '2. Sofas, armchairs and stools', '3. Tables', '4. Conference sets', '5. Storage furniture'];
+            //kun käyttäjä valitsee huonekalukategorian
+            const categories = ['Tuolit', 'Sohvat, nojatuolit ja rahit', 'Pöydät', 'Neuvotteluryhmät', 'Säilytyskalusteet'];
+            const categories2 = ['1. Tuolit', '2. Sohvat, nojatuolit ja rahit', '3. Pöydät', '4. Neuvotteluryhmät', '5. Säilytyskalusteet'];
 
             if(categories.includes(option)){
               const words = option.split(' ').filter(word => /^[A-Za-z,]+$/.test(word));
@@ -300,8 +293,8 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
                 nextPageNumber = phaseNumber + 1;
               }
               else{
-                botResponseText = `Sure, lets find ${option.toLowerCase()} to your liking. Would you like to provide me with reference image/images that I can look at for inspiration?`;
-                options = ['Add images', 'No thank you, give me random suggestions that I can browse straight away.'];
+                botResponseText = `Selvä, etsitään ${option.toLowerCase()} toiveittesi mukaan. Haluatko antaa minulle referenssikuvan/kuvia, joita voin katsoa inspiraatioksi?`;
+                options = ['Lisää kuvia', 'Ei kiitos, anna minulle satunnaisia ehdotuksia, joita voin selata heti.'];
                 nextPageNumber = phaseNumber + 1;
               }
             }
@@ -309,19 +302,20 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
               const words = option.split(' ').filter(word => /^[A-Za-z,]+$/.test(word));
               const firstWord = words[0].replace(/[^A-Za-z]/g, '').toLowerCase();
               setFurnitureClass(firstWord);
-              botResponseText = `Sure, lets find ${firstWord} to your liking. Would you like to provide me with image/images of the space you are designing so I can find fitting ${firstWord}?`;
-              options = ['Add image/images of the space', 'No thank you, give me random suggestions that I can browse straight away.'];
+              botResponseText = `Selvä, etsitään ${firstWord} toiveittesi mukaan. Haluatko antaa minulle kuvan/kuvia suunnittelemastasi tilasta, jotta voin löytää sopivat ${firstWord}?`;
+              options = ['Lisää kuva/kuvia tilasta', 'Ei kiitos, anna minulle satunnaisia ehdotuksia, joita voin selata heti.'];
               nextPageNumber = phaseNumber + 1;
             }
 
-            //default if user somehow fires function with no specific case
+            //oletusarvo, jos käyttäjä jollain tapaa suorittaa toiminnon ilman tiettyä tapausta
             else {
-              botResponseText = 'An error occured processing your selection';
-              options = ['Start again'];
+              botResponseText = 'Valinnan käsittelyssä tapahtui virhe';
+              options = ['Aloita alusta'];
               nextPageNumber = 0;
             }
             break;
     }
+
 
     const newBotMessage: ChatMessage = {
         id: appStates.messages.length + 2,
@@ -359,16 +353,19 @@ const receiveInput = (input : string) => {
     if(appStates.typingPhase === 1){
       historyArrayMessages[0] = '1. User describing space: ' + input;
       setChatHistoryDirect(historyArrayMessages);
-      handleOptionClick('Space described', input);
+      // handleOptionClick('Space described', input);
+      handleOptionClick('Tila kuvailtu', input);
       setErrorMessage('');
     }
     else if(appStates.typingPhase === 2){
       historyArrayMessages[1] = '2. User describing style he/she is looking for: ' + input;
       setChatHistoryDirect(historyArrayMessages);
-      handleOptionClick('Style explained', input);
+      // handleOptionClick('Style explained', input);
+      handleOptionClick('Tyyli kuvailtu', input);
       setTypingMode(false);
       setErrorMessage('');
     }
+    // this is since 22.8.24 redacted and should not trigger
     else if(appStates.typingPhase === 3){
       historyArrayMessages[2] = '3. User describing needs for the furniture: ' + input;
       setChatHistoryDirect(historyArrayMessages);
@@ -382,15 +379,15 @@ const receiveInput = (input : string) => {
   return (
     <div className="chat-app-background">
     <div className='screen-wrapper'>
-    <div className='app-header'><h1 className='header-title'>ReDecoFinder assistant</h1>
+    <div className='app-header'><h1 className='header-title'>ReDecoFinder avustaja</h1>
         <div className='hamburger-menu' onClick={()=>toggleDrawer()}>
           &#9776;
         </div>
         </div>
         <div className='drawer' id='drawer'>
-        <button className='close-button' onClick={()=>toggleDrawer()}>Close &times;</button>
+        <button className='close-button' onClick={()=>toggleDrawer()}>Sulje &times;</button>
           <a href={clientPublic.webStoreUrl}>
-            <div className='modal-option-button' style={{color: 'white', marginTop: 10}}>Open {clientPublic.webStoreName} ecom store</div>
+            <div className='modal-option-button' style={{color: 'white', marginTop: 10}}>Avaa {clientPublic.webStoreName} verkkokauppa</div>
           </a>
         </div>
       <div className="chat-wrapper">

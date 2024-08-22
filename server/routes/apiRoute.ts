@@ -23,6 +23,14 @@ apiRoute.get("/", async (req : express.Request, res : express.Response) : Promis
 apiRoute.post("/furnitureCategory", async (req : express.Request, res : express.Response) : Promise<void> => { 
     try {
         let category : string = req.body.category;
+        let finnishCategories : string[] = ['tuolit', 'sohvat', 'pöydät', 'neuvotteluryhmät', 'säilytyskalusteet'];
+        let englishCategories : string[] = ['chairs', 'sofas', 'tables', 'conference', 'storage'];
+        for(let i = 0; i < finnishCategories.length; i++){
+            if(finnishCategories[i] === category){
+                category = englishCategories[i];
+                break;
+            }
+        }
         if(parameterLibrary.includes(category)){
             let data = await furnitureModel(category).fetchData();
             res.status(200).json(data);

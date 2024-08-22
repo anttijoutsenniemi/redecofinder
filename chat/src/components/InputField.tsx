@@ -27,11 +27,11 @@ const InputField: React.FC<InputProps> = (props) => {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         className="rounded-input"
-        placeholder="Type something..."
+        placeholder="Kirjoita tähän..."
         onKeyDown={handleKeyPress}
       />
       <button onClick={handleSend} className="send-button">
-        Send
+        Lähetä
       </button>
     </div>
   );
