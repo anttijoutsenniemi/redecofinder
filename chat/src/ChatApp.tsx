@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import InputField from './components/InputField';
 import './App.css';
 import ImageCapture from './components/ImageCapture';
-import { fetchInterPretationWithReference, fetchInterPretationWithSpaceImg } from './components/Aihandler';
+import { fetchInterPretationWithOnlyText, fetchInterPretationWithReference, fetchInterPretationWithSpaceImg } from './components/Aihandler';
 import { fetchFurnitureData } from './components/ApiFetches';
 import clientPublic from './assets/clientPublic.json';
 import ProductCard from './components/Products';
@@ -108,6 +108,21 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
     }, 50);
   }
 
+  // Function to flatten the object so that the values are like coordinates of a line in 2d matrix
+  const flattenObject = (obj: StyleObject): number[] => {
+    const colorThemes = obj.colorThemes ? Object.values(obj.colorThemes) : [];
+    const designStyles = obj.designStyles ? Object.values(obj.designStyles) : [];
+    return [...colorThemes, ...designStyles];
+  };
+
+  // Calculate Euclidean distance
+  const calculateDistance = (obj1: StyleObject, obj2: StyleObject): number => {
+    const values1 = flattenObject(obj1);
+    const values2 = flattenObject(obj2);
+    //console.log(values1, values2);
+    return Math.sqrt(values1.reduce((sum, value, index) => sum + Math.pow(value - values2[index], 2), 0));
+  };
+
   const uploadImage = async (furnitureClass? : string) => {
     try {
       setLoading(true);
@@ -152,21 +167,6 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
       
       let botAnswr : string = aiJson.explanation;  
   
-      // Function to flatten the object
-      const flattenObject = (obj: StyleObject): number[] => {
-        const colorThemes = obj.colorThemes ? Object.values(obj.colorThemes) : [];
-        const designStyles = obj.designStyles ? Object.values(obj.designStyles) : [];
-        return [...colorThemes, ...designStyles];
-      };
-  
-      // Calculate Euclidean distance
-      const calculateDistance = (obj1: StyleObject, obj2: StyleObject): number => {
-        const values1 = flattenObject(obj1);
-        const values2 = flattenObject(obj2);
-        //console.log(values1, values2);
-        return Math.sqrt(values1.reduce((sum, value, index) => sum + Math.pow(value - values2[index], 2), 0));
-      };
-  
       // Compute distances
         const distances = arrayOfObjects.map((obj : any, index : number) => {
           const distance = calculateDistance(aiJson, obj.styleJson);
@@ -185,9 +185,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
         setRecommendations(top3Matches);
         // handleOptionClick('recommendations', 'Show me the recommendations please', top3Matches, botAnswr);
         handleOptionClick('suositukset', 'Voisitko näyttää minulle huonekalusuositukset?', top3Matches, botAnswr);
-        //here next show the 3 results to user: handleoptionclick where images go to imagearray
-        //add other elements to jsx like price and avaialabity
-      
+  
     } catch (error) {
       console.log(error);
       setErrorMessage('An unexpected error occured fetching AI response');
@@ -205,6 +203,47 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
     
     //handleOptionClick('recommendations', 'Show me the recommendations please', newArr, 'Here are some random recommendations as promised:')
     handleOptionClick('suositukset', 'Voisitko näyttää minulle huonekalusuosituket?', newArr, 'Tässä on satunnaisia suosituksia kujten lupasin:')
+  }
+
+  const getTextRecommendations = async () => {
+    try {
+      setLoading(true);
+      let userFilledData : string = "";
+  
+      for(let i = 0; i < appStates.chatHistory.length; i++){
+        userFilledData += appStates.chatHistory[i] + " ";
+      }
+      
+      let aiJsonUnParsed = await fetchInterPretationWithOnlyText(userFilledData);
+
+      let aiJson = JSON.parse(aiJsonUnParsed);
+      setAiJson(aiJson);
+      let arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
+
+      let botAnswr : string = aiJson.explanation;  
+  
+      // Compute distances
+        const distances = arrayOfObjects.map((obj : any, index : number) => {
+          const distance = calculateDistance(aiJson, obj.styleJson);
+          return {
+            distance,
+            object: obj
+          };
+        });
+        //console.log(distances);
+    
+        // Sort by distance
+        const sortedObjects = distances.sort((a : any, b : any) => a.distance - b.distance);
+    
+        // Select top 3 matches
+        const top3Matches = sortedObjects.slice(0, 3).map((item : any) => item.object);
+        setRecommendations(top3Matches);
+        handleOptionClick('suositukset', 'Voisitko näyttää minulle huonekalusuositukset?', top3Matches, botAnswr);
+        setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setErrorMessage(`Error occured: ${error}`)
+    }
   }
 
   // Function to handle option click, send next
@@ -264,9 +303,10 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             options = ['Aloita alusta', 'Etsitään lisää huonekaluja eri kategoriasta'];
             nextPageNumber = phaseNumber + 1;
             break;
-        case 'Ei kiitos, anna minulle satunnaisia ehdotuksia, joita voin selata heti.':
-            botResponseText = 'Selvä, odota hetki, valitsen sinulle kolme satunnaista huonekalu ehdotusta...';
-            getRandomRecommendations();
+        case 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla':
+            botResponseText = 'Selvä, odota hetki, valitsen sinulle kolme huonekaluehdotusta pelkän tekstin avulla...';
+            //getRandomRecommendations();
+            getTextRecommendations();
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Etsitään lisää huonekaluja eri kategoriasta':
@@ -294,7 +334,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
               }
               else{
                 botResponseText = `Selvä, etsitään ${option.toLowerCase()} toiveittesi mukaan. Haluatko antaa minulle referenssikuvan/kuvia, joita voin katsoa inspiraatioksi?`;
-                options = ['Lisää kuvia', 'Ei kiitos, anna minulle satunnaisia ehdotuksia, joita voin selata heti.'];
+                options = ['Lisää kuvia', 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla'];
                 nextPageNumber = phaseNumber + 1;
               }
             }
@@ -303,7 +343,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
               const firstWord = words[0].replace(/[^A-Za-z]/g, '').toLowerCase();
               setFurnitureClass(firstWord);
               botResponseText = `Selvä, etsitään ${firstWord} toiveittesi mukaan. Haluatko antaa minulle kuvan/kuvia suunnittelemastasi tilasta, jotta voin löytää sopivat ${firstWord}?`;
-              options = ['Lisää kuva/kuvia tilasta', 'Ei kiitos, anna minulle satunnaisia ehdotuksia, joita voin selata heti.'];
+              options = ['Lisää kuva/kuvia tilasta', 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla'];
               nextPageNumber = phaseNumber + 1;
             }
 
