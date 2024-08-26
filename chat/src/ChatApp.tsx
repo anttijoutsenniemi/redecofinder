@@ -5,6 +5,7 @@ import ImageCapture from './components/ImageCapture';
 import { fetchInterPretationWithOnlyText, fetchInterPretationWithReference, fetchInterPretationWithSpaceImg } from './components/Aihandler';
 import { fetchFurnitureData } from './components/ApiFetches';
 import clientPublic from './assets/clientPublic.json';
+import furnitureCategories from './assets/furnitureCategories.json';
 import ProductCard from './components/Products';
 import Modal from './components/Modal';
 import { AppStates } from './App';
@@ -133,8 +134,19 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
       if(appStates.aiJson && furnitureClass){ //this should trigger if user wants to find more products after already getting the first set of recommendations
         aiJson = appStates.aiJson;
         arrayOfObjects = await fetchFurnitureData(furnitureClass);
+          //if db module returns empty array (no products in the category)
+          if(arrayOfObjects.length === 0 || !arrayOfObjects[0]){
+            handleOptionClick('Ei tuotteita');
+            return;
+          }
       }
       else{ //this should trigger if its the first time user wants product recommendations
+        arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
+          //if db module returns empty array (no products in the category)
+          if(arrayOfObjects.length === 0 || !arrayOfObjects[0]){
+            handleOptionClick('Ei tuotteita');
+            return;
+          }
         let refImageArray : string[] = [];
         if (appStates.refImage64) {
           refImageArray.push(appStates.refImage64);
@@ -162,7 +174,6 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
   
         aiJson = JSON.parse(aiJsonUnParsed);
         setAiJson(aiJson);
-        arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
       }
       
       let botAnswr : string = aiJson.explanation;  
@@ -197,6 +208,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
     return shuffled.slice(0, count); // Get the first `count` elements
   }
 
+  //this is redacted but saved it in case its needed
   const getRandomRecommendations = async () => {
     let arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
     let newArr = getRandomElements(arrayOfObjects, 3);
@@ -208,6 +220,12 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
   const getTextRecommendations = async () => {
     try {
       setLoading(true);
+      let arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
+        //if db module returns empty array (no products in the category)
+        if(arrayOfObjects.length === 0 || !arrayOfObjects[0]){
+          handleOptionClick('Ei tuotteita');
+          return;
+        }
       let userFilledData : string = "";
   
       for(let i = 0; i < appStates.chatHistory.length; i++){
@@ -218,7 +236,6 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
 
       let aiJson = JSON.parse(aiJsonUnParsed);
       setAiJson(aiJson);
-      let arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
 
       let botAnswr : string = aiJson.explanation;  
   
@@ -258,7 +275,8 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
     switch (option) {
         case '1. Etsi huonekaluja käyttämällä kuvia tilasta':
             botResponseText = 'Tottakai! Minkä tyyppisiä huonekaluja etsitään?';
-            options = ['1. Tuolit', '2. Sohvat, nojatuolit ja rahit', '3. Pöydät', '4. Neuvotteluryhmät', '5. Säilytyskalusteet'];
+            let newCategories : string[] = furnitureCategories.withNumbers;
+            options = newCategories;
             nextPageNumber = phaseNumber + 1;
             break;
         case '2. Etsi huonekaluja täyttämällä koko tyylikysely':
@@ -275,7 +293,8 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             break;
         case 'Tyyli kuvailtu':
             botResponseText = 'Ymmärretty, minkä tyyppisiä huonekaluja etsit? Tässä muutamia vaihtoehtoja:';
-            options = ['Tuolit', 'Sohvat, nojatuolit ja rahit', 'Pöydät', 'Neuvotteluryhmät', 'Säilytyskalusteet'];
+            let newCategoriesNoNumbers : string[] = furnitureCategories.withoutNumbers;
+            options = newCategoriesNoNumbers;     
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Lisää kuvia':
@@ -288,6 +307,19 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             botResponseText = "Lisää 1-3 kuvaa tilasta";
             setSpaceImageMode(true);
             imageUploadMode = true;
+            nextPageNumber = phaseNumber + 1;
+            break;
+        case 'Ei tuotteita':
+            botResponseText = "Näyttää siltä, ettei valitsemastasi kategoriasta löytynyt tällä hetkellä tarpeeksi käytettyjä tuotteita. Ne saattavat olla loppuunmyytyjä, ja saatat löytää niitä kokeilemalla myöhemmin uudestaan. Haluaisitko etsiä saman kategorian huonekaluja uusista tuotteista?";
+            options = ['Aloita alusta', 'Etsi uusista']
+            nextPageNumber = phaseNumber + 1;
+            break;
+        case 'Etsi uusista':
+            // botResponseText = 'Selvä! Etsitään uusista tuotteista...'
+            botResponseText = 'This feature is not coded yet';
+
+            //this is not coded yet, should next try to find the products from new ones
+            options = ['Aloita alusta']
             nextPageNumber = phaseNumber + 1;
             break;
         case 'suositukset':
@@ -311,7 +343,8 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             break;
         case 'Etsitään lisää huonekaluja eri kategoriasta':
             botResponseText = 'Selvä, mitä kategoriaa etsitään?';
-            options = ['Tuolit', 'Sohvat, nojatuolit ja rahit', 'Pöydät', 'Neuvotteluryhmät', 'Säilytyskalusteet'];
+            let newCategoriesNoNumbers2 : string[] = furnitureCategories.withoutNumbers;
+            options = newCategoriesNoNumbers2; 
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Aloita alusta':
@@ -321,28 +354,55 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             break;
         default:
             //kun käyttäjä valitsee huonekalukategorian
-            const categories = ['Tuolit', 'Sohvat, nojatuolit ja rahit', 'Pöydät', 'Neuvotteluryhmät', 'Säilytyskalusteet'];
-            const categories2 = ['1. Tuolit', '2. Sohvat, nojatuolit ja rahit', '3. Pöydät', '4. Neuvotteluryhmät', '5. Säilytyskalusteet'];
+            const categories = furnitureCategories.withoutNumbers;
+            const categories2 = furnitureCategories.withNumbers;
 
             if(categories.includes(option)){
-              const words = option.split(' ').filter(word => /^[A-Za-z,]+$/.test(word));
-              const firstWord = words[0].replace(/[^A-Za-z]/g, '').toLowerCase();
-              setFurnitureClass(firstWord);
+              //this is the old way of doing it
+              // const words = option.split(' ').filter(word => /^[A-Za-z,]+$/.test(word));
+              // const firstWord = words[0].replace(/[^A-Za-z]/g, '').toLowerCase();
+
+              let normalized = option.toLowerCase();
+              //Remove leading numbers (if any) followed by a period and space
+              normalized = normalized.replace(/^\d+\.\s*/, '');
+              //Replace Nordic characters with their ASCII equivalents
+              normalized = normalized
+              .replace(/ä/g, 'a')
+              .replace(/ö/g, 'o')
+              .replace(/å/g, 'a')
+              .replace(/ü/g, 'u');
+              //Remove special characters except spaces and hyphens
+              normalized = normalized.replace(/[^\w\s-]/g, '');
+              //Replace spaces with underscores
+              let identifier = normalized.replace(/\s+/g, '_');
+
+              setFurnitureClass(identifier);
               if(appStates.aiJson){
-                uploadImage(firstWord);
+                uploadImage(identifier);
                 nextPageNumber = phaseNumber + 1;
               }
               else{
-                botResponseText = `Selvä, etsitään ${option.toLowerCase()} toiveittesi mukaan. Haluatko antaa minulle referenssikuvan/kuvia, joita voin katsoa inspiraatioksi?`;
+                botResponseText = `Selvä, etsitään kategoriasta: ${option.toLowerCase()} toiveittesi mukaan. Haluatko antaa minulle referenssikuvan/kuvia, joita voin katsoa inspiraatioksi?`;
                 options = ['Lisää kuvia', 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla'];
                 nextPageNumber = phaseNumber + 1;
               }
             }
             else if(categories2.includes(option)){
-              const words = option.split(' ').filter(word => /^[A-Za-z,]+$/.test(word));
-              const firstWord = words[0].replace(/[^A-Za-z]/g, '').toLowerCase();
-              setFurnitureClass(firstWord);
-              botResponseText = `Selvä, etsitään ${firstWord} toiveittesi mukaan. Haluatko antaa minulle kuvan/kuvia suunnittelemastasi tilasta, jotta voin löytää sopivat ${firstWord}?`;
+              let normalized = option.toLowerCase();
+              //Remove leading numbers (if any) followed by a period and space
+              normalized = normalized.replace(/^\d+\.\s*/, '');
+              //Replace Nordic characters with their ASCII equivalents
+              normalized = normalized
+              .replace(/ä/g, 'a')
+              .replace(/ö/g, 'o')
+              .replace(/å/g, 'a')
+              .replace(/ü/g, 'u');
+              //Remove special characters except spaces and hyphens
+              normalized = normalized.replace(/[^\w\s-]/g, '');
+              //Replace spaces with underscores
+              let identifier = normalized.replace(/\s+/g, '_');
+              setFurnitureClass(identifier);
+              botResponseText = `Selvä, etsitään kategoriasta: ${option.toLowerCase()} toiveittesi mukaan. Haluatko antaa minulle kuvan/kuvia suunnittelemastasi tilasta, jotta voin löytää siihen sopivat huonekalut?`;
               options = ['Lisää kuva/kuvia tilasta', 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla'];
               nextPageNumber = phaseNumber + 1;
             }

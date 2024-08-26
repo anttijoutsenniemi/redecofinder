@@ -1,7 +1,13 @@
 [
-"chairs", 
-"storage", 
-"conference",
-"tables",
-"sofas"
+    "tyotuolit",
+    "korkeat_tuolit",
+    "neuvottelu-_ja_asiakastuolit",
+    "sohvat_nojatuolit_ja_rahit",
+    "sailytyskalusteet",
+    "tyopoydat",
+    "korkeat_poydat",
+    "neuvottelupoydat",
+    "sahkopoydat",
+    "sohva-_ja_pikkupoydat",
+    "neuvotteluryhmat"
 ]

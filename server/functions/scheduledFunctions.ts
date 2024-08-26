@@ -14,11 +14,17 @@ const scrapeCategory = async (url : string, category : string) => {
 
 export const scrapeAndMakeAiData = async () => {
     const scrapePromises = [
-        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=2&category[]=11`, 'chairs'),
-        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=29`, 'sofas'),
-        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=8`, 'storage'),
-        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=5&category[]=173&category[]=54&category[]=190`, 'tables'),
-        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=139`, 'conference')
+        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=2`, 'tyotuolit'), //työtuolit
+        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=196`, 'korkeat_tuolit'), //korkeat tuolit
+        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=11`, 'neuvottelu-_ja_asiakastuolit'), //neuvottelu- ja asiakastuolit
+        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=29`, 'sohvat_nojatuolit_ja_rahit'), //sohvat, nojatuolit ja rahit
+        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=8`, 'sailytyskalusteet'), //säilytyskalusteet
+        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=5`, 'tyopoydat'), //työpöydät
+        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=195`, 'korkeat_poydat'), //korkeat pöydät
+        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=173`, 'neuvottelupoydat'), //neuvottelupöydät
+        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=54`, 'sahkopoydat'), //sähköpöydät
+        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=190`, 'sohva-_ja_pikkupoydat'), //sohva- ja pikkupöydät
+        scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=139`, 'neuvotteluryhmat') //neuvotteluryhmät
     ];
 
     try {
