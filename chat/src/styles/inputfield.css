@@ -4,13 +4,21 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
+    flex-direction: column;
+  }
+
+  .typing-box-container {
+    display: flex; /* Enable flexbox layout */
+    width: 100%;
+    align-items: center; /* Vertically center the input and button */
   }
   
   .rounded-input {
     padding: 10px;
     border-radius: 15px;
     border: 1px solid #ccc;
-    width: 100%;
+    flex: 1; /* Take up the remaining space */
+    margin-right: 10px;
     outline: none;
   }
   
@@ -25,9 +33,47 @@
     background-color: #007bff;
     color: white;
     cursor: pointer;
+    flex-shrink: 0; /* Prevent the button from shrinking */
   }
   
   .send-button:hover {
     background-color: #0056b3;
+  }
+
+  /* .compo-options-container {
+    display: flex;
+    overflow-x: auto;
+    margin-bottom: 10px;
+  }
+  
+  .compo-option-button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    white-space: nowrap;
+  } */
+
+  .compo-options-container {
+    display: flex;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap;
+    width: 100%; /* Ensure the container fits within the parent */
+    margin-bottom: 10px;
+    padding: 5px 0; /* Add some padding to make it look nicer */
+    box-sizing: border-box; /* Include padding in the width calculation */
+  }
+  
+  .compo-option-button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0; /* Prevent the buttons from shrinking */
   }
   

@@ -372,7 +372,7 @@ const handleProductClick = (index: number, productUrl: string) => {
         <div><p style={{color: 'red'}}>{errorMessage}</p></div>
       )}
       {typingMode && (
-        <InputField receiveInput={receiveInput}/>
+        <InputField receiveInput={receiveInput} typingPhase={1}/>
       )}
       
       </div>

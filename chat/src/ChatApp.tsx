@@ -280,7 +280,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             nextPageNumber = phaseNumber + 1;
             break;
         case '2. Etsi huonekaluja täyttämällä koko tyylikysely':
-            botResponseText = 'Hienoa, aloitetaan! Voitko kuvailla omin sanoin millaista tilaa suunnittelet?';
+            botResponseText = 'Hienoa, aloitetaan! Voitko kuvailla omin sanoin millaista tilaa suunnittelet? Voit täyttää tekstikentän ehdotuksilla, kirjoittaa itse tai molemmat!';
             setTypingPhase(1);
             setTypingMode(true);
             nextPageNumber = phaseNumber + 1;
@@ -324,7 +324,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             break;
         case 'suositukset':
             if(botAnswr && recommendations){ 
-              botResponseText = botAnswr + " Löysin nämä suositukset, jotka sopivat parhaiten tyyliisi:";
+              botResponseText = botAnswr + " Löysin nämä suositukset, jotka sopivat mielestäni parhaiten tyyliisi:";
               recommendationArray = recommendations;
               setLoading(false);
             }
@@ -592,7 +592,7 @@ const receiveInput = (input : string) => {
         <div><p style={{color: 'red'}}>{appStates.errorMessage}</p></div>
       )}
       {appStates.typingMode && (
-        <InputField receiveInput={receiveInput}/>
+        <InputField receiveInput={receiveInput} typingPhase={appStates.typingPhase}/>
       )}
       
       </div>
