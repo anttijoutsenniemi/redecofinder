@@ -13,7 +13,7 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url('./assets/waves2.svg');
+  background-image: url('./assets/straight_waves.svg');
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -28,6 +28,8 @@
   width: 100%;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
   /* Firefox scrollbar styles */
   scrollbar-width: thin; /* Width of the scrollbar */
   scrollbar-color: lightgrey transparent; /* Thumb color and track color */
@@ -138,7 +140,9 @@
 }
 
 .chat-message.user .chat-bubble {
-  background-color: #4caf50; /* Different color for user */
+   /* background-color: #4caf50;  */
+  /* background-color: rgb(187, 203, 203); */
+  background-color: rgb(51, 51, 51);
   color: white;
 }
 
@@ -155,7 +159,8 @@
   border: none;
   border-radius: 15px;
   cursor: pointer;
-  background-color: #2196f3;
+  /* background-color: #2196f3; */
+  background-color: rgb(5, 88, 84);
   color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -166,7 +171,8 @@
   border: none;
   border-radius: 15px;
   cursor: pointer;
-  background-color: #4caf50;
+  /* background-color: #4caf50; */
+  background-color: rgb(5, 88, 84);
   color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
