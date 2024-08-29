@@ -3,11 +3,12 @@ import InputField from './components/InputField';
 import './App.css';
 import ImageCapture from './components/ImageCapture';
 import { fetchInterPretationWithOnlyText, fetchInterPretationWithReference, fetchInterPretationWithSpaceImg } from './components/Aihandler';
-import { fetchFurnitureData } from './components/ApiFetches';
+import { fetchFurnitureData, fetchFurnitureDataWithQuantity } from './components/ApiFetches';
 import clientPublic from './assets/clientPublic.json';
 import furnitureCategories from './assets/furnitureCategories.json';
 import ProductCard from './components/Products';
 import Modal from './components/Modal';
+import NumberPicker from './components/NumberPicker';
 import { AppStates } from './App';
 import { useNavigate } from 'react-router';
 import { quantum } from 'ldrs';
@@ -70,11 +71,13 @@ interface ChildComponentProps {
   setSelectedProduct: (product: null | CompareObject) => void;
   setSpaceImageMode: (value: boolean) => void;
   setAiJson: (value: any) => void;
+  setShowNumberPicker: (value: boolean) => void;
+  setQuantityNumber: (value : number) => void;
 }
 
 const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phaseNumber, setModalOpen, setTypingMode, setLoading, setMessages, setFurnitureClass,
   setImagesSent, setTypingPhase, setChatHistoryDirect, setErrorMessage, setRecommendations,
-  setRefImage64, setRefImage642, setRefImage643, setSelectedProduct, setSpaceImageMode, setAiJson }) => {
+  setRefImage64, setRefImage642, setRefImage643, setSelectedProduct, setSpaceImageMode, setAiJson, setShowNumberPicker, setQuantityNumber}) => {
 
   const navigate = useNavigate();
 
@@ -138,7 +141,13 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
           arrayOfObjects = await fetchFurnitureData(`new_${furnitureClass}`);
         }
         else {
-          arrayOfObjects = await fetchFurnitureData(furnitureClass);
+          if(appStates.quantityNumber > 0){ //if user wants furniture with min x quantity
+            arrayOfObjects = await fetchFurnitureDataWithQuantity(furnitureClass, appStates.quantityNumber);
+          }
+          else{
+            arrayOfObjects = await fetchFurnitureData(furnitureClass);
+          }
+          
         }
           //if db module returns empty array (no products in the category)
           if(arrayOfObjects.length === 0 || !arrayOfObjects[0]){
@@ -147,7 +156,12 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
           }
       }
       else{ //this should trigger if its the first time user wants product recommendations
-        arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
+        if(appStates.quantityNumber > 0){ //if user wants atleast x amount of products
+          arrayOfObjects = await fetchFurnitureDataWithQuantity(appStates.furnitureClass, appStates.quantityNumber);
+        }
+        else{
+          arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
+        }
           //if db module returns empty array (no products in the category)
           if(arrayOfObjects.length === 0 || !arrayOfObjects[0]){
             handleOptionClick('Ei tuotteita');
@@ -226,7 +240,13 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
   const getTextRecommendations = async () => {
     try {
       setLoading(true);
-      let arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
+      let arrayOfObjects : any;
+      if(appStates.quantityNumber > 0){
+        arrayOfObjects = await fetchFurnitureDataWithQuantity(appStates.furnitureClass, appStates.quantityNumber);
+      }
+      else {
+        arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
+      }
         //if db module returns empty array (no products in the category)
         if(arrayOfObjects.length === 0 || !arrayOfObjects[0]){
           handleOptionClick('Ei tuotteita');
@@ -298,9 +318,14 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Tyyli kuvailtu':
-            botResponseText = 'Ymmärretty, minkä tyyppisiä huonekaluja etsit? Tässä muutamia vaihtoehtoja:';
+            botResponseText = 'Hienoa, kirjasin tiedot ylös. Minkä tyyppisiä huonekaluja etsit? Tässä muutamia vaihtoehtoja:';
             let newCategoriesNoNumbers : string[] = furnitureCategories.withoutNumbers;
-            options = newCategoriesNoNumbers;     
+            options = newCategoriesNoNumbers; 
+            nextPageNumber = phaseNumber + 1;
+            break;
+        case 'Kategoria kirjattu ylös':
+            botResponseText = 'Määrä kirjattu ylös. Haluatko antaa minulle kuvan/kuvia suunnittelemastasi tilasta, jotta voin löytää siihen sopivat huonekalut?';
+            options = ['Lisää kuvia', 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla'];
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Lisää kuvia':
@@ -386,8 +411,8 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
                 nextPageNumber = phaseNumber + 1;
               }
               else{
-                botResponseText = `Selvä, etsitään kategoriasta: ${option.toLowerCase()} toiveittesi mukaan. Haluatko antaa minulle referenssikuvan/kuvia, joita voin katsoa inspiraatioksi?`;
-                options = ['Lisää kuvia', 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla'];
+                botResponseText = `Selvä, etsitään kategoriasta: ${option.toLowerCase()} toiveittesi mukaan. Etsimmmekö vähintään tiettyä määrää huonekaluja?`;
+                setShowNumberPicker(true);
                 nextPageNumber = phaseNumber + 1;
               }
             }
@@ -406,8 +431,8 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
               //Replace spaces with underscores
               let identifier = normalized.replace(/\s+/g, '_');
               setFurnitureClass(identifier);
-              botResponseText = `Selvä, etsitään kategoriasta: ${option.toLowerCase()} toiveittesi mukaan. Haluatko antaa minulle kuvan/kuvia suunnittelemastasi tilasta, jotta voin löytää siihen sopivat huonekalut?`;
-              options = ['Lisää kuva/kuvia tilasta', 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla'];
+              botResponseText = `Selvä, etsitään kategoriasta: ${option.toLowerCase()} toiveittesi mukaan. Etsimmmekö vähintään tiettyä määrää huonekaluja?`;
+              setShowNumberPicker(true);
               nextPageNumber = phaseNumber + 1;
             }
 
@@ -444,6 +469,19 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
 function toggleDrawer() {
   const drawer : any = document.getElementById('drawer');
   drawer.classList.toggle('open');
+}
+
+const receiveQuantityNumber = (quantityNumber : number) => {
+  setQuantityNumber(quantityNumber);
+  setShowNumberPicker(false);
+  let userResponse : string;
+  if(quantityNumber === 0){
+    userResponse = 'Määrällä ei ole minulle merkitystä';
+  }
+  else{
+    userResponse = quantityNumber.toString();
+  }
+  handleOptionClick('Kategoria kirjattu ylös', userResponse);
 }
 
 //func for receiving input from user typing
@@ -597,6 +635,9 @@ const receiveInput = (input : string) => {
       )}
       {appStates.typingMode && (
         <InputField receiveInput={receiveInput} typingPhase={appStates.typingPhase}/>
+      )}
+      {appStates.showNumberPicker && (
+        <NumberPicker receiveInput={receiveQuantityNumber}/>
       )}
       
       </div>

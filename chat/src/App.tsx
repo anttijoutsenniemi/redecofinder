@@ -56,6 +56,8 @@ export interface ChatMessage {
     selectedProduct: null | CompareObject;
     spaceImgMode: boolean;
     aiJson: any;
+    quantityNumber: number;
+    showNumberPicker: boolean;
   }
 
   export interface StateHistory {
@@ -90,7 +92,9 @@ const App0: React.FC = () => {
             modalOpen: false,
             selectedProduct: null,
             spaceImgMode: false,
-            aiJson: null
+            aiJson: null,
+            quantityNumber: 0,
+            showNumberPicker: false
           }
     );
     const [stateHistory, setStateHistory] = useState<StateHistory[]>([{ phase: 0, states: appStates}]);
@@ -146,7 +150,8 @@ const App0: React.FC = () => {
     const setSelectedProduct = (product: null | CompareObject) => setAppStates(prevState => ({ ...prevState, selectedProduct: product }));
     const setSpaceImageMode = (value: boolean) => setAppStates(prevState => ({ ...prevState, spaceImgMode: value }));
     const setAiJson = (value: any) => setAppStates(prevState => ({ ...prevState, aiJson: value }));
-
+    const setShowNumberPicker = (value: boolean) => setAppStates(prevState => ({ ...prevState, showNumberPicker: value }));
+    const setQuantityNumber = (value: number) => setAppStates(prevState => ({ ...prevState, quantityNumber: value }));
 
     const navigateHandler = (sourcePhase : number) => {
 
@@ -179,11 +184,11 @@ const App0: React.FC = () => {
 
   return (
       <Routes>
-        <Route path='/' element={<ChatApp appStates={appStates} navigateHandler={navigateHandler} phaseNumber={0} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} setSpaceImageMode={setSpaceImageMode} setAiJson={setAiJson}/>} />
+        <Route path='/' element={<ChatApp appStates={appStates} navigateHandler={navigateHandler} phaseNumber={0} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} setSpaceImageMode={setSpaceImageMode} setAiJson={setAiJson} setShowNumberPicker={setShowNumberPicker} setQuantityNumber={setQuantityNumber}/>} />
 
         {
             phaseNumbers.map((number, index)=> (
-                <Route key={index} path={`/${number}`} element={<ChatApp appStates={appStates} navigateHandler={navigateHandler} phaseNumber={number} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} setSpaceImageMode={setSpaceImageMode} setAiJson={setAiJson}/>} />
+                <Route key={index} path={`/${number}`} element={<ChatApp appStates={appStates} navigateHandler={navigateHandler} phaseNumber={number} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} setSpaceImageMode={setSpaceImageMode} setAiJson={setAiJson} setShowNumberPicker={setShowNumberPicker} setQuantityNumber={setQuantityNumber}/>} />
             ))
         }
 

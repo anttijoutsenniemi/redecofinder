@@ -130,6 +130,7 @@
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
+  flex-shrink: 0;
 }
 
 .chat-bubble {

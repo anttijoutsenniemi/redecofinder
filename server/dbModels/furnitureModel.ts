@@ -78,6 +78,32 @@ const furnitureModel = (furnitureCategory : string) => {
         } 
     }
 
+    //fetch data with minimum quantity available
+    const fetchDataWithQuantity = async (minQuantity : number) => {
+        try {
+            const result = await furnitureCollection.find({
+                styleJson: { $exists: true },
+                deleted: false
+            }).toArray();
+    
+            // Extract and filter based on the quantity
+            const filteredResult = result.filter(item => {
+                // Extract the number from the quantity string
+                const quantityMatch = item.quantity.match(/Varastossa (\d+) kpl/);
+                const quantityNumber = quantityMatch ? parseInt(quantityMatch[1], 10) : 0;
+    
+                // Return true if the quantity is greater than or equal to minQuantity
+                return quantityNumber >= minQuantity;
+            });
+    
+            return filteredResult;
+        } catch (error) {
+            console.error('Connection to test db failed with status code 99');
+            throw error;
+        }
+    };
+    
+
     //add one datacell to document
     const addData = async (scrapingData : ScrapingData) => {
         try {
@@ -120,7 +146,8 @@ const furnitureModel = (furnitureCategory : string) => {
         fetchData,
         addData,
         checkDeletedAndUpdate,
-        updateDeleted
+        updateDeleted,
+        fetchDataWithQuantity
         // Add more functions to export here
     };
 }
