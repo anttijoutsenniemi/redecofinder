@@ -124,7 +124,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
     return Math.sqrt(values1.reduce((sum, value, index) => sum + Math.pow(value - values2[index], 2), 0));
   };
 
-  const uploadImage = async (furnitureClass? : string) => {
+  const uploadImage = async (furnitureClass? : string, fetchFromNew? : boolean) => {
     try {
       setLoading(true);
       setImagesSent(true);
@@ -133,7 +133,13 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
       let arrayOfObjects : any;
       if(appStates.aiJson && furnitureClass){ //this should trigger if user wants to find more products after already getting the first set of recommendations
         aiJson = appStates.aiJson;
-        arrayOfObjects = await fetchFurnitureData(furnitureClass);
+        //we check if we search from new products or no, searching from new should always be after user finds no matches from used ones first
+        if(fetchFromNew){
+          arrayOfObjects = await fetchFurnitureData(`new_${furnitureClass}`);
+        }
+        else {
+          arrayOfObjects = await fetchFurnitureData(furnitureClass);
+        }
           //if db module returns empty array (no products in the category)
           if(arrayOfObjects.length === 0 || !arrayOfObjects[0]){
             handleOptionClick('Ei tuotteita');
@@ -310,21 +316,19 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Ei tuotteita':
+            setLoading(false);
             botResponseText = "Näyttää siltä, ettei valitsemastasi kategoriasta löytynyt tällä hetkellä tarpeeksi käytettyjä tuotteita. Ne saattavat olla loppuunmyytyjä, ja saatat löytää niitä kokeilemalla myöhemmin uudestaan. Haluaisitko etsiä saman kategorian huonekaluja uusista tuotteista?";
-            options = ['Aloita alusta', 'Etsi uusista']
+            options = ['Aloita alusta', 'Etsi uusista tuotteista']
             nextPageNumber = phaseNumber + 1;
             break;
-        case 'Etsi uusista':
-            // botResponseText = 'Selvä! Etsitään uusista tuotteista...'
-            botResponseText = 'This feature is not coded yet';
-
-            //this is not coded yet, should next try to find the products from new ones
-            options = ['Aloita alusta']
+        case 'Etsitään uusista tuotteista':
+            botResponseText = 'Selvä! Etsitään uusista tuotteista...'
+            uploadImage(appStates.furnitureClass, true);
             nextPageNumber = phaseNumber + 1;
             break;
         case 'suositukset':
             if(botAnswr && recommendations){ 
-              botResponseText = botAnswr + " Löysin nämä suositukset, jotka sopivat mielestäni parhaiten tyyliisi:";
+              botResponseText = botAnswr + " Löysin nämä alla olevat suositukset, jotka sopivat mielestäni parhaiten tyyliisi. Jos suositukset eivät tällä kertaa osuneet kohdalleen, voimme myös halutessasi etsiä uusista tuotteista tai eri kategoriasta!";
               recommendationArray = recommendations;
               setLoading(false);
             }
@@ -332,7 +336,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
               botResponseText = 'En ymmärtänyt valintaasi.'
             }
             
-            options = ['Aloita alusta', 'Etsitään lisää huonekaluja eri kategoriasta'];
+            options = ['Etsitään uusista tuotteista', 'Etsitään lisää huonekaluja eri kategoriasta', 'Aloita alusta'];
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla':

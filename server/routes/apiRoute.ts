@@ -1,7 +1,7 @@
 import express from 'express';
 import { scrapeWebsite } from '../functions/webScraping';
 import furnitureModel from '../dbModels/furnitureModel';
-import { scrapeAndMakeAiData } from '../functions/scheduledFunctions';
+import { scrapeAndMakeAiData, scrapeAndMakeAiDataNew } from '../functions/scheduledFunctions';
 import parameterLibrary from './../styleJson/parameterLibrary.json';
 
 const apiRoute : express.Router = express.Router();
@@ -45,7 +45,8 @@ apiRoute.get("/testScraping", async (req : express.Request, res : express.Respon
             4. Tables = sohva ja pikkupöydät + sähköpöydät + työpöydät + neuvottelupöydät
             5. Conference sets = neuvotteluryhmät
             */
-        //let automaticScraping = await scrapeAndMakeAiData();
+        // let automaticScraping = await scrapeAndMakeAiDataNew();
+        
         res.status(200).json({ "message" : "apiroute initialized"});
     } catch (e : any) {
         res.status(404).json({ "error" : `error fetching: ${e}` });
