@@ -9,6 +9,7 @@ import furnitureCategories from './assets/furnitureCategories.json';
 import ProductCard from './components/Products';
 import Modal from './components/Modal';
 import NumberPicker from './components/NumberPicker';
+import { randomizeJsonValues } from './functions/randomizeJson';
 import { AppStates } from './App';
 import { useNavigate } from 'react-router';
 import { quantum } from 'ldrs';
@@ -340,6 +341,14 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             imageUploadMode = true;
             nextPageNumber = phaseNumber + 1;
             break;
+        case 'Etsitään satunnaisia suosituksia':
+            botResponseText = 'Hetkinen, etsin 3 satunnaista huonekaluehdotusta...';
+            let randomAiJson = { "nonValidImage": false, "explanation": "Etsin lisää täysin satunnaisia suosituksia.", "colorThemes": { "dark": 0, "light": 0, "colorful": 0, "earthy": 0, "blackAndWhite": 0, "pastel": 0, "neutrals": 0, "jewelTones": 0, "metallics": 0, "oceanic": 0 }, "designStyles": { "industrial": 0, "scandinavian": 0, "minimalist": 0, "modern": 0, "farmhouse": 0, "artDeco": 0, "bohemian": 0, "traditional": 0, "rustic": 0, "glam": 0, "contemporary": 0, "transitional": 0 } };
+            randomAiJson = randomizeJsonValues(randomAiJson);
+            setAiJson(randomAiJson);
+            getRandomRecommendations();
+            nextPageNumber = phaseNumber + 1;
+            break;
         case 'Ei tuotteita':
             setLoading(false);
             botResponseText = "Näyttää siltä, ettei valitsemastasi kategoriasta löytynyt tällä hetkellä tarpeeksi käytettyjä tuotteita. Ne saattavat olla loppuunmyytyjä, ja saatat löytää niitä kokeilemalla myöhemmin uudestaan. Haluaisitko etsiä saman kategorian huonekaluja uusista tuotteista?";
@@ -431,8 +440,8 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
               //Replace spaces with underscores
               let identifier = normalized.replace(/\s+/g, '_');
               setFurnitureClass(identifier);
-              botResponseText = `Selvä, etsitään kategoriasta: ${option.toLowerCase()} toiveittesi mukaan. Etsimmmekö vähintään tiettyä määrää huonekaluja?`;
-              setShowNumberPicker(true);
+              botResponseText = `Selvä, etsitään kategoriasta: ${option.toLowerCase()} toiveittesi mukaan. Haluatko viimeiseksi lisätä kuvia tilastasi vai saada suoraan täysin satunnaisia huonekalusuosituksia?`;
+              options = ['Lisää kuva/kuvia tilasta', 'Etsitään satunnaisia suosituksia'];
               nextPageNumber = phaseNumber + 1;
             }
 
