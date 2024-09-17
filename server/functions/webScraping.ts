@@ -22,7 +22,7 @@ export async function scrapeWebsite(url: string): Promise<Product[]> {
         let hasMorePages = true;
         const userAgent = 'Chrome/91.0.4472.124';
     
-        while(hasMorePages){
+        while(hasMorePages && currentPage < 50){ //setting limit at 50 so no infiloops
             let response;
             if(currentPage > 1){
                 response = await axios.get(`${url}?page=${currentPage}`, {
