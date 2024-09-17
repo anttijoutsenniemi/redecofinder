@@ -1,4 +1,4 @@
 {
-    "phase1space": ["Upouusi toimistotila.", "Keittiö.", "Pieni kerrostaloasunto.", "Rintamamiestalo maaseudulla.", "Makuuhuone."],
-    "phase2style": ["Tumma ja moderni.", "Värikäs ja boheemi.", "Vaaleaa värimaailmaa.", "Minimalistinen.", "Maanläheiset värit ja jykevät muodot.", "Maalaisromantiikkaa.", "Skandinaavinen."]
+    "phase1space": ["Avotoimisto.", "Neuvottelutila.", "Taukotila.", "Koko toimisto.", "Vetäytymistila."],
+    "phase2style": ["Moderni.", "Vaalea.", "Kodinomainen.", "Tumma.", "Värikäs.", "Skandinaavinen.", "Minimalistinen."]
 }

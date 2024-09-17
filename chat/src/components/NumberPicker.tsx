@@ -20,6 +20,9 @@ const NumberPicker: React.FC<InputProps> = (props) => {
     if(option === ''){
         setInput(0);
     }
+    else if(option === "50+"){ // if user want 50+ products we have to send number to next function so we send 51 and handle that
+      setInput(51);
+    }
     else if(typeof option === 'number'){
         setInput(option);
     }

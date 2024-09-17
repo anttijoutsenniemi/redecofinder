@@ -142,7 +142,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
           arrayOfObjects = await fetchFurnitureData(`new_${furnitureClass}`);
         }
         else {
-          if(appStates.quantityNumber > 0){ //if user wants furniture with min x quantity
+          if(appStates.quantityNumber > 1){ //if user wants furniture with min x quantity
             arrayOfObjects = await fetchFurnitureDataWithQuantity(furnitureClass, appStates.quantityNumber);
           }
           else{
@@ -157,7 +157,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
           }
       }
       else{ //this should trigger if its the first time user wants product recommendations
-        if(appStates.quantityNumber > 0){ //if user wants atleast x amount of products
+        if(appStates.quantityNumber > 1){ //if user wants atleast x amount of products
           arrayOfObjects = await fetchFurnitureDataWithQuantity(appStates.furnitureClass, appStates.quantityNumber);
         }
         else{
@@ -242,7 +242,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
     try {
       setLoading(true);
       let arrayOfObjects : any;
-      if(appStates.quantityNumber > 0){
+      if(appStates.quantityNumber > 1){
         arrayOfObjects = await fetchFurnitureDataWithQuantity(appStates.furnitureClass, appStates.quantityNumber);
       }
       else {
@@ -484,12 +484,11 @@ const receiveQuantityNumber = (quantityNumber : number) => {
   setQuantityNumber(quantityNumber);
   setShowNumberPicker(false);
   let userResponse : string;
-  if(quantityNumber === 0){
-    userResponse = 'Määrällä ei ole minulle merkitystä';
-  }
-  else{
-    userResponse = quantityNumber.toString();
-  }
+  // if(quantityNumber === 0){
+  //   userResponse = 'Määrällä ei ole minulle merkitystä';
+  // }
+  userResponse = quantityNumber.toString();
+  
   handleOptionClick('Kategoria kirjattu ylös', userResponse);
 }
 
