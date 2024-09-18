@@ -488,6 +488,9 @@ const receiveQuantityNumber = (quantityNumber : number) => {
   //   userResponse = 'Määrällä ei ole minulle merkitystä';
   // }
   userResponse = quantityNumber.toString();
+  if(quantityNumber === 51){
+    userResponse = "51+";
+  }
   
   handleOptionClick('Kategoria kirjattu ylös', userResponse);
 }
