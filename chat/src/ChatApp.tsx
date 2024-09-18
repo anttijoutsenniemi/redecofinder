@@ -216,7 +216,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
         const top3Matches = sortedObjects.slice(0, 3).map((item : any) => item.object);
         setRecommendations(top3Matches);
         // handleOptionClick('recommendations', 'Show me the recommendations please', top3Matches, botAnswr);
-        handleOptionClick('suositukset', 'Voisitko näyttää minulle huonekalusuositukset?', top3Matches, botAnswr);
+        handleOptionClick('suositukset', 'Voisitko näyttää minulle kalustesuositukset?', top3Matches, botAnswr);
   
     } catch (error) {
       console.log(error);
@@ -235,7 +235,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
     let newArr = getRandomElements(arrayOfObjects, 3);
     
     //handleOptionClick('recommendations', 'Show me the recommendations please', newArr, 'Here are some random recommendations as promised:')
-    handleOptionClick('suositukset', 'Voisitko näyttää minulle huonekalusuosituket?', newArr, 'Tässä on satunnaisia suosituksia kujten lupasin:')
+    handleOptionClick('suositukset', 'Voisitko näyttää minulle kalustesuosituket?', newArr, 'Tässä on satunnaisia suosituksia kujten lupasin:')
   }
 
   const getTextRecommendations = async () => {
@@ -282,7 +282,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
         // Select top 3 matches
         const top3Matches = sortedObjects.slice(0, 3).map((item : any) => item.object);
         setRecommendations(top3Matches);
-        handleOptionClick('suositukset', 'Voisitko näyttää minulle huonekalusuositukset?', top3Matches, botAnswr);
+        handleOptionClick('suositukset', 'Voisitko näyttää minulle kalustesuositukset?', top3Matches, botAnswr);
         setLoading(false);
     } catch (error) {
       console.log(error);
@@ -300,13 +300,13 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
     let recommendationArray : CompareObject[] = [];
     let nextPageNumber : number;
     switch (option) {
-        case '1. Etsi huonekaluja käyttämällä kuvia tilasta':
-            botResponseText = 'Tottakai! Minkä tyyppisiä huonekaluja etsitään?';
+        case '1. Etsi kalusteita käyttämällä kuvia tilasta':
+            botResponseText = 'Tottakai! Minkä tyyppisiä kalusteita etsitään?';
             let newCategories : string[] = furnitureCategories.withNumbers;
             options = newCategories;
             nextPageNumber = phaseNumber + 1;
             break;
-        case '2. Etsi huonekaluja täyttämällä koko tyylikysely':
+        case '2. Etsi kalusteita täyttämällä koko tyylikysely':
             botResponseText = 'Hienoa, aloitetaan! Voitko kuvailla omin sanoin millaista tilaa suunnittelet? Voit täyttää tekstikentän ehdotuksilla, kirjoittaa itse tai molemmat!';
             setTypingPhase(1);
             setTypingMode(true);
@@ -319,13 +319,13 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Tyyli kuvailtu':
-            botResponseText = 'Hienoa, kirjasin tiedot ylös. Minkä tyyppisiä huonekaluja etsit? Tässä muutamia vaihtoehtoja:';
+            botResponseText = 'Hienoa, kirjasin tiedot ylös. Minkä tyyppisiä kalusteita etsit? Tässä muutamia vaihtoehtoja:';
             let newCategoriesNoNumbers : string[] = furnitureCategories.withoutNumbers;
             options = newCategoriesNoNumbers; 
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Kategoria kirjattu ylös':
-            botResponseText = 'Määrä kirjattu ylös. Haluatko antaa minulle kuvan/kuvia suunnittelemastasi tilasta, jotta voin löytää siihen sopivat huonekalut?';
+            botResponseText = 'Määrä kirjattu ylös. Haluatko antaa minulle kuvan/kuvia suunnittelemastasi tilasta, jotta voin löytää siihen sopivat kalusteet?';
             options = ['Lisää kuvia', 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla'];
             nextPageNumber = phaseNumber + 1;
             break;
@@ -342,7 +342,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Etsitään satunnaisia suosituksia':
-            botResponseText = 'Hetkinen, etsin 3 satunnaista huonekaluehdotusta...';
+            botResponseText = 'Hetkinen, etsin 3 satunnaista kalusteehdotusta...';
             let randomAiJson = { "nonValidImage": false, "explanation": "Etsin lisää täysin satunnaisia suosituksia.", "colorThemes": { "dark": 0, "light": 0, "colorful": 0, "earthy": 0, "blackAndWhite": 0, "pastel": 0, "neutrals": 0, "jewelTones": 0, "metallics": 0, "oceanic": 0 }, "designStyles": { "industrial": 0, "scandinavian": 0, "minimalist": 0, "modern": 0, "farmhouse": 0, "artDeco": 0, "bohemian": 0, "traditional": 0, "rustic": 0, "glam": 0, "contemporary": 0, "transitional": 0 } };
             randomAiJson = randomizeJsonValues(randomAiJson);
             setAiJson(randomAiJson);
@@ -351,7 +351,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             break;
         case 'Ei tuotteita':
             setLoading(false);
-            botResponseText = "Näyttää siltä, ettei valitsemastasi kategoriasta löytynyt tällä hetkellä tarpeeksi käytettyjä tuotteita. Ne saattavat olla loppuunmyytyjä, ja saatat löytää niitä kokeilemalla myöhemmin uudestaan. Haluaisitko etsiä saman kategorian huonekaluja uusista tuotteista?";
+            botResponseText = "Näyttää siltä, ettei valitsemastasi kategoriasta löytynyt tällä hetkellä tarpeeksi käytettyjä tuotteita. Ne saattavat olla loppuunmyytyjä, ja saatat löytää niitä kokeilemalla myöhemmin uudestaan. Haluaisitko etsiä saman kategorian kalusteita uusista tuotteista?";
             options = ['Aloita alusta', 'Etsi uusista tuotteista']
             nextPageNumber = phaseNumber + 1;
             break;
@@ -370,28 +370,28 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
               botResponseText = 'En ymmärtänyt valintaasi.'
             }
             
-            options = ['Etsitään uusista tuotteista', 'Etsitään lisää huonekaluja eri kategoriasta', 'Aloita alusta'];
+            options = ['Etsitään uusista tuotteista', 'Etsitään lisää kalusteita eri kategoriasta', 'Aloita alusta'];
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla':
-            botResponseText = 'Selvä, odota hetki, valitsen sinulle kolme huonekaluehdotusta pelkän tekstin avulla...';
+            botResponseText = 'Selvä, odota hetki, valitsen sinulle kolme kalusteehdotusta pelkän tekstin avulla...';
             //getRandomRecommendations();
             getTextRecommendations();
             nextPageNumber = phaseNumber + 1;
             break;
-        case 'Etsitään lisää huonekaluja eri kategoriasta':
+        case 'Etsitään lisää kalusteita eri kategoriasta':
             botResponseText = 'Selvä, mitä kategoriaa etsitään?';
             let newCategoriesNoNumbers2 : string[] = furnitureCategories.withoutNumbers;
             options = newCategoriesNoNumbers2; 
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Aloita alusta':
-            botResponseText = 'Tervetuloa! Olen Redecofinder AI-avustajasi, ja autan sinua suunnittelemaan tilaasi sopivilla käytetyillä huonekaluilla. Voit jatkaa valitsemalla 1: saat suosituksia nopeasti ja helposti käyttämällä kuvia suunnittelemastasi tilasta. 2: täytä koko tyylikysely, jossa löydämme sinulle sopivat huonekalut yhdessä.';
-            options = ['1. Etsi huonekaluja käyttämällä kuvia tilasta', '2. Etsi huonekaluja täyttämällä koko tyylikysely'];
+            botResponseText = 'Tervetuloa! Olen Redecofinder AI-avustajasi, ja autan sinua suunnittelemaan tilaasi sopivilla käytetyillä kalusteilla. Voit jatkaa valitsemalla 1: saat suosituksia nopeasti ja helposti käyttämällä kuvia suunnittelemastasi tilasta. 2: täytä koko tyylikysely, jossa löydämme sinulle sopivat kalusteet yhdessä.';
+            options = ['1. Etsi kalusteita käyttämällä kuvia tilasta', '2. Etsi kalusteita täyttämällä koko tyylikysely'];
             nextPageNumber = phaseNumber + 1;
             break;
         default:
-            //kun käyttäjä valitsee huonekalukategorian
+            //kun käyttäjä valitsee kalustekategorian
             const categories = furnitureCategories.withoutNumbers;
             const categories2 = furnitureCategories.withNumbers;
 
@@ -420,7 +420,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
                 nextPageNumber = phaseNumber + 1;
               }
               else{
-                botResponseText = `Selvä, etsitään kategoriasta: ${option.toLowerCase()} toiveittesi mukaan. Etsimmmekö vähintään tiettyä määrää huonekaluja?`;
+                botResponseText = `Selvä, etsitään kategoriasta: ${option.toLowerCase()} toiveittesi mukaan. Etsimmmekö vähintään tiettyä määrää kalusteita?`;
                 setShowNumberPicker(true);
                 nextPageNumber = phaseNumber + 1;
               }
@@ -440,7 +440,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
               //Replace spaces with underscores
               let identifier = normalized.replace(/\s+/g, '_');
               setFurnitureClass(identifier);
-              botResponseText = `Selvä, etsitään kategoriasta: ${option.toLowerCase()} toiveittesi mukaan. Haluatko viimeiseksi lisätä kuvia tilastasi vai saada suoraan täysin satunnaisia huonekalusuosituksia?`;
+              botResponseText = `Selvä, etsitään kategoriasta: ${option.toLowerCase()} toiveittesi mukaan. Haluatko viimeiseksi lisätä kuvia tilastasi vai saada suoraan täysin satunnaisia kalustesuosituksia?`;
               options = ['Lisää kuva/kuvia tilasta', 'Etsitään satunnaisia suosituksia'];
               nextPageNumber = phaseNumber + 1;
             }
