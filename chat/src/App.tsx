@@ -59,6 +59,7 @@ export interface ChatMessage {
     quantityNumber: number;
     showNumberPicker: boolean;
     fetchProductsAgain: boolean;
+    feedbackMode: boolean;
   }
 
   export interface StateHistory {
@@ -96,7 +97,8 @@ const App0: React.FC = () => {
             aiJson: null,
             quantityNumber: 0,
             showNumberPicker: false,
-            fetchProductsAgain: false
+            fetchProductsAgain: false,
+            feedbackMode: false,
           }
     );
     const [stateHistory, setStateHistory] = useState<StateHistory[]>([{ phase: 0, states: appStates}]);
@@ -155,6 +157,7 @@ const App0: React.FC = () => {
     const setShowNumberPicker = (value: boolean) => setAppStates(prevState => ({ ...prevState, showNumberPicker: value }));
     const setQuantityNumber = (value: number) => setAppStates(prevState => ({ ...prevState, quantityNumber: value }));
     const setFetchProductsAgain = (value: boolean) => setAppStates(prevState => ({ ...prevState, fetchProductsAgain: value }));
+    const setFeedbackMode = (value: boolean) => setAppStates(prevState => ({ ...prevState, feedbackMode: value }));
 
     const navigateHandler = (sourcePhase : number) => {
 
@@ -187,11 +190,11 @@ const App0: React.FC = () => {
 
   return (
       <Routes>
-        <Route path='/' element={<ChatApp appStates={appStates} navigateHandler={navigateHandler} phaseNumber={0} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} setSpaceImageMode={setSpaceImageMode} setAiJson={setAiJson} setShowNumberPicker={setShowNumberPicker} setQuantityNumber={setQuantityNumber} setFetchProductsAgain={setFetchProductsAgain}/>} />
+        <Route path='/' element={<ChatApp appStates={appStates} navigateHandler={navigateHandler} phaseNumber={0} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} setSpaceImageMode={setSpaceImageMode} setAiJson={setAiJson} setShowNumberPicker={setShowNumberPicker} setQuantityNumber={setQuantityNumber} setFetchProductsAgain={setFetchProductsAgain} setFeedbackMode={setFeedbackMode}/>} />
 
         {
             phaseNumbers.map((number, index)=> (
-                <Route key={index} path={`/${number}`} element={<ChatApp appStates={appStates} navigateHandler={navigateHandler} phaseNumber={number} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} setSpaceImageMode={setSpaceImageMode} setAiJson={setAiJson} setShowNumberPicker={setShowNumberPicker} setQuantityNumber={setQuantityNumber} setFetchProductsAgain={setFetchProductsAgain}/>} />
+                <Route key={index} path={`/${number}`} element={<ChatApp appStates={appStates} navigateHandler={navigateHandler} phaseNumber={number} setModalOpen={setModalOpen} setTypingMode={setTypingMode} setLoading={setLoading} setMessages={setMessages} setFurnitureClass={setFurnitureClass} setImagesSent={setImagesSent} setTypingPhase={setTypingPhase} setChatHistory={setChatHistory} setChatHistoryDirect={setChatHistoryDirect} setErrorMessage={setErrorMessage} setRecommendations={setRecommendations} setRefImage64={setRefImage64} setRefImage642={setRefImage642} setRefImage643={setRefImage643} setSelectedProduct={setSelectedProduct} setSpaceImageMode={setSpaceImageMode} setAiJson={setAiJson} setShowNumberPicker={setShowNumberPicker} setQuantityNumber={setQuantityNumber} setFetchProductsAgain={setFetchProductsAgain} setFeedbackMode={setFeedbackMode}/>} />
             ))
         }
 

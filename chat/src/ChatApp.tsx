@@ -3,7 +3,7 @@ import InputField from './components/InputField';
 import './App.css';
 import ImageCapture from './components/ImageCapture';
 import { fetchInterPretationWithOnlyText, fetchInterPretationWithReference, fetchInterPretationWithSpaceImg } from './components/Aihandler';
-import { fetchFurnitureData, fetchFurnitureDataWithQuantity } from './components/ApiFetches';
+import { fetchFurnitureData, fetchFurnitureDataWithQuantity, sendFeedbackToServer } from './components/ApiFetches';
 import clientPublic from './assets/clientPublic.json';
 import furnitureCategories from './assets/furnitureCategories.json';
 import ProductCard from './components/Products';
@@ -14,6 +14,7 @@ import { AppStates } from './App';
 import { useNavigate } from 'react-router';
 import { quantum } from 'ldrs';
 import type {} from 'ldrs';
+import Feedback from './components/Feedback';
 quantum.register();
 
 export interface ChatMessage {
@@ -75,11 +76,14 @@ interface ChildComponentProps {
   setShowNumberPicker: (value: boolean) => void;
   setQuantityNumber: (value : number) => void;
   setFetchProductsAgain: (value: boolean) => void;
+  setFeedbackMode: (value: boolean) => void;
 }
 
 const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phaseNumber, setModalOpen, setTypingMode, setLoading, setMessages, setFurnitureClass,
   setImagesSent, setTypingPhase, setChatHistoryDirect, setErrorMessage, setRecommendations,
-  setRefImage64, setRefImage642, setRefImage643, setSelectedProduct, setSpaceImageMode, setAiJson, setShowNumberPicker, setQuantityNumber, setFetchProductsAgain}) => {
+  setRefImage64, setRefImage642, setRefImage643, setSelectedProduct, setSpaceImageMode, setAiJson, setShowNumberPicker, setQuantityNumber, setFetchProductsAgain,
+  setFeedbackMode
+}) => {
 
   const navigate = useNavigate();
 
@@ -371,8 +375,18 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
               botResponseText = 'En ymmärtänyt valintaasi.'
             }
             
-            options = ['Etsitään uusista tuotteista', 'Etsitään lisää kalusteita eri kategoriasta', 'Aloita alusta'];
+            options = ['Etsitään uusista tuotteista', 'Etsitään lisää kalusteita eri kategoriasta', 'Aloita alusta', 'Anna palautetta'];
             nextPageNumber = phaseNumber + 1;
+            break;
+        case 'Anna palautetta':
+            botResponseText = 'Olivatko tekoälykalustesuositukset tarpeisiisi sopivia?';
+            setFeedbackMode(true);
+            nextPageNumber = phaseNumber + 1;
+            break;
+        case 'Palaute annettu':
+            botResponseText = 'Kiitos palautteesta! Toivottavasti kanssani asioiminen oli sujuvaa.'
+            nextPageNumber = phaseNumber + 1;
+            options = ['Aloita alusta'];
             break;
         case 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla':
             botResponseText = 'Selvä, odota hetki, valitsen sinulle kolme kalusteehdotusta pelkän tekstin avulla...';
@@ -509,8 +523,22 @@ const openProductInStore = (product: CompareObject) => {
     window.open(url, "_blank"); // Opens the URL in a new tab
   } else {
     console.error("Invalid URL:", url);
+    alert('Tuote on poistunut tai linkki on epäkelpo');
   }
 };
+
+const receiveFeedBack = async (success: boolean, feedback?: string) => {
+  setLoading(true);
+  if(feedback){
+    await sendFeedbackToServer(success, feedback);
+  }
+  else{
+    await sendFeedbackToServer(success);
+  }
+  setLoading(false);
+  setFeedbackMode(false);
+  handleOptionClick('Palaute annettu');
+}
 
 //func for receiving input from user typing
 const receiveInput = (input : string) => {
@@ -666,6 +694,9 @@ const receiveInput = (input : string) => {
       )}
       {appStates.showNumberPicker && (
         <NumberPicker receiveInput={receiveQuantityNumber}/>
+      )}
+      {appStates.feedbackMode && (
+        <Feedback receiveInput={receiveFeedBack}/>
       )}
       
       </div>
