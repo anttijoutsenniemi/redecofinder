@@ -74,11 +74,12 @@ interface ChildComponentProps {
   setAiJson: (value: any) => void;
   setShowNumberPicker: (value: boolean) => void;
   setQuantityNumber: (value : number) => void;
+  setFetchProductsAgain: (value: boolean) => void;
 }
 
 const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phaseNumber, setModalOpen, setTypingMode, setLoading, setMessages, setFurnitureClass,
   setImagesSent, setTypingPhase, setChatHistoryDirect, setErrorMessage, setRecommendations,
-  setRefImage64, setRefImage642, setRefImage643, setSelectedProduct, setSpaceImageMode, setAiJson, setShowNumberPicker, setQuantityNumber}) => {
+  setRefImage64, setRefImage642, setRefImage643, setSelectedProduct, setSpaceImageMode, setAiJson, setShowNumberPicker, setQuantityNumber, setFetchProductsAgain}) => {
 
   const navigate = useNavigate();
 
@@ -381,6 +382,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             break;
         case 'Etsitään lisää kalusteita eri kategoriasta':
             botResponseText = 'Selvä, mitä kategoriaa etsitään?';
+            setFetchProductsAgain(true);
             let newCategoriesNoNumbers2 : string[] = furnitureCategories.withoutNumbers;
             options = newCategoriesNoNumbers2; 
             nextPageNumber = phaseNumber + 1;
@@ -415,15 +417,15 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
               let identifier = normalized.replace(/\s+/g, '_');
 
               setFurnitureClass(identifier);
-              if(appStates.aiJson){
-                uploadImage(identifier);
-                nextPageNumber = phaseNumber + 1;
-              }
-              else{
+              // if(appStates.aiJson){ //commented 19.9 because amount will have to be asked again
+              //   uploadImage(identifier);
+              //   nextPageNumber = phaseNumber + 1;
+              // }
+              // else{
                 botResponseText = `Selvä, etsitään kategoriasta: ${option.toLowerCase()} toiveittesi mukaan. Etsimmmekö vähintään tiettyä määrää kalusteita?`;
                 setShowNumberPicker(true);
                 nextPageNumber = phaseNumber + 1;
-              }
+              // }
             }
             else if(categories2.includes(option)){
               let normalized = option.toLowerCase();
@@ -489,11 +491,26 @@ const receiveQuantityNumber = (quantityNumber : number) => {
   // }
   userResponse = quantityNumber.toString();
   if(quantityNumber === 51){
-    userResponse = "51+";
+    userResponse = "50+";
+  }
+  if(appStates.fetchProductsAgain){ //we go straight to fetching products if this the second+ time user is searching products
+    uploadImage(appStates.furnitureClass);
+  }
+  else{ //this should tirgger if its first time user searches for products
+    handleOptionClick('Kategoria kirjattu ylös', userResponse);
   }
   
-  handleOptionClick('Kategoria kirjattu ylös', userResponse);
 }
+
+const openProductInStore = (product: CompareObject) => {
+  const url = product.productUrl;
+
+  if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
+    window.open(url, "_blank"); // Opens the URL in a new tab
+  } else {
+    console.error("Invalid URL:", url);
+  }
+};
 
 //func for receiving input from user typing
 const receiveInput = (input : string) => {
@@ -548,14 +565,14 @@ const receiveInput = (input : string) => {
       <div key={message.id} className={`chat-message ${message.type}`}>
         {message.type === 'chatbot' && (
           <div className="chat-content">
-            <img src="/icon.png" alt="Chatbot" className="chatbot-profile" />
+            {/* <img src="/icon.png" alt="Chatbot" className="chatbot-profile" /> removed 19.9.24*/}
             <div>
               <div className="chat-bubble" ref={appStates.messageEnd}>{message.text}</div>
 
               { //paste recommendation products
                 message.recommendationArray && message.recommendationArray.length > 0 && (
                   <>
-                    <ProductCard products={message.recommendationArray} onCardClick={openModal}/>
+                    <ProductCard products={message.recommendationArray} onCardClick={openProductInStore} />
                     <Modal title='Select from options below' product={appStates.selectedProduct} isOpen={appStates.modalOpen} onClose={closeModal}/>
                   </>
                 )
