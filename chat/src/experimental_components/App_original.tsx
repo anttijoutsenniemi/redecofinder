@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import InputField from './components/InputField';
+import InputField from '../components/InputField';
 import './App.css';
-import ImageCapture from './components/ImageCapture';
-import { fetchInterPretationWithReference } from './components/Aihandler';
-import { fetchFurnitureData } from './components/ApiFetches';
-import clientPublic from './assets/clientPublic.json';
-import ProductCard from './components/Products';
-import Modal from './components/Modal';
+import ImageCapture from '../components/ImageCapture';
+import { fetchInterPretationWithReference } from '../components/Aihandler';
+import { fetchFurnitureData } from '../components/ApiFetches';
+import clientPublic from '../assets/clientPublic.json';
+import ProductCard from '../components/Products';
+import Modal from '../components/Modal';
 
 export interface ChatMessage {
   id: number;
@@ -372,7 +372,7 @@ const handleProductClick = (index: number, productUrl: string) => {
         <div><p style={{color: 'red'}}>{errorMessage}</p></div>
       )}
       {typingMode && (
-        <InputField receiveInput={receiveInput}/>
+        <InputField receiveInput={receiveInput} typingPhase={1}/>
       )}
       
       </div>

@@ -5,14 +5,6 @@ import { createTimestamp } from "./timestampFi";
 
 export const combineScrapingAndAi =  async (scrapingData : Product[], furnitureCategory : string) => {
     try {
-                   /* 
-            Here we start with categories: 
-            1. Chairs = työtuolit + neuvottelu-asiakastauolit
-            2. Sofas, armchairs and stools = sohvat, nojatuolit ja rahit
-            3. Storage furniture = säilytyskalusteet
-            4. Tables = sohva ja pikkupöydät + sähköpöydät + työpöydät + neuvottelupöydät
-            5. Conference sets = neuvotteluryhmät
-            */
         const databaseModule = furnitureModel(furnitureCategory);
 
         //first we check which products are deleted from website (exist in old dbdata but does not exist in new scrapingdata, we turn those into objects with deleted flag true)
@@ -21,10 +13,10 @@ export const combineScrapingAndAi =  async (scrapingData : Product[], furnitureC
 
         // Iterate over each product asynchronously and send images for ai process
         for (const product of scrapingData) {
-            
             let uniqueCheck = await databaseModule?.fetchOneWithStyles(product.title);
 
             if(!uniqueCheck){
+                
                 //send pic to vision
                 const processedResult = await fetchStyleForSingleFurniture(product.picUrl);
 

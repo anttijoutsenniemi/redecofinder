@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 
 interface ImageCaptureProps {
-    updateImage: (img64 : string) => void
+    updateImage: (img64 : string) => void;
 }
 
 const ImageCapture : React.FC<ImageCaptureProps> = (props) => {
@@ -35,17 +35,17 @@ const ImageCapture : React.FC<ImageCaptureProps> = (props) => {
             />
             <div>
                 <button
-                    style={(useCamera) ? { backgroundColor: '#2196f3'} : { backgroundColor: 'grey' }}  
+                    style={(useCamera) ? { backgroundColor: 'rgb(5, 88, 84)'} : { backgroundColor: 'grey' }}  
                     onClick={() => setUseCamera(true)} 
-                    className="camera-button">Use Camera
+                    className="camera-button">Käytä kameraa
                 </button>
                 <button 
-                    style={(useCamera) ? { backgroundColor: 'grey' } : { backgroundColor: '#2196f3'}}
+                    style={(useCamera) ? { backgroundColor: 'grey' } : { backgroundColor: 'rgb(5, 88, 84)'}}
                     onClick={() => setUseCamera(false)} 
-                    className="gallery-button">Use Gallery
+                    className="gallery-button">Etsi galleriasta
                 </button>
             </div>
-            <button onClick={handleClick} className="upload-button">Take/Upload Photo</button>
+            <button onClick={handleClick} className="upload-button">Valitse/nappaa kuva</button>
         </div>
     );
 };

@@ -42,7 +42,8 @@ export interface ScrapingData {
 
 const furnitureModel = (furnitureCategory : string) => {
     const url : string = process.env.MONGO_ATLAS_URI ?? "";
-    const client = new MongoClient(url);
+    // const client = new MongoClient(url);
+    const client = new MongoClient(url, { maxPoolSize: 5, maxIdleTimeMS: 30000 }); //reduce the amount of connections
     const dbName = 'redecofinderData';
 
     const collection = `${furnitureCategory}Collection`;
@@ -77,6 +78,32 @@ const furnitureModel = (furnitureCategory : string) => {
             throw error;
         } 
     }
+
+    //fetch data with minimum quantity available
+    const fetchDataWithQuantity = async (minQuantity : number) => {
+        try {
+            const result = await furnitureCollection.find({
+                styleJson: { $exists: true },
+                deleted: false
+            }).toArray();
+    
+            // Extract and filter based on the quantity
+            const filteredResult = result.filter(item => {
+                // Extract the number from the quantity string
+                const quantityMatch = item.quantity.match(/Varastossa (\d+) kpl/);
+                const quantityNumber = quantityMatch ? parseInt(quantityMatch[1], 10) : 0;
+    
+                // Return true if the quantity is greater than or equal to minQuantity
+                return quantityNumber >= minQuantity;
+            });
+    
+            return filteredResult;
+        } catch (error) {
+            console.error('Connection to test db failed with status code 99');
+            throw error;
+        }
+    };
+    
 
     //add one datacell to document
     const addData = async (scrapingData : ScrapingData) => {
@@ -120,7 +147,8 @@ const furnitureModel = (furnitureCategory : string) => {
         fetchData,
         addData,
         checkDeletedAndUpdate,
-        updateDeleted
+        updateDeleted,
+        fetchDataWithQuantity
         // Add more functions to export here
     };
 }
