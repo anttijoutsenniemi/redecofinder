@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import InputField from './components/InputField';
 import './App.css';
 import ImageCapture from './components/ImageCapture';
-import { fetchInterPretationWithOnlyText, fetchInterPretationWithReference, fetchInterPretationWithSpaceImg } from './components/Aihandler';
-import { fetchFurnitureData, fetchFurnitureDataWithQuantity, sendFeedbackToServer } from './components/ApiFetches';
+import { fetchInterPretationForWebSearch, fetchInterPretationWithOnlyText, fetchInterPretationWithReference, fetchInterPretationWithSpaceImg } from './components/Aihandler';
+import { fetchFurnitureData, fetchFurnitureDataWithQuantity, sendFeedbackToServer, sendSerperQuery } from './components/ApiFetches';
 import clientPublic from './assets/clientPublic.json';
 import furnitureCategories from './assets/furnitureCategories.json';
 import ProductCard from './components/Products';
@@ -77,12 +77,13 @@ interface ChildComponentProps {
   setQuantityNumber: (value : number) => void;
   setFetchProductsAgain: (value: boolean) => void;
   setFeedbackMode: (value: boolean) => void;
+  setWebSearchMode: (value: boolean) => void;
 }
 
 const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, phaseNumber, setModalOpen, setTypingMode, setLoading, setMessages, setFurnitureClass,
   setImagesSent, setTypingPhase, setChatHistoryDirect, setErrorMessage, setRecommendations,
   setRefImage64, setRefImage642, setRefImage643, setSelectedProduct, setSpaceImageMode, setAiJson, setShowNumberPicker, setQuantityNumber, setFetchProductsAgain,
-  setFeedbackMode
+  setFeedbackMode, setWebSearchMode
 }) => {
 
   const navigate = useNavigate();
@@ -133,10 +134,41 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
     return Math.sqrt(values1.reduce((sum, value, index) => sum + Math.pow(value - values2[index], 2), 0));
   };
 
+  const initiateWebSearch = async () => {
+    try {
+      setWebSearchMode(false);
+      let refImageArray : string[] = [];
+      if (appStates.refImage64) {
+        refImageArray.push(appStates.refImage64);
+      }
+      if (appStates.refImage642) {
+        refImageArray.push(appStates.refImage642);
+      }
+      if (appStates.refImage643) {
+        refImageArray.push(appStates.refImage643);
+      }
+      let queryObject = await fetchInterPretationForWebSearch(refImageArray, appStates.furnitureClass);
+      if(typeof queryObject === 'string'){
+        queryObject = JSON.parse(queryObject);
+      }
+      let recommendations = await sendSerperQuery(queryObject.webSearchQuery);
+      console.log(recommendations);
+      //this needs to also be done for random products function
+    } catch (error) {
+      console.log(error);
+      alert('Error occured searching from web');
+    }
+  }
+
   const uploadImage = async (furnitureClass? : string, fetchFromNew? : boolean) => {
     try {
       setLoading(true);
       setImagesSent(true);
+
+      if(appStates.webSearchMode){
+        initiateWebSearch();
+        return;
+      }
 
       let aiJson : any;
       let arrayOfObjects : any;
@@ -312,6 +344,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             nextPageNumber = phaseNumber + 1;
             break;
         case '2. Etsi kalusteita täyttämällä koko tyylikysely':
+            setWebSearchMode(false);
             botResponseText = 'Hienoa, aloitetaan! Voitko kuvailla omin sanoin millaista tilaa suunnittelet? Voit täyttää tekstikentän ehdotuksilla, kirjoittaa itse tai molemmat!';
             setTypingPhase(1);
             setTypingMode(true);
@@ -387,6 +420,11 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             botResponseText = 'Kiitos palautteesta! Toivottavasti kanssani asioiminen oli sujuvaa.'
             nextPageNumber = phaseNumber + 1;
             options = ['Aloita alusta'];
+            break;
+        case 'Etsi kalusteita verkosta':
+            setWebSearchMode(true);
+            nextPageNumber = phaseNumber;
+            handleOptionClick('1. Etsi kalusteita käyttämällä kuvia tilasta', 'Etsi kalusteita verkosta');
             break;
         case 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla':
             botResponseText = 'Selvä, odota hetki, valitsen sinulle kolme kalusteehdotusta pelkän tekstin avulla...';

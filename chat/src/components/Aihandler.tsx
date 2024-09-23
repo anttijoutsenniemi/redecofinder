@@ -41,3 +41,17 @@ export const fetchInterPretationWithOnlyText = async (userFilledData : string) =
       console.error('There was an error!', error);
     }
 }
+
+export const fetchInterPretationForWebSearch = async (refPic64 : string[], category: string) => {
+  try {
+      const response = await axios.post('/airoute/webSearch', { refPic64: refPic64, category: category }, {
+        auth: {
+            username: process.env.REACT_APP_TESTER_USERNAME!,
+            password: process.env.REACT_APP_TESTER_PASSWORD!
+        }
+    });
+      return response.data;
+    } catch (error) {
+      console.error('There was an error!', error);
+    }
+}

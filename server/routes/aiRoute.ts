@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { fetchInterPretationWithOnlyText, fetchInterPretationWithReference, fetchInterPretationWithSpaceImg } from '../functions/visionHandler';
+import { fetchInterPretationForWebSearch, fetchInterPretationWithOnlyText, fetchInterPretationWithReference, fetchInterPretationWithSpaceImg } from '../functions/visionHandler';
 
 const aiRoute : express.Router = express.Router();
 
@@ -74,6 +74,23 @@ aiRoute.post("/onlytext", async (req : express.Request, res : express.Response) 
     let userFilledData : string = req.body.userFilledData;
       if(validateAndProcessRequest(req, res, true/*check texts*/, false/*check imgs*/)){
           let aiJson = await fetchInterPretationWithOnlyText(userFilledData);
+          res.status(200).json(aiJson);
+      }
+      else {
+          res.status(404).json({ "error" : `invalid data format` });
+      }
+
+  } catch (e : any) {
+      res.status(404).json({ "error" : `error fetching: ${e}` });
+  }
+});
+
+aiRoute.post("/webSearch", async (req : express.Request, res : express.Response) : Promise<void> => { 
+  try {
+      let img64Array : string[] = req.body.refPic64;
+      let category : string = req.body.category;
+      if(validateAndProcessRequest(req, res, false/*checktext*/, true/*check imgs*/)){
+          let aiJson = await fetchInterPretationForWebSearch(img64Array, category);
           res.status(200).json(aiJson);
       }
       else {
