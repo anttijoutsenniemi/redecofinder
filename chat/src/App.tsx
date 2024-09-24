@@ -78,7 +78,7 @@ const App0: React.FC = () => {
               { id: 1, 
                 type: 'chatbot',
                 text: 'Tervetuloa! Olen Redecofinder AI-avustajasi, ja autan sinua suunnittelemaan tilaasi sopivilla käytetyillä kalusteilla. Voit jatkaa valitsemalla 1: saat suosituksia nopeasti ja helposti käyttämällä kuvia suunnittelemastasi tilasta. 2: täytä koko tyylikysely, jossa löydämme sinulle sopivat huonekalut yhdessä.', 
-                options: ['1. Etsi kalusteita käyttämällä kuvia tilasta', '2. Etsi kalusteita täyttämällä koko tyylikysely'] },
+                options: ['1. Etsi kalusteita käyttämällä kuvia tilasta', '2. Etsi kalusteita täyttämällä koko tyylikysely', /*'3. Etsi kalusteita verkosta'*/] },
             ],
             furnitureClass: 'Chairs',
             messageEnd: messageEndRef,

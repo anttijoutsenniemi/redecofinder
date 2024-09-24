@@ -153,8 +153,20 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
       }
       let recommendations = await sendSerperQuery(queryObject.webSearchQuery);
       console.log(recommendations);
+
+      if(recommendations && queryObject){
+        let botAnswr : string = queryObject.explanation;
+        let top6matches = recommendations.slice(0, 5);
+        handleOptionClick('suositukset', 'Voisitko näyttää minulle kalustesuositukset?', top6matches, botAnswr);
+      }
+      else {
+        setLoading(false);
+        alert('Error occured fetching products from web');
+      }
+      
       //this needs to also be done for random products function
     } catch (error) {
+      setLoading(false);
       console.log(error);
       alert('Error occured searching from web');
     }
@@ -421,10 +433,12 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             nextPageNumber = phaseNumber + 1;
             options = ['Aloita alusta'];
             break;
-        case 'Etsi kalusteita verkosta':
+        case '3. Etsi kalusteita verkosta':
             setWebSearchMode(true);
-            nextPageNumber = phaseNumber;
-            handleOptionClick('1. Etsi kalusteita käyttämällä kuvia tilasta', 'Etsi kalusteita verkosta');
+            nextPageNumber = phaseNumber + 1;
+            setTimeout(() => { //this wont work without timeout for some reason
+              handleOptionClick('1. Etsi kalusteita käyttämällä kuvia tilasta', 'Etsi kalusteita verkosta');
+            }, 50);
             break;
         case 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla':
             botResponseText = 'Selvä, odota hetki, valitsen sinulle kolme kalusteehdotusta pelkän tekstin avulla...';
@@ -495,7 +509,13 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
               let identifier = normalized.replace(/\s+/g, '_');
               setFurnitureClass(identifier);
               botResponseText = `Selvä, etsitään kategoriasta: ${option.toLowerCase()} toiveittesi mukaan. Haluatko viimeiseksi lisätä kuvia tilastasi vai saada suoraan täysin satunnaisia kalustesuosituksia?`;
-              options = ['Lisää kuva/kuvia tilasta', 'Etsitään satunnaisia suosituksia'];
+              if(appStates.webSearchMode){
+                options = ['Lisää kuva/kuvia tilasta'];
+
+              }
+              else{
+                options = ['Lisää kuva/kuvia tilasta', 'Etsitään satunnaisia suosituksia'];
+              }
               nextPageNumber = phaseNumber + 1;
             }
 

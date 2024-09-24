@@ -8,6 +8,7 @@ export async function searchSerperImages(query: string) {
       q: query,
       num: 5,
       gl: "fi", // Set country to Finland
+      location: "Finland",
       // On vielä location parametri, mutta en tiedä tekeekö tällä mitään koska gl,hl kohdat ovat jo finland. location: "Finland",
       hl: "fi", // Set language to Finnish
       // Tähän voi lisätä myös Data-Range asetuksen "tbs", jolla voi rajata hakutuloksia aikavälin mukaan PastDay, PastWeek, PastMonth, PastYear etc.
@@ -29,9 +30,9 @@ export async function searchSerperImagesFiltered(query: string) {
   if (response && response.images) {
     return response.images.map((image: any) => ({
       title: image.title,
-      link: image.link,
+      productUrl: image.link,
       domain: image.domain,
-      imageUrl: image.imageUrl,
+      picUrl: image.imageUrl,
     }));
   }
 
