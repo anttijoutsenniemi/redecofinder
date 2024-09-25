@@ -706,7 +706,7 @@ const receiveInput = (input : string) => {
                     : <div style={{marginTop: 10}}><ImageCapture updateImage={updateImage}/></div>
                   }
                   { (appStates.refImage64 && !appStates.imagesSent)
-                  ? <div style={{float: 'none'}}><button style={{marginTop: 20}} className='green-upload-button' onClick={() => uploadImage()}>Send image/images</button></div>
+                  ? <div style={{float: 'none'}}><button style={{marginTop: 20}} className='green-upload-button' onClick={() => uploadImage()}>Lähetä kuva/t käsittelyyn</button></div>
                   : null
                   }
                   <div ref={appStates.messageEnd}></div>
@@ -741,7 +741,7 @@ const receiveInput = (input : string) => {
       {appStates.loading && ( 
         <div className='loadingWrapper'>
           <l-quantum size={60} color={'#2196f3'} speed={3}></l-quantum>
-          <p>Hold on tight as I analyze your data and find best furniture for your style...</p>
+          <p>Hetkinen... analysoin antamiasi tietoja ja etsin sopivia kalusteita</p>
         </div>
       )}
       {appStates.errorMessage && (
