@@ -369,9 +369,9 @@ export const fetchInterPretationWithReference = async (userFilledData : string, 
       let contentArray : object[] = [
         {
             type: "text",
-            text: dedent`Im interior designing the space in the image/images. Im looking for furniture in the category: ${category}. 
+            text: dedent`Im interior designing the space in the image/images. Im looking for mainly used furniture in the category: ${category}. 
                   Your mission is to analyze what style & colorthemed furniture would fit the space and write the perfect web search query 
-                  in english that would help me find matching furniture for the space. 
+                  in finnish that would help me find matching furniture for the space. 
                   In explanation key write your reasoning in finnish on why certain style and color attributes would fit. 
                   If some images are not valid please only fill nonValidImage key as true. Fill this JSON and return
                   it only: ${fillableJson}`
