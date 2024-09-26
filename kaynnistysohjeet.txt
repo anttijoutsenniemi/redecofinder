@@ -1,0 +1,12 @@
+Chat sovellus kansiossa chat ja selain kansiossa server.
+
+Jotta saadaan uusin deployment koko sovelluksesta:
+
+1. Aukaisee chat kansion terminaaliin
+2. npm run build - komento buildaa sovelluksen chat/build kansioon
+3. Siirrä uusin buildi server/public_chat kansion tiedostojen paikalle
+4. Nyt uusin buildattu frontti toimii servun juuressa, sen voi käynnistää
+    lokaalissa avaamalla uuden terminaalin kansioon server ja ajamalla komennon
+    npm run dev
+5. Nyt myös buildaamalla uusimman kontin /server kansiossa olevan Dockerfilen
+    mukaan saadaan toimiva kontti
