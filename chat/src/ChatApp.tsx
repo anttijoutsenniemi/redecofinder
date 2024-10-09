@@ -156,7 +156,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
 
       if(recommendations && queryObject){
         let botAnswr : string = queryObject.explanation;
-        let top6matches = recommendations.slice(0, 5);
+        let top6matches = recommendations.slice(0, 6);
         handleOptionClick('suositukset', 'Voisitko näyttää minulle kalustesuositukset?', top6matches, botAnswr);
       }
       else {
@@ -261,8 +261,8 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
         // Sort by distance
         const sortedObjects = distances.sort((a : any, b : any) => a.distance - b.distance);
     
-        // Select top 3 matches
-        const top3Matches = sortedObjects.slice(0, 3).map((item : any) => item.object);
+        // Select top 12 matches
+        const top3Matches = sortedObjects.slice(0, 12).map((item : any) => item.object);
         setRecommendations(top3Matches);
         // handleOptionClick('recommendations', 'Show me the recommendations please', top3Matches, botAnswr);
         handleOptionClick('suositukset', 'Voisitko näyttää minulle kalustesuositukset?', top3Matches, botAnswr);
@@ -328,8 +328,8 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
         // Sort by distance
         const sortedObjects = distances.sort((a : any, b : any) => a.distance - b.distance);
     
-        // Select top 3 matches
-        const top3Matches = sortedObjects.slice(0, 3).map((item : any) => item.object);
+        // Select top 12 matches
+        const top3Matches = sortedObjects.slice(0, 12).map((item : any) => item.object);
         setRecommendations(top3Matches);
         handleOptionClick('suositukset', 'Voisitko näyttää minulle kalustesuositukset?', top3Matches, botAnswr);
         setLoading(false);

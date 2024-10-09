@@ -59,7 +59,7 @@ const InputField: React.FC<InputProps> = (props) => {
           onKeyDown={handleKeyPress}
         />
         <button onClick={handleSend} className="send-button">
-          Lähetä
+          Jatka
         </button>
       </div>
     </div>

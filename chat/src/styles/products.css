@@ -54,6 +54,18 @@
   margin: 8px 0 0;
 }
 
+.load-more-button {
+  align-self: center;
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: grey;
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
 /* Media query for 2 cards per row on mobile */
 @media (max-width: 768px) {
   .product-card {

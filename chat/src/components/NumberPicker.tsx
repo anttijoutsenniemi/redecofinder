@@ -45,7 +45,7 @@ const NumberPicker: React.FC<InputProps> = (props) => {
       </div>
       <div className='number-typing-box-container'>
         <button onClick={handleSend} className="number-send-button">
-          Lähetä
+          Jatka
         </button>
       </div>
     </div>
