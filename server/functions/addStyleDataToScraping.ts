@@ -9,9 +9,12 @@ export const combineScrapingAndAi =  async (scrapingData : Product[], furnitureC
 
         //first we check which products are deleted from website (exist in old dbdata but does not exist in new scrapingdata, we turn those into objects with deleted flag true)
         let newProductTitles = scrapingData.map(product => product.title);
-        console.log(newProductTitles);
+
         if(newProductTitles.length > 1){ //we check length so all products dont turn to deleted if array is empty
             databaseModule?.checkDeletedAndUpdate(newProductTitles);
+        }
+        else{
+            return;
         }
 
         // Iterate over each product asynchronously and send images for ai process
