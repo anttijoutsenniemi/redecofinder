@@ -3,7 +3,7 @@ import { scrapeWebsite } from './webScraping';
 import { combineScrapingAndAi } from './addStyleDataToScraping';
 import clientPublic from './../styleJson/clientPublic.json';
 
-const scrapeCategory = async (url : string, category : string) => {
+export const scrapeCategory = async (url : string, category : string) => {
     try {
         console.log('Starting ctaegory: ', category);
         const products = await scrapeWebsite(url);

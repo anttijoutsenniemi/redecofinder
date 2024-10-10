@@ -35,7 +35,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ products, onCardClick }) => {
 
       {/* Show the button only if there are more products to display */}
       {visibleCount < products.length && (
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <div className='load-more-container'>
         <button className="load-more-button" onClick={loadMoreProducts}>
           Näytä lisää suosituksia
         </button>

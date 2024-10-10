@@ -6,8 +6,8 @@ export const fetchFurnitureData = async (category : string) => {
         { category: category }, //req.body
         {
           auth: {
-              username: process.env.REACT_APP_HTTP_BASIC_AUTH_USERNAME!,
-              password: process.env.REACT_APP_HTTP_BASIC_AUTH_PASSWORD!
+              username: process.env.REACT_APP_TESTER_USERNAME!,
+              password: process.env.REACT_APP_TESTER_PASSWORD!
           }
       });
         return response.data;
@@ -22,8 +22,8 @@ export const fetchFurnitureDataWithQuantity = async (category : string, quantity
       { category: category, quantity: quantity }, //req.body
       {
         auth: {
-            username: process.env.REACT_APP_HTTP_BASIC_AUTH_USERNAME!,
-            password: process.env.REACT_APP_HTTP_BASIC_AUTH_PASSWORD!
+            username: process.env.REACT_APP_TESTER_USERNAME!,
+            password: process.env.REACT_APP_TESTER_PASSWORD!
         }
     });
       return response.data;
@@ -42,8 +42,8 @@ export const sendFeedbackToServer = async (success: boolean, feedback?: string) 
       reqBody, //req.body
       {
         auth: {
-            username: process.env.REACT_APP_HTTP_BASIC_AUTH_USERNAME!,
-            password: process.env.REACT_APP_HTTP_BASIC_AUTH_PASSWORD!
+            username: process.env.REACT_APP_TESTER_USERNAME!,
+            password: process.env.REACT_APP_TESTER_PASSWORD!
         }
     });
       return response.data;
@@ -58,8 +58,8 @@ export const sendSerperQuery = async (searchQuery: string) => {
       { searchQuery: searchQuery }, //req.body
       {
         auth: {
-            username: process.env.REACT_APP_HTTP_BASIC_AUTH_USERNAME!,
-            password: process.env.REACT_APP_HTTP_BASIC_AUTH_PASSWORD!
+            username: process.env.REACT_APP_TESTER_USERNAME!,
+            password: process.env.REACT_APP_TESTER_PASSWORD!
         }
     });
       return response.data;

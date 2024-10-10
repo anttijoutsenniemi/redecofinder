@@ -54,8 +54,14 @@
   margin: 8px 0 0;
 }
 
+.load-more-container {
+  display: 'flex';
+  justify-content: center;
+  align-items: center;
+}
+
 .load-more-button {
-  align-self: center;
+  /* align-self: center; */
   padding: 10px 20px;
   margin: 5px;
   background-color: grey;

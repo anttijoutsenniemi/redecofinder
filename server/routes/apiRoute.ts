@@ -3,7 +3,7 @@ import { scrapeWebsite } from '../functions/webScraping';
 import furnitureModel from '../dbModels/furnitureModel';
 import counterModel from '../dbModels/counterModel';
 import feedbackModel from '../dbModels/feedbackModel';
-import { scrapeAndMakeAiData, scrapeAndMakeAiDataNew } from '../functions/scheduledFunctions';
+import { scrapeAndMakeAiData, scrapeAndMakeAiDataNew, scrapeCategory } from '../functions/scheduledFunctions';
 import parameterLibrary from './../styleJson/parameterLibrary.json';
 import { searchSerperImages, searchSerperImagesFiltered } from '../functions/serperSearch';
 
@@ -55,7 +55,8 @@ apiRoute.get("/testScraping", async (req : express.Request, res : express.Respon
     try {
 
         // let automaticScraping = await scrapeAndMakeAiDataNew();
-        
+        let scraping = await scrapeCategory(`https://www.tavaratrading.com/kaytetyt/?category[]=29`, 'sohvat_nojatuolit_ja_rahit');
+        // let scraping2 = await scrapeCategory(`www.tavaratrading.com/kaytetyt/?category[]=196`, 'korkeat_tuolit')
         res.status(200).json({ "message" : "apiroute initialized"});
     } catch (e : any) {
         res.status(404).json({ "error" : `error fetching: ${e}` });

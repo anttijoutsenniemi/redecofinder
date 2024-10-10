@@ -297,6 +297,8 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
       else {
         arrayOfObjects = await fetchFurnitureData(appStates.furnitureClass);
       }
+      console.log(appStates.furnitureClass);
+      console.log(arrayOfObjects);
         //if db module returns empty array (no products in the category)
         if(arrayOfObjects.length === 0 || !arrayOfObjects[0]){
           handleOptionClick('Ei tuotteita');
@@ -402,7 +404,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
         case 'Ei tuotteita':
             setLoading(false);
             botResponseText = "Näyttää siltä, ettei valitsemastasi kategoriasta löytynyt tällä hetkellä tarpeeksi käytettyjä tuotteita. Ne saattavat olla loppuunmyytyjä, ja saatat löytää niitä kokeilemalla myöhemmin uudestaan. Haluaisitko etsiä saman kategorian kalusteita uusista tuotteista?";
-            options = ['Aloita alusta', 'Etsi uusista tuotteista']
+            options = ['Aloita alusta', 'Etsitään uusista tuotteista']
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Etsitään uusista tuotteista':

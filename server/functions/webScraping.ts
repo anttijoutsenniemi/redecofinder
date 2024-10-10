@@ -21,8 +21,9 @@ export async function scrapeWebsite(url: string): Promise<Product[]> {
         let currentPage = 1;
         let hasMorePages = true;
         const userAgent = 'Chrome/91.0.4472.124';
+        let duplicateFound = false; // flag to stop the outer loop
     
-        while(hasMorePages && currentPage < 50){ //setting limit at 50 so no infiloops
+        while(hasMorePages && currentPage < 50 && !duplicateFound){ //setting limit at 50 so no infiloops can happen
             let response;
             if(currentPage > 1){
                 response = await axios.get(`${url}?page=${currentPage}`, {
@@ -96,18 +97,23 @@ export async function scrapeWebsite(url: string): Promise<Product[]> {
                 if(quantity){
                     productInfoObject['quantity'] = quantity;
                 }
-    
-                products.push(productInfoObject);
-            });
-    
-            // Check if there is a "next page" link that contains the next page icon.
-            const hasNextPage = $('.page_numbers a:has(i.icon-seuraava-sivu-icon)').length > 0;
 
-            if (!hasNextPage) {
-                hasMorePages = false;  // This indicates that there are no more pages.
-            } else {
-                hasMorePages = true;   // Continue if there's a next page link.
-                currentPage++;
+                // Check if the product is already in the array to prevent duplicates
+                if (!products.some(product => product.productUrl === productInfoObject.productUrl)) {
+                    products.push(productInfoObject);
+                }
+                else{
+                    duplicateFound = true; // Set flag if duplicate found
+                    return false; // Break out of the `each` loop
+                }
+
+            });
+
+            // Check if there is a "next page" link that contains the next page icon.
+            if (!duplicateFound) {
+                const hasNextPage = $('.page_numbers a:has(i.icon-seuraava-sivu-icon)').length > 0;
+                hasMorePages = hasNextPage;
+                if (hasNextPage) currentPage++;
             }
             
         }
