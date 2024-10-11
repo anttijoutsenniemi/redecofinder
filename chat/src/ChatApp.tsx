@@ -12,9 +12,11 @@ import NumberPicker from './components/NumberPicker';
 import { randomizeJsonValues } from './functions/randomizeJson';
 import { AppStates } from './App';
 import { useNavigate } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import { quantum } from 'ldrs';
 import type {} from 'ldrs';
 import Feedback from './components/Feedback';
+import CustomButton from './components/BackButton';
 quantum.register();
 
 export interface ChatMessage {
@@ -85,7 +87,9 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
   setRefImage64, setRefImage642, setRefImage643, setSelectedProduct, setSpaceImageMode, setAiJson, setShowNumberPicker, setQuantityNumber, setFetchProductsAgain,
   setFeedbackMode, setWebSearchMode
 }) => {
+  const [currentPhase, setCurrentPhase] = useState<number>(0);
 
+  const location = useLocation();
   const navigate = useNavigate();
 
   const openModal = (product : CompareObject) => {
@@ -100,7 +104,19 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
 
   useEffect(() => {
     scrollToBottom();
-  }, [appStates.messages]); 
+  }, [appStates.messages]);
+
+  //this updates the currentphase so we can display go back arrow
+  useEffect(() => {
+    let urlPath = location.pathname;
+    let lastSegment = urlPath.substring(urlPath.lastIndexOf('/') + 1);
+    let number = Number(lastSegment);
+    setCurrentPhase(number);
+  }, [location]); 
+
+  const navigateBack = () => {
+    navigate(-1);
+  }
 
   //&_&
   const updateImage = (img64 : string) => {
@@ -757,6 +773,11 @@ const receiveInput = (input : string) => {
       )}
       {appStates.feedbackMode && (
         <Feedback receiveInput={receiveFeedBack}/>
+      )}
+      {currentPhase > 0 && (
+        <div ref={appStates.messageEnd}>
+        <CustomButton handleClick={navigateBack}/>
+        </div>
       )}
       
       </div>
