@@ -21,7 +21,7 @@ const CustomButton: React.FC<ButtonProps> = (props) => {
         backgroundColor: 'rgb(5, 88, 84)', // Customize button background color
         color: 'white',
         '&:hover': {
-          backgroundColor: '#1565c0',
+          backgroundColor: 'rgb(51, 51, 51)',
         },
       }}
     >
