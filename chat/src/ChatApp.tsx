@@ -438,10 +438,18 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
               botResponseText = 'En ymmärtänyt valintaasi.'
             }
             
-            options = ['Etsitään uusista tuotteista', 'Etsitään lisää kalusteita eri kategoriasta', 'Aloita alusta', 'Anna palautetta'];
+            options = ['Etsitään uusista tuotteista', 'Etsitään lisää kalusteita eri kategoriasta', 'Aloita alusta', 'Anna palautetta tekoälysovelluksesta', 'Ota yhteyttä myyjään'];
             nextPageNumber = phaseNumber + 1;
             break;
-        case 'Anna palautetta':
+        case 'Ota yhteyttä myyjään':
+            botResponseText = "Hetkinen...avaan piakkoin yhteydenottolomakkeen uuteen välilehteen.";
+            setTimeout(() => {
+              window.open('https://www.tavaratrading.com/info/57/yhteydenottolomake', '_blank', 'noopener,noreferrer');
+            }, 3000);
+            options = ['Aloita alusta', 'Anna palautetta tekoälysovelluksesta'];
+            nextPageNumber = phaseNumber + 1;
+            break;
+        case 'Anna palautetta tekoälysovelluksesta':
             botResponseText = 'Olivatko tekoälykalustesuositukset tarpeisiisi sopivia?';
             setFeedbackMode(true);
             nextPageNumber = phaseNumber + 1;
