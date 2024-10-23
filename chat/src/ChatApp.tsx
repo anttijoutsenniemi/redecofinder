@@ -444,7 +444,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
         case 'Ota yhteyttä myyjään':
             botResponseText = "Hetkinen...avaan piakkoin yhteydenottolomakkeen uuteen välilehteen.";
             setTimeout(() => {
-              window.open('https://www.tavaratrading.com/info/57/yhteydenottolomake', '_blank', 'noopener,noreferrer');
+              window.open(`${clientPublic.webStoreUrl}/info/57/yhteydenottolomake`, '_blank', 'noopener,noreferrer');
             }, 3000);
             options = ['Aloita alusta', 'Anna palautetta tekoälysovelluksesta'];
             nextPageNumber = phaseNumber + 1;
