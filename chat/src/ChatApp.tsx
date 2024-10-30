@@ -118,6 +118,12 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
     navigate(-1);
   }
 
+  const delayedScroll = () => {
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+  }
+
   //&_&
   const updateImage = (img64 : string) => {
     setImagesSent(false);
@@ -393,6 +399,7 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Kategoria kirjattu ylös':
+            //console.log(appStates.chatHistory);
             botResponseText = 'Määrä kirjattu ylös. Haluatko antaa minulle kuvan/kuvia suunnittelemastasi tilasta, jotta voin löytää siihen sopivat kalusteet?';
             options = ['Lisää kuvia', 'Ei kiitos, anna minulle suosituksia pelkän tekstin avulla'];
             nextPageNumber = phaseNumber + 1;
@@ -438,20 +445,26 @@ const ChatApp: React.FC<ChildComponentProps> = ({ appStates, navigateHandler, ph
               botResponseText = 'En ymmärtänyt valintaasi.'
             }
             
-            options = ['Etsitään uusista tuotteista', 'Etsitään lisää kalusteita eri kategoriasta', 'Aloita alusta', 'Anna palautetta tekoälysovelluksesta', 'Ota yhteyttä myyjään'];
+            options = ['Etsitään uusista tuotteista', 'Etsitään lisää kalusteita eri kategoriasta', 'Aloita alusta', 'Palautekysely', 'Ota yhteyttä myyjään'];
             nextPageNumber = phaseNumber + 1;
+            delayedScroll();
             break;
         case 'Ota yhteyttä myyjään':
             botResponseText = "Hetkinen...avaan piakkoin yhteydenottolomakkeen uuteen välilehteen.";
             setTimeout(() => {
               window.open(`${clientPublic.webStoreUrl}/info/57/yhteydenottolomake`, '_blank', 'noopener,noreferrer');
             }, 3000);
-            options = ['Aloita alusta', 'Anna palautetta tekoälysovelluksesta'];
+            options = ['Aloita alusta', 'Palautekysely'];
             nextPageNumber = phaseNumber + 1;
             break;
-        case 'Anna palautetta tekoälysovelluksesta':
-            botResponseText = 'Olivatko tekoälykalustesuositukset tarpeisiisi sopivia?';
-            setFeedbackMode(true);
+        case 'Palautekysely':
+            // botResponseText = 'Olivatko tekoälykalustesuositukset tarpeisiisi sopivia?';
+            // setFeedbackMode(true);
+            botResponseText = "Hetkinen...avaan piakkoin palautekyselyn uuteen välilehteen.";
+            setTimeout(() => {
+              window.open(`${clientPublic.surveyUrl}`, '_blank', 'noopener,noreferrer');
+            }, 3000);
+            options = ['Aloita alusta', 'Palautekysely'];
             nextPageNumber = phaseNumber + 1;
             break;
         case 'Palaute annettu':
@@ -629,18 +642,24 @@ const receiveInput = (input : string) => {
   if(input.length < 1 || !input){
     setErrorMessage("Im sorry but I do not understand empty messages");
   }
+
   else{
+    let newInput : string = input;
+    if(!input.endsWith('.')) {
+      // Add a dot if it doesn't end with one
+      newInput = input + '.';
+    }
     //typingPhase tells us to which part of the ai dialog this input is used for 1=describe the space, 2=describe style, 3=needs
     let historyArrayMessages : string[] = appStates.chatHistory;
     if(appStates.typingPhase === 1){
-      historyArrayMessages[0] = '1. User describing space: ' + input;
+      historyArrayMessages[0] = '1. User describing space: ' + newInput;
       setChatHistoryDirect(historyArrayMessages);
       // handleOptionClick('Space described', input);
       handleOptionClick('Tila kuvailtu', input);
       setErrorMessage('');
     }
     else if(appStates.typingPhase === 2){
-      historyArrayMessages[1] = '2. User describing style he/she is looking for: ' + input;
+      historyArrayMessages[1] = '2. User describing style he/she is looking for: ' + newInput;
       setChatHistoryDirect(historyArrayMessages);
       // handleOptionClick('Style explained', input);
       handleOptionClick('Tyyli kuvailtu', input);
@@ -679,7 +698,7 @@ const receiveInput = (input : string) => {
           <div className="chat-content">
             {/* <img src="/icon.png" alt="Chatbot" className="chatbot-profile" /> removed 19.9.24*/}
             <div>
-              <div className="chat-bubble" ref={appStates.messageEnd}>{message.text}</div>
+              <div className="chat-bubble">{message.text}</div>
 
               { //paste recommendation products
                 message.recommendationArray && message.recommendationArray.length > 0 && (
@@ -735,7 +754,7 @@ const receiveInput = (input : string) => {
                   ? <div style={{float: 'none'}}><button style={{marginTop: 20}} className='green-upload-button' onClick={() => uploadImage()}>Lähetä kuva/t käsittelyyn</button></div>
                   : null
                   }
-                  <div ref={appStates.messageEnd}></div>
+                  {/* <div ref={appStates.messageEnd}></div> */}
                   </div>
                 )
               }
@@ -783,10 +802,10 @@ const receiveInput = (input : string) => {
         <Feedback receiveInput={receiveFeedBack}/>
       )}
       {currentPhase > 0 && (
-        <div ref={appStates.messageEnd}>
+        
         <CustomButton handleClick={navigateBack}/>
-        </div>
       )}
+      <div ref={appStates.messageEnd}></div>
       
       </div>
       </div>

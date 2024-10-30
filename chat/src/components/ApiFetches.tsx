@@ -1,8 +1,9 @@
 import axios from "axios";
+const apiUrl = process.env.API_URL || '';
 
 export const fetchFurnitureData = async (category : string) => {
     try {
-        const response = await axios.post('/apiroute/furnitureCategory', 
+        const response = await axios.post(`${apiUrl}/apiroute/furnitureCategory`, 
         { category: category }, //req.body
         {
           auth: {
@@ -18,7 +19,7 @@ export const fetchFurnitureData = async (category : string) => {
 
 export const fetchFurnitureDataWithQuantity = async (category : string, quantity : number) => {
   try {
-      const response = await axios.post('/apiroute/categoryWithQuantity', 
+      const response = await axios.post(`${apiUrl}/apiroute/categoryWithQuantity`, 
       { category: category, quantity: quantity }, //req.body
       {
         auth: {
@@ -38,7 +39,7 @@ export const sendFeedbackToServer = async (success: boolean, feedback?: string) 
     reqBody = { success: success, feedback: feedback };
   }
   try {
-      const response = await axios.post('/apiroute/sendFeedback', 
+      const response = await axios.post(`${apiUrl}/apiroute/sendFeedback`, 
       reqBody, //req.body
       {
         auth: {
@@ -54,7 +55,7 @@ export const sendFeedbackToServer = async (success: boolean, feedback?: string) 
 
 export const sendSerperQuery = async (searchQuery: string) => {
   try {
-      const response = await axios.post('/apiroute/serperImageSearchFiltered', 
+      const response = await axios.post(`${apiUrl}/apiroute/serperImageSearchFiltered`, 
       { searchQuery: searchQuery }, //req.body
       {
         auth: {
