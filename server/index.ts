@@ -26,11 +26,12 @@ function getUnauthorizedResponse(req:any) {
         : 'No credentials provided';
 }
 
-//content security policy config to only accept scripts from self source
+//content security policy config
 const cspConfig = {
   directives: {
     defaultSrc: ["'self'"],
     imgSrc: ["'self'", clientPublic.webStoreUrl, "data:"],
+    frameAncestors: ["'self'", clientPublic.allUrl]
   },
 };
 
@@ -38,6 +39,15 @@ const cspConfig = {
 app.use(helmet({
   contentSecurityPolicy: cspConfig
 }));
+
+// uncomment if needed
+// const cors = require('cors');
+
+// app.use(cors({
+//   origin: clientPublic.allUrl, 
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   credentials: true
+// }));
 
 const port = process.env.PORT || 8000;
 

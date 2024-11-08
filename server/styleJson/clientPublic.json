@@ -1,3 +1,4 @@
 {
-    "webStoreUrl": "https://www.tavaratrading.com"
+    "webStoreUrl": "https://www.tavaratrading.com",
+    "allUrl": "https://*.tavaratrading.com"
 }
