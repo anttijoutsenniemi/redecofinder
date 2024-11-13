@@ -9,8 +9,8 @@ import { searchSerperImages, searchSerperImagesFiltered } from '../functions/ser
 
 const apiRoute : express.Router = express.Router();
 
-const counterModule = counterModel();
-const feedbackModule = feedbackModel();
+// const counterModule = counterModel();
+// const feedbackModule = feedbackModel();
 
 apiRoute.get("/", async (req : express.Request, res : express.Response) : Promise<void> => { 
     try {
@@ -51,31 +51,33 @@ apiRoute.post("/categoryWithQuantity", async (req : express.Request, res : expre
     }
 });
 
-apiRoute.get("/testScraping", async (req : express.Request, res : express.Response) : Promise<void> => { 
-    try {
+//uncomment to testScrape
 
-        // let automaticScraping = await scrapeAndMakeAiDataNew();
-        let scraping = await scrapeCategory(`https://www.tavaratrading.com/kaytetyt/?category[]=29`, 'sohvat_nojatuolit_ja_rahit');
-        // let scraping2 = await scrapeCategory(`www.tavaratrading.com/kaytetyt/?category[]=196`, 'korkeat_tuolit')
-        res.status(200).json({ "message" : "apiroute initialized"});
-    } catch (e : any) {
-        res.status(404).json({ "error" : `error fetching: ${e}` });
-    }
-});
+// apiRoute.get("/testScraping", async (req : express.Request, res : express.Response) : Promise<void> => { 
+//     try {
 
-apiRoute.post("/sendFeedback", async (req : express.Request, res : express.Response) : Promise<void> => { 
-    try {
-        let success: boolean = req.body.success;
-        if(req.body.feedback){
-            await feedbackModule.addData({ feedback: req.body.feedback });
-        }
-        await counterModule.updateFeedbackCounter(success);
+//         //let automaticScraping = await scrapeAndMakeAiData();
+
+//         res.status(200).json({ "message" : "apiroute initialized"});
+//     } catch (e : any) {
+//         res.status(404).json({ "error" : `error fetching: ${e}` });
+//     }
+// });
+
+/*Redacted 13.11.2024*/
+// apiRoute.post("/sendFeedback", async (req : express.Request, res : express.Response) : Promise<void> => { 
+//     try {
+//         let success: boolean = req.body.success;
+//         if(req.body.feedback){
+//             await feedbackModule.addData({ feedback: req.body.feedback });
+//         }
+//         await counterModule.updateFeedbackCounter(success);
         
-        res.status(200).json({ "message" : "feedback updated"});
-    } catch (e : any) {
-        res.status(404).json({ "error" : `error fetching: ${e}` });
-    }
-});
+//         res.status(200).json({ "message" : "feedback updated"});
+//     } catch (e : any) {
+//         res.status(404).json({ "error" : `error fetching: ${e}` });
+//     }
+// });
 
 apiRoute.post("/serperImageSearch", async (req: express.Request, res: express.Response): Promise<void> => {
     try {

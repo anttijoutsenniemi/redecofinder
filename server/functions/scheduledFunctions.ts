@@ -14,6 +14,9 @@ export const scrapeCategory = async (url : string, category : string) => {
     }
 };
 
+//what is interesting here is that this is way faster than
+//scrapeAndMakeAiDataNew() since this runs each of the scrapeCategory
+//functions at the same time, then triggers Promise.all()
 export const scrapeAndMakeAiData = async () => {
     const scrapePromises = [
         scrapeCategory(`${clientPublic.webStoreUrl}/kaytetyt/?category[]=2`, 'tyotuolit'), //työtuolit
@@ -38,6 +41,8 @@ export const scrapeAndMakeAiData = async () => {
 };
 
 //this is for new products
+//runs slower but is better if trying to bughunt
+//because it runs each line separately in a for loop
 export const scrapeAndMakeAiDataNew = async () => {
     const scrapePromises = [
         { url: `${clientPublic.webStoreUrl}/toimistokalusteet/3/tyo-satula-ja-valvomotuolit/uudet-tyotuolit`, category: 'new_tyotuolit' }, // OK työtuolit
