@@ -1,4 +1,4 @@
-Chat sovellus kansiossa chat ja selain kansiossa server.
+Chat sovellus kansiossa chat ja palvelin kansiossa server.
 
 Jotta saadaan uusin deployment koko sovelluksesta:
 
