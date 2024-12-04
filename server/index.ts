@@ -7,6 +7,7 @@ import aiRoute from "./routes/aiRoute";
 import expressBasicAuth from "express-basic-auth";
 import { setupCronJobs } from "./functions/scheduledFunctions";
 import clientPublic from './styleJson/clientPublic.json';
+import path from "path";
 
 const app : Application = express();
 
@@ -57,17 +58,20 @@ app.use(express.json({limit: '50mb'})); //receive req.body
 
 app.use(express.static('public_chat'));
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public_chat', 'index.html'));
+});
 
 app.use("/apiroute", authenticate, apiRoute);
 app.use("/airoute", authenticate, aiRoute);
 
-app.get("/", (req: Request, res: Response) => {
-  try {
-    res.status(200).json({ Message: "Welcome to the homepage" });
-  } catch (e: any) {
-    res.status(404).json({ error: `error fetching: ${e}` });
-  }
-});
+// app.get("/", (req: Request, res: Response) => {
+//   try {
+//     res.status(200).json({ Message: "Welcome to the homepage" });
+//   } catch (e: any) {
+//     res.status(404).json({ error: `error fetching: ${e}` });
+//   }
+// });
 
 app.listen(port, () => {
   console.log(`Server is Fire at http://localhost:${port}`);

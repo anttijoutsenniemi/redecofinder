@@ -106,7 +106,8 @@ const App0: React.FC = () => {
     const [stateHistory, setStateHistory] = useState<StateHistory[]>([{ phase: 0, states: appStates}]);
     const [currentPhase, setCurrentPhase] = useState<number>(0);
     const [previousPhase, setPreviousPhase] = useState<number>(0);
-    const [phaseNumbers, setPhaseNumbers] = useState<number[]>([1, 2, 3]);
+    const [phaseNumbers, setPhaseNumbers] = useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+    13, 14, 15, 16, 17, 18, 19, 20]);
     const location = useLocation();
 
     useNavigationDetection(

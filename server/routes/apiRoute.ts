@@ -12,13 +12,13 @@ const apiRoute : express.Router = express.Router();
 // const counterModule = counterModel();
 // const feedbackModule = feedbackModel();
 
-apiRoute.get("/", async (req : express.Request, res : express.Response) : Promise<void> => { 
-    try {
-        res.status(200).json({ "message" : "apiroute initialized"});
-    } catch (e : any) {
-        res.status(404).json({ "error" : `error fetching: ${e}` });
-    }
-});
+// apiRoute.get("/", async (req : express.Request, res : express.Response) : Promise<void> => { 
+//     try {
+//         res.status(200).json({ "message" : "apiroute initialized"});
+//     } catch (e : any) {
+//         res.status(404).json({ "error" : `error fetching: ${e}` });
+//     }
+// });
 
 apiRoute.post("/furnitureCategory", async (req : express.Request, res : express.Response) : Promise<void> => { 
     try {
@@ -53,7 +53,7 @@ apiRoute.post("/categoryWithQuantity", async (req : express.Request, res : expre
 
 //uncomment to testScrape
 
-// apiRoute.get("/testScraping", async (req : express.Request, res : express.Response) : Promise<void> => { 
+// apiRoute.post("/testScraping", async (req : express.Request, res : express.Response) : Promise<void> => { 
 //     try {
 
 //         //let automaticScraping = await scrapeAndMakeAiData();
