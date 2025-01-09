@@ -3,7 +3,7 @@ import { MongoClient } from 'mongodb';
 const counterModel = () => {
     const url : string = process.env.MONGO_ATLAS_URI ?? "";
     // const client = new MongoClient(url);
-    const client = new MongoClient(url, { maxPoolSize: 5, maxIdleTimeMS: 30000 }); //reduce the amount of connections
+    const client = new MongoClient(url, { maxPoolSize: 5, maxIdleTimeMS: 30000, connectTimeoutMS: 15000 }); //reduce the amount of connections
     const dbName = 'redecofinderData';
 
     const collection = `counterCollection`;
@@ -33,6 +33,9 @@ const counterModel = () => {
         } catch (error) {
             console.error('Updating feedback counter failed with status code 102');
             throw error;
+        }
+        finally {
+            await client.close();
         }
     };
 
