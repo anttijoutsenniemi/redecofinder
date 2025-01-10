@@ -70,12 +70,13 @@ export const scrapeAndMakeAiDataNew = async () => {
 
 
 export const setupCronJobs = (): void => {
-    //here first number is the starting minute and the other is hours, so this runs on the first minute of every 12 hours
-    cron.schedule('0 */12 * * *', scrapeAndMakeAiData, {
+    //here first number is the starting minute and the other is hours, third is days, so this should run every 2 days
+    cron.schedule('0 0 */2 * *', scrapeAndMakeAiData, {
         scheduled: true,
         timezone: "Europe/Helsinki"
     });
-    cron.schedule('0 1,13 * * *', scrapeAndMakeAiDataNew, {
+    
+    cron.schedule('0 13 */2 * *', scrapeAndMakeAiDataNew, {
         scheduled: true,
         timezone: "Europe/Helsinki"
     });

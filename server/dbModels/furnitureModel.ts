@@ -63,9 +63,7 @@ const furnitureModel = (furnitureCategory : string) => {
             console.error('Connection to productInfo document failed with status code 100: ', error);
             throw error;
         }
-        finally {
-            await client.close();
-        }
+        
     }
     
     //find all data and return an array
@@ -80,9 +78,7 @@ const furnitureModel = (furnitureCategory : string) => {
             console.error('Connection to test db failed with status code 101');
             throw error;
         }
-        finally {
-            await client.close();
-        }
+        
     }
 
     //fetch data with minimum quantity available
@@ -108,9 +104,7 @@ const furnitureModel = (furnitureCategory : string) => {
             console.error('Connection to test db failed with status code 99');
             throw error;
         }
-        finally {
-            await client.close();
-        }
+        
     };
     
 
@@ -123,9 +117,7 @@ const furnitureModel = (furnitureCategory : string) => {
             console.error('Connection to test db failed with status code 102');
             throw error;
         }
-        finally {
-            await client.close();
-        }
+        
     }
 
     //check products deleted from webshop and update deleted boolean value
@@ -138,9 +130,7 @@ const furnitureModel = (furnitureCategory : string) => {
             console.error('Connection to test db failed with status code 102');
             throw error;
         }
-        finally {
-            await client.close();
-        }
+        
     }
 
     //update product deleted value back to false
@@ -153,9 +143,7 @@ const furnitureModel = (furnitureCategory : string) => {
             console.error('Connection to test db failed with status code 102');
             throw error;
         } 
-        finally {
-            await client.close();
-        }
+        
     }
 
     // Define more functions as needed

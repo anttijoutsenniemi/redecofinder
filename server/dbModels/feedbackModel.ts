@@ -27,9 +27,7 @@ const feedbackModel = () => {
             console.error('Connection to test db failed with status code 102');
             throw error;
         }
-        finally {
-            await client.close();
-        }
+        
     }
 
     // Define more functions as needed

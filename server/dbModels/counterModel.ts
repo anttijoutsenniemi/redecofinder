@@ -34,9 +34,7 @@ const counterModel = () => {
             console.error('Updating feedback counter failed with status code 102');
             throw error;
         }
-        finally {
-            await client.close();
-        }
+        
     };
 
     // Define more functions as needed
