@@ -1,0 +1,71 @@
+//// 3. Avainteknologiat ja arkkitehtuuri \\\\
+
+    MERN -stack into Docker container.
+
+    1.Front-end: REACT (TypeScript). 
+    - Koottu static-tiedostoiksi jotka tarjoillaan Node -palvelimella
+    - Kevyt autentikointi (username-password-pari jotka on buildattu fronttiin) 
+        käytännössä tämän tarkoitus on vain estää ulkopuolisten endpoint-bottien ja muiden vastaavien kutsut,
+        eikä olisi yksinään riittävä suojaus laajemman skaalan applikaatiossa, sillä tunnukset voi osaava tekijä
+        logata clienttiä ajaessa.
+    - Tärkein logiikka tapahtuu ChatApp.tsx/handleOptionClick(); -funktiossa.
+    - Tärkein tekoälylogiikka tapahtuu ChatApp.tsx/flattenObject(); ja calculateDistance(); -funktioissa
+    - Integroitu selaimen navigaatiohistorian kanssa käyttämällä React Router -domia
+        sovellus siis liikkuu edestakas keskustelussa painamalla selaimen edestakas -nuolia.
+        App.tsx -fileen luodaan niin monta reittiä kun keskustelussa on vaiheita.
+        Keskusteluin "vaihenumeron" mukaan noudetaan siihen kuuluvat useState -muuttujat stateHistory -muuttujasta.
+        Tässä jos tekisi systeemin uudestaan kannattaisi ehkä säilyttää stateHistoryssa vain edellinen ja seuraava
+        vaihtoehto, eikä luoda jokaiselle keskustelun vaiheelle omaa kohtaa stateHistory -muuttujassa.
+    - App.tsx sisältää myös itsetehdyn version keskitetystä muuttujanhallinnasta
+        muuttujat löytyvät appStates -tilamuuttujasta, jossa jokaiselle muuttujalle on oma helper function App.tsx
+        sisällä. Nämä sitten jaetaan jokaiselle child -componentille. Uudemmissa projekteissa tämä systeemi 
+        on korvattu Zustand -kirjastolla.
+
+    2. Palvelin: Node, Express (TypeScript).
+    - AI-promptit ja openAI -kutsut
+    - Verkkokaupan scraping-skriptit (cheerio, axios)
+    - Scraping-datan perusteella tehdyt tekoälytyyliarvioinnit 
+    - Scraping- ja tyyliarviointiskriptit ajavat itsensä automaattisesti haluttuina ajankohtina
+        voidaan laittaa pois päältä kommentoimalla index.ts/setupCronJobs(); Huom. jos laitetaan
+        pois päältä sovellus jää käyttämään vanhaa dataa eikä siis enää päivitä uusimpia tuotteita käyttäjälle.
+    - Kaikkien automatisoitujen skriptien ensimmäinen ajokerta ja tietokannan täyttö n. 1000 tuotteelle
+        kustansi tekoälykuluissa 14.11.2024 n. 2 dollaria. Seuraavat ajokerrat tietenkin lisäilevät uusia tuotteita
+        muutamia ja harvoin joten kokonaistekoälykustannuksiksi tulee tuhannella aloitustuotteella noin. alle dollari
+        kuukaudessa.
+    - index.ts -löytyvä cspConfig yhdessä helmetin avulla sallivat vain servunsisäiset skriptit, kuvat ja lähteet.
+        configurointiin pitää lisätä uusia ehtoja, jos halutaan esim. käyttää muualta netistä tulevia kuvia.
+
+    3. Backend: MongoDB.
+    - tietokantaan tallentuu tuotetiedot ja kuvien linkit
+    - tyyliarvioinnit jokaisesta tuotteesta
+    - connectionsien määrää on koitettu vähentää clientconfiguroinnilla, näihin oleelliset jutut löytyy
+        server/dbModels
+
+//// 4. Käynnistysohjeet lokaaliin \\\\
+
+    Chat sovellus kansiossa chat ja palvelin kansiossa server.
+
+    Jotta saadaan uusin deployment koko sovelluksesta:
+
+    0. Luo env tiedostot sekä chat kansioon että server kansioon ja kopioi esimerkit tämän
+      tiedoston lopusta löytyvillä exampleilla. Lisää lopuksi omat tiedot ja tallenna.
+    1. Aukaisee chat kansion terminaaliin
+    2. npm run build - komento buildaa React -sovelluksen chat/build kansioon
+    3. Siirrä uusin buildi server/public_chat kansion tiedostojen paikalle
+    4. Nyt uusin buildattu frontti toimii servun juuressa, sen voi käynnistää
+        lokaalissa avaamalla uuden terminaalin kansioon server ja ajamalla komennon
+        npm run dev
+    5. Nyt myös buildaamalla uusimman kontin /server kansiossa olevan Dockerfilen
+        mukaan saadaan toimiva kontti
+        
+FRONT ENV EXAMPLE:
+REACT_APP_TESTER_USERNAME="replaceusername"
+REACT_APP_TESTER_PASSWORD="replacepassword"
+
+BACK ENV EXAMPLE:
+HTTP_BASIC_AUTH_USERNAME="replaceusername"
+HTTP_BASIC_AUTH_PASSWORD="replacepassword"
+OPENAI_API_KEY=replaceapikey
+TESTER_USERNAME="replaceusername"
+TESTER_PASSWORD="replacepassword"
+MONGO_ATLAS_URI="replacemongouri"
